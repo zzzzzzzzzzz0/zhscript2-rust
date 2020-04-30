@@ -1,4 +1,4 @@
-use super::*;
+use super::{*, super::{as_ref__}};
 
 const ARGS_:&str = "参数栈";
 
@@ -9,8 +9,8 @@ pub struct Args_ {
 }
 
 impl Args_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>, begin:i32, end:i32) -> Self {
-		Self {super_:Item1_::new(&kws, rems), begin_:begin, end_:end}
+	pub fn new(kws:&keyword_::List_, rems:Vec<String>, begin_:i32, end_:i32) -> Self {
+		Self {super_:Item1_::new(&kws, rems), begin_, end_}
 	}
 	pub fn with__(name:&str, rems:&mut Vec<String>) -> Option<(i32, i32)> {
 		let mut begin = 1;
@@ -42,9 +42,23 @@ impl Args_ {
 			None
 		}
 	}
+	pub fn with2__(name:&str, rems:&Vec<String>) -> bool {
+		if name == ARGS_ {
+			let mut i2 = 0;
+			for i in rems.iter() {
+				if t_::s2n__::<i32>(&i).is_some() {
+					i2 += 1;
+					if i2 > 2 {return false}
+				} else {
+					return false
+				}
+			}
+			true
+		} else {false}
+	}
 
 	pub fn hello__(is_has:bool, q:qv_::T_, begin:i32, end:i32, ret:&mut result_::List_) -> Result2_ {
-		let ls = &q.borrow().args_;
+		let ls = &as_ref__!(q).args_;
 		let a = &ls.a_;
 		if !a.is_empty() {
 			let len = ls.dunhao_ + 2;
@@ -56,7 +70,7 @@ impl Args_ {
 				} else {
 					let mut i2 = 1;
 					for i in a {
-						if i.borrow().dunhao__() {
+						if as_ref__!(i).dunhao__() {
 							i2 += 1;
 							if i2 == begin2 {
 								continue
@@ -75,7 +89,7 @@ impl Args_ {
 			}
 		}
 		if let Some(i) = ret.end__() {
-			if i.borrow().dunhao__() {
+			if as_ref__!(i).dunhao__() {
 				ret.pop();
 			}
 		}
@@ -96,7 +110,7 @@ impl code_::Item_ for Args_ {
 		}
 		self.super_.s__(&s, ret, w)
 	}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, ret),

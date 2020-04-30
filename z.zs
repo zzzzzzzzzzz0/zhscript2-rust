@@ -95,41 +95,41 @@
 		、douhao、“，”、、
 		、maohao、“：”、、
 		、dunhao、“、”、、
-		、dunhao2、“为”、别、
 		、for1、“循环”、-、
 		、break1、“跳出”、-、
 		、continue1、“再来”、、
 		、range、“圈子”、-、
 		、break2、“遁出”、-、
 		、continue2、“重来”、、
-		p、return1、“返回”、-、
-		p、quit、“结束”、、
+		、return1、“返回”、-、
+		、quit、“结束”、、
 		、if1、“如果”、-、
-		if、dengyu、“等于”、-、
-		if、xiaoyudengyu、“小于等于”、-、
-		if、xiaoyu、“小于”、-、
-		if、dayudengyu、“大于等于”、-、
-		if、dayu、“大于”、-、
-		if、not、“不”、=、
-		if、and、“并且”、-、
-		if、or、“或者”、=、
-		if2、then、“那么”、-、
-		if2、else1、“否则”、、
+		、dengyu、“等于”、-、
+		、xiaoyudengyu、“小于等于”、-、
+		、xiaoyu、“小于”、-、
+		、dayudengyu、“大于等于”、-、
+		、dayu、“大于”、-、
+		、not、“不”、=、
+		、and、“并且”、-、
+		、or、“或者”、=、
+		、then、“那么”、-、
+		、else1、“否则”、、
 		、switch1、“分叉”、、
 		、guandaodu、“管道堵”、-、
 		、guandaojie、“管道接”、、
-		p、mod1、“模块”、-、
-		p、name、“命名”、、
-		sp、set、“赋予”、-、
-		sp、alias、“别名”、-、
-		sp、def、“定义”、-、
+		、mod1、“模块”、-、
+		、mod_free、“释放模块”、-、
+		、name、“命名”、、
+		、set、“赋予”、-、
+		、alias、“别名”、-、
+		、def、“定义”、-、
 		、equ、“以”、、
 		、has、“存在”、、
-		p、eval、“解释”、-、
-		p、load、“加载”、、
+		、eval、“解释”、-、
+		、load、“加载”、、
 		、expl、“算术”、、
-		p、print、“显示”、、
-		p、exec、“执行”、、
+		、print、“显示”、、
+		、exec、“执行”、、
 		、brkpoint、“这断点”、前回-、
 		、par_brkpoint、“这析断点”、、
 		、u2、、-、
@@ -148,9 +148,9 @@
 		了。
 
 		显示下原样
-use std::rc::Rc;
+use super::Rc_;
 
-pub type RI_ = Rc<Item_>;
+pub type RI_ = Rc_<Item_>;
 pub type ORI_ = Option<RI_>;
 
 #[derive(PartialEq, Debug)]
@@ -170,45 +170,30 @@ pub enum Id_ {
 		显示下原样
 }
 
-#[derive(Debug)]
-pub struct Grp_ {
-	pub print_:bool,
-	pub if_:bool,
-	pub if2_:bool,
-	pub set_:bool,
-}
-
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 pub struct Item_ {
 	pub s_:String,
 	pub id_:Id_,
-	pub g_:Grp_,
 }
 
 impl Item_ {
 	pub fn new(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if_:false, if2_:false, set_:false})
-	}
-	pub fn new_p(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, if_:false, if2_:false, set_:false})
-	}
-	pub fn new_sp(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, if_:false, if2_:false, set_:true})
-	}
-	pub fn new_if(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if_:true, if2_:false, set_:false})
-	}
-	pub fn new_if2(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if2_:true, if_:false, set_:false})
+		Self::new3(id, s)
 	}
 	pub fn new2(id:Id_) -> Self {
 		Self::new(id, "")
 	}
-	pub fn new3(id:Id_, s:&str, g:Grp_) -> Self {
-		Self {s_:s.to_string(), id_:id, g_:g}
+	pub fn new3(id_:Id_, s:&str) -> Self {
+		Self {s_:s.to_string(), id_}
 	}
 }
 
+pub struct Item2_ {
+	pub s_:&'static str,
+	pub id_:Vec<Id_>,
+}
+
+#[derive(Clone)]
 pub struct List_ {
 上原样。
 		循环‘量’次先
@@ -217,12 +202,13 @@ pub struct List_ {
 			显示先
 				如果‘3’内包含前回那么换行。
 				跳表1下
-			了“pub ”‘‘次’/1_’:Rc<Item_>,换行先
+			了“pub ”‘‘次’/1_’:Rc_<Item_>,换行先
 				如果‘3’内包含后回那么换行。
 			了。
 		了。
 		显示下原样
-	pub a_:Vec<Rc<Item_>>,
+	pub a_:Vec<Rc_<Item_>>,
+	pub a2_:Vec<Rc_<Item2_>>,
 }
 
 impl List_ {
@@ -232,10 +218,11 @@ impl List_ {
 			别名2以‘次’/2。
 			如果不‘2’那么再来。
 			别名4以‘次’/4。
-			显示先跳表2下了“let ‘‘次’/1’‘ ‘次’/1’ = Rc::new(Item_::new‘4’(Id_::‘‘次’id’, ‘ ‘次’id1’"”‘2’"));换行。
+			显示先跳表2下了“let ‘‘次’/1’‘ ‘次’/1’ = Rc_::new(Item_::new‘4’(Id_::‘‘次’id’, ‘ ‘次’id1’"”‘2’"));换行。
 		了。
 		显示下原样
-		Self {a_:vec![
+		Self {a2_:vec![],
+			a_:vec![
 上原样。
 		循环‘量’次先
 			如果不‘‘次’/2’那么再来。
@@ -249,7 +236,7 @@ impl List_ {
 			分支‘‘次’/2’先
 				：再来。
 				0先
-					显示先跳表3下了‘1_’:Rc::new(Item_::new2(Id_::‘‘次’id’)),换行。
+					显示先跳表3下了‘1_’:Rc_::new(Item_::new2(Id_::‘‘次’id’)),换行。
 					再来。
 				了。
 			了。
@@ -257,6 +244,14 @@ impl List_ {
 		了。
 		显示下原样
 		}
+	}
+
+	pub fn add__(&mut self, s:&str, id:Id_) {
+		self.a_.push(Rc_::new(Item_::new(id, s)))
+	}
+	#[allow(dead_code)]
+	pub fn add2__(&mut self, s_:&'static str, id_:Vec<Id_>) {
+		self.a2_.push(Rc_::new(Item2_ {id_, s_}))
 	}
 }
 上原样。

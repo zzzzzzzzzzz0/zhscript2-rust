@@ -20,12 +20,10 @@ impl code_::Item_ for Item_ {
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
-		let mut gd2 = gd;
-		gd2.jvhao_ = false;
-		t_::o__(&self.a_).hello__(gd2, q, w, ret)?;
-		if w.dbg_.lc_ {
-			w.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		t_::o__(&self.a_).hello__(code_::Opt_ {jvhao_:false, ..gd}, q, w.clone(), wm, ret)?;
+		if wm.dbg_.lc_ {
+			wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 		}
 		ok__()
 	}

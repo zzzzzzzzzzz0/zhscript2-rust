@@ -21,9 +21,9 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q, w, &mut ret2)?;
+		t_::o__(&self.a_).hello__(gd, q, w.clone(), wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		if !v.is_empty() {
 			let s = &v[0];
@@ -34,9 +34,7 @@ impl code_::Item_ for Item_ {
 				match i {
 					"" => pf = true,
 					"错" => ep = true,
-					_ => {
-						return result2_::err__([i, " 无效选项"].concat())
-					}
+					_ => return self.super_.err__(&[&as_ref__!(w).text__(i), "无效选项"].concat())
 				}
 			}
 			if ep {
@@ -47,7 +45,7 @@ impl code_::Item_ for Item_ {
 			if pf {
 				t_::pf__();
 			}
-			if !gd.guandao_du_ {
+			if gd.guandao_jie_ {
 				ret.add__(s);
 			}
 		}

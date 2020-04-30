@@ -1,8 +1,8 @@
 // 66 14,8,13
 
-use std::rc::Rc;
+use super::Rc_;
 
-pub type RI_ = Rc<Item_>;
+pub type RI_ = Rc_<Item_>;
 pub type ORI_ = Option<RI_>;
 
 #[derive(PartialEq, Debug)]
@@ -27,7 +27,7 @@ pub enum Id_ {
 		Then, Else,
 	Switch,
 	Guandaodu, Guandaojie,
-	Mod, Name,
+	Mod, ModFree, Name,
 	Set, Alias, Def, Equ,
 	Has,
 	Eval, Load,
@@ -39,171 +39,158 @@ pub enum Id_ {
 
 }
 
-#[derive(Debug)]
-pub struct Grp_ {
-	pub print_:bool,
-	pub if_:bool,
-	pub if2_:bool,
-	pub set_:bool,
-}
-
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 pub struct Item_ {
 	pub s_:String,
 	pub id_:Id_,
-	pub g_:Grp_,
 }
 
 impl Item_ {
 	pub fn new(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if_:false, if2_:false, set_:false})
-	}
-	pub fn new_p(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, if_:false, if2_:false, set_:false})
-	}
-	pub fn new_sp(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, if_:false, if2_:false, set_:true})
-	}
-	pub fn new_if(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if_:true, if2_:false, set_:false})
-	}
-	pub fn new_if2(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:false, if2_:true, if_:false, set_:false})
+		Self::new3(id, s)
 	}
 	pub fn new2(id:Id_) -> Self {
 		Self::new(id, "")
 	}
-	pub fn new3(id:Id_, s:&str, g:Grp_) -> Self {
-		Self {s_:s.to_string(), id_:id, g_:g}
+	pub fn new3(id_:Id_, s:&str) -> Self {
+		Self {s_:s.to_string(), id_}
 	}
 }
 
+pub struct Item2_ {
+	pub s_:&'static str,
+	pub id_:Vec<Id_>,
+}
+
+#[derive(Clone)]
 pub struct List_ {
-	pub undef_:Rc<Item_>,
+	pub undef_:Rc_<Item_>,
 
-	pub begin_rem_:Rc<Item_>,
-	pub   end_rem_:Rc<Item_>,
-	pub begin_rem2_:Rc<Item_>,
-	pub   end_rem2_:Rc<Item_>,
-	pub begin_var_:Rc<Item_>,
-	pub   end_var_:Rc<Item_>,
-	pub begin_text_:Rc<Item_>,
-	pub   end_text_:Rc<Item_>,
-	pub begin_yuanyang_:Rc<Item_>,
-	pub   end_yuanyang_:Rc<Item_>,
-	pub begin_code_:Rc<Item_>,
-	pub   end_code_:Rc<Item_>,
-	pub begin_text2_:Rc<Item_>,
-	pub   end_text2_:Rc<Item_>,
-	pub begin_block_:Rc<Item_>,
-	pub   end_block_:Rc<Item_>,
-	pub jvhao_:Rc<Item_>,
-	pub douhao_:Rc<Item_>,
-	pub maohao_:Rc<Item_>,
-	pub dunhao_:Rc<Item_>,
-	pub dunhao2_:Rc<Item_>,
-	pub for_:Rc<Item_>,
-	pub break_:Rc<Item_>,
-	pub continue_:Rc<Item_>,
-	pub range_:Rc<Item_>,
-	pub break2_:Rc<Item_>,
-	pub continue2_:Rc<Item_>,
-	pub return_:Rc<Item_>,
-	pub quit_:Rc<Item_>,
-	pub if_:Rc<Item_>,
-	pub dengyu_:Rc<Item_>,
-	pub xiaoyudengyu_:Rc<Item_>,
-	pub xiaoyu_:Rc<Item_>,
-	pub dayudengyu_:Rc<Item_>,
-	pub dayu_:Rc<Item_>,
-	pub not_:Rc<Item_>,
-	pub and_:Rc<Item_>,
-	pub or_:Rc<Item_>,
-	pub then_:Rc<Item_>,
-	pub else_:Rc<Item_>,
-	pub switch_:Rc<Item_>,
-	pub guandaodu_:Rc<Item_>,
-	pub guandaojie_:Rc<Item_>,
-	pub mod_:Rc<Item_>,
-	pub name_:Rc<Item_>,
-	pub set_:Rc<Item_>,
-	pub alias_:Rc<Item_>,
-	pub def_:Rc<Item_>,
-	pub equ_:Rc<Item_>,
-	pub has_:Rc<Item_>,
-	pub eval_:Rc<Item_>,
-	pub load_:Rc<Item_>,
-	pub expl_:Rc<Item_>,
-	pub print_:Rc<Item_>,
-	pub exec_:Rc<Item_>,
+	pub begin_rem_:Rc_<Item_>,
+	pub   end_rem_:Rc_<Item_>,
+	pub begin_rem2_:Rc_<Item_>,
+	pub   end_rem2_:Rc_<Item_>,
+	pub begin_var_:Rc_<Item_>,
+	pub   end_var_:Rc_<Item_>,
+	pub begin_text_:Rc_<Item_>,
+	pub   end_text_:Rc_<Item_>,
+	pub begin_yuanyang_:Rc_<Item_>,
+	pub   end_yuanyang_:Rc_<Item_>,
+	pub begin_code_:Rc_<Item_>,
+	pub   end_code_:Rc_<Item_>,
+	pub begin_text2_:Rc_<Item_>,
+	pub   end_text2_:Rc_<Item_>,
+	pub begin_block_:Rc_<Item_>,
+	pub   end_block_:Rc_<Item_>,
+	pub jvhao_:Rc_<Item_>,
+	pub douhao_:Rc_<Item_>,
+	pub maohao_:Rc_<Item_>,
+	pub dunhao_:Rc_<Item_>,
+	pub for_:Rc_<Item_>,
+	pub break_:Rc_<Item_>,
+	pub continue_:Rc_<Item_>,
+	pub range_:Rc_<Item_>,
+	pub break2_:Rc_<Item_>,
+	pub continue2_:Rc_<Item_>,
+	pub return_:Rc_<Item_>,
+	pub quit_:Rc_<Item_>,
+	pub if_:Rc_<Item_>,
+	pub dengyu_:Rc_<Item_>,
+	pub xiaoyudengyu_:Rc_<Item_>,
+	pub xiaoyu_:Rc_<Item_>,
+	pub dayudengyu_:Rc_<Item_>,
+	pub dayu_:Rc_<Item_>,
+	pub not_:Rc_<Item_>,
+	pub and_:Rc_<Item_>,
+	pub or_:Rc_<Item_>,
+	pub then_:Rc_<Item_>,
+	pub else_:Rc_<Item_>,
+	pub switch_:Rc_<Item_>,
+	pub guandaodu_:Rc_<Item_>,
+	pub guandaojie_:Rc_<Item_>,
+	pub mod_:Rc_<Item_>,
+	pub mod_free_:Rc_<Item_>,
+	pub name_:Rc_<Item_>,
+	pub set_:Rc_<Item_>,
+	pub alias_:Rc_<Item_>,
+	pub def_:Rc_<Item_>,
+	pub equ_:Rc_<Item_>,
+	pub has_:Rc_<Item_>,
+	pub eval_:Rc_<Item_>,
+	pub load_:Rc_<Item_>,
+	pub expl_:Rc_<Item_>,
+	pub print_:Rc_<Item_>,
+	pub exec_:Rc_<Item_>,
 
-	pub brkpoint_:Rc<Item_>,
-	pub par_brkpoint_:Rc<Item_>,
+	pub brkpoint_:Rc_<Item_>,
+	pub par_brkpoint_:Rc_<Item_>,
 
-	pub a_:Vec<Rc<Item_>>,
+	pub a_:Vec<Rc_<Item_>>,
+	pub a2_:Vec<Rc_<Item2_>>,
 }
 
 impl List_ {
 	pub fn new() -> Self {
-		let begin_rem      = Rc::new(Item_::new    (Id_::BeginRem,      "（"));
-		let   end_rem      = Rc::new(Item_::new    (Id_::EndRem,        "）"));
-		let begin_rem2     = Rc::new(Item_::new    (Id_::BeginRem2,     "【"));
-		let   end_rem2     = Rc::new(Item_::new    (Id_::EndRem2,       "】"));
-		let begin_var      = Rc::new(Item_::new    (Id_::BeginVar,      "‘"));
-		let   end_var      = Rc::new(Item_::new    (Id_::EndVar,        "’"));
-		let begin_text     = Rc::new(Item_::new    (Id_::BeginText,     "“"));
-		let   end_text     = Rc::new(Item_::new    (Id_::EndText,       "”"));
-		let begin_yuanyang = Rc::new(Item_::new    (Id_::BeginYuanyang, "下原样"));
-		let   end_yuanyang = Rc::new(Item_::new    (Id_::EndYuanyang,   "上原样"));
-		let begin_code     = Rc::new(Item_::new    (Id_::BeginCode,     "下代码"));
-		let   end_code     = Rc::new(Item_::new    (Id_::EndCode,       "上代码"));
-		let begin_text2    = Rc::new(Item_::new    (Id_::BeginText2,    "下文本"));
-		let   end_text2    = Rc::new(Item_::new    (Id_::EndText2,      "上文本"));
-		let begin_block    = Rc::new(Item_::new    (Id_::BeginBlock,    "先"));
-		let   end_block    = Rc::new(Item_::new    (Id_::EndBlock,      "了"));
-		let jvhao          = Rc::new(Item_::new    (Id_::Jvhao,         "。"));
-		let douhao         = Rc::new(Item_::new    (Id_::Douhao,        "，"));
-		let maohao         = Rc::new(Item_::new    (Id_::Maohao,        "："));
-		let dunhao         = Rc::new(Item_::new    (Id_::Dunhao,        "、"));
-		let dunhao2        = Rc::new(Item_::new    (Id_::Dunhao,        "为"));
-		let for1           = Rc::new(Item_::new    (Id_::For,           "循环"));
-		let break1         = Rc::new(Item_::new    (Id_::Break,         "跳出"));
-		let continue1      = Rc::new(Item_::new    (Id_::Continue,      "再来"));
-		let range          = Rc::new(Item_::new    (Id_::Range,         "圈子"));
-		let break2         = Rc::new(Item_::new    (Id_::Break2,        "遁出"));
-		let continue2      = Rc::new(Item_::new    (Id_::Continue2,     "重来"));
-		let return1        = Rc::new(Item_::new_p  (Id_::Return,        "返回"));
-		let quit           = Rc::new(Item_::new_p  (Id_::Quit,          "结束"));
-		let if1            = Rc::new(Item_::new    (Id_::If,            "如果"));
-		let dengyu         = Rc::new(Item_::new_if (Id_::Dengyu,        "等于"));
-		let xiaoyudengyu   = Rc::new(Item_::new_if (Id_::Xiaoyudengyu,  "小于等于"));
-		let xiaoyu         = Rc::new(Item_::new_if (Id_::Xiaoyu,        "小于"));
-		let dayudengyu     = Rc::new(Item_::new_if (Id_::Dayudengyu,    "大于等于"));
-		let dayu           = Rc::new(Item_::new_if (Id_::Dayu,          "大于"));
-		let not            = Rc::new(Item_::new_if (Id_::Not,           "不"));
-		let and            = Rc::new(Item_::new_if (Id_::And,           "并且"));
-		let or             = Rc::new(Item_::new_if (Id_::Or,            "或者"));
-		let then           = Rc::new(Item_::new_if2(Id_::Then,          "那么"));
-		let else1          = Rc::new(Item_::new_if2(Id_::Else,          "否则"));
-		let switch1        = Rc::new(Item_::new    (Id_::Switch,        "分叉"));
-		let guandaodu      = Rc::new(Item_::new    (Id_::Guandaodu,     "管道堵"));
-		let guandaojie     = Rc::new(Item_::new    (Id_::Guandaojie,    "管道接"));
-		let mod1           = Rc::new(Item_::new_p  (Id_::Mod,           "模块"));
-		let name           = Rc::new(Item_::new_p  (Id_::Name,          "命名"));
-		let set            = Rc::new(Item_::new_sp (Id_::Set,           "赋予"));
-		let alias          = Rc::new(Item_::new_sp (Id_::Alias,         "别名"));
-		let def            = Rc::new(Item_::new_sp (Id_::Def,           "定义"));
-		let equ            = Rc::new(Item_::new    (Id_::Equ,           "以"));
-		let has            = Rc::new(Item_::new    (Id_::Has,           "存在"));
-		let eval           = Rc::new(Item_::new_p  (Id_::Eval,          "解释"));
-		let load           = Rc::new(Item_::new_p  (Id_::Load,          "加载"));
-		let expl           = Rc::new(Item_::new    (Id_::Expl,          "算术"));
-		let print          = Rc::new(Item_::new_p  (Id_::Print,         "显示"));
-		let exec           = Rc::new(Item_::new_p  (Id_::Exec,          "执行"));
-		let brkpoint       = Rc::new(Item_::new    (Id_::Brkpoint,      "这断点"));
-		let par_brkpoint   = Rc::new(Item_::new    (Id_::ParBrkpoint,   "这析断点"));
+		let begin_rem      = Rc_::new(Item_::new    (Id_::BeginRem,      "（"));
+		let   end_rem      = Rc_::new(Item_::new    (Id_::EndRem,        "）"));
+		let begin_rem2     = Rc_::new(Item_::new    (Id_::BeginRem2,     "【"));
+		let   end_rem2     = Rc_::new(Item_::new    (Id_::EndRem2,       "】"));
+		let begin_var      = Rc_::new(Item_::new    (Id_::BeginVar,      "‘"));
+		let   end_var      = Rc_::new(Item_::new    (Id_::EndVar,        "’"));
+		let begin_text     = Rc_::new(Item_::new    (Id_::BeginText,     "“"));
+		let   end_text     = Rc_::new(Item_::new    (Id_::EndText,       "”"));
+		let begin_yuanyang = Rc_::new(Item_::new    (Id_::BeginYuanyang, "下原样"));
+		let   end_yuanyang = Rc_::new(Item_::new    (Id_::EndYuanyang,   "上原样"));
+		let begin_code     = Rc_::new(Item_::new    (Id_::BeginCode,     "下代码"));
+		let   end_code     = Rc_::new(Item_::new    (Id_::EndCode,       "上代码"));
+		let begin_text2    = Rc_::new(Item_::new    (Id_::BeginText2,    "下文本"));
+		let   end_text2    = Rc_::new(Item_::new    (Id_::EndText2,      "上文本"));
+		let begin_block    = Rc_::new(Item_::new    (Id_::BeginBlock,    "先"));
+		let   end_block    = Rc_::new(Item_::new    (Id_::EndBlock,      "了"));
+		let jvhao          = Rc_::new(Item_::new    (Id_::Jvhao,         "。"));
+		let douhao         = Rc_::new(Item_::new    (Id_::Douhao,        "，"));
+		let maohao         = Rc_::new(Item_::new    (Id_::Maohao,        "："));
+		let dunhao         = Rc_::new(Item_::new    (Id_::Dunhao,        "、"));
+		let for1           = Rc_::new(Item_::new    (Id_::For,           "循环"));
+		let break1         = Rc_::new(Item_::new    (Id_::Break,         "跳出"));
+		let continue1      = Rc_::new(Item_::new    (Id_::Continue,      "再来"));
+		let range          = Rc_::new(Item_::new    (Id_::Range,         "圈子"));
+		let break2         = Rc_::new(Item_::new    (Id_::Break2,        "遁出"));
+		let continue2      = Rc_::new(Item_::new    (Id_::Continue2,     "重来"));
+		let return1        = Rc_::new(Item_::new    (Id_::Return,        "返回"));
+		let quit           = Rc_::new(Item_::new    (Id_::Quit,          "结束"));
+		let if1            = Rc_::new(Item_::new    (Id_::If,            "如果"));
+		let dengyu         = Rc_::new(Item_::new    (Id_::Dengyu,        "等于"));
+		let xiaoyudengyu   = Rc_::new(Item_::new    (Id_::Xiaoyudengyu,  "小于等于"));
+		let xiaoyu         = Rc_::new(Item_::new    (Id_::Xiaoyu,        "小于"));
+		let dayudengyu     = Rc_::new(Item_::new    (Id_::Dayudengyu,    "大于等于"));
+		let dayu           = Rc_::new(Item_::new    (Id_::Dayu,          "大于"));
+		let not            = Rc_::new(Item_::new    (Id_::Not,           "不"));
+		let and            = Rc_::new(Item_::new    (Id_::And,           "并且"));
+		let or             = Rc_::new(Item_::new    (Id_::Or,            "或者"));
+		let then           = Rc_::new(Item_::new    (Id_::Then,          "那么"));
+		let else1          = Rc_::new(Item_::new    (Id_::Else,          "否则"));
+		let switch1        = Rc_::new(Item_::new    (Id_::Switch,        "分叉"));
+		let guandaodu      = Rc_::new(Item_::new    (Id_::Guandaodu,     "管道堵"));
+		let guandaojie     = Rc_::new(Item_::new    (Id_::Guandaojie,    "管道接"));
+		let mod1           = Rc_::new(Item_::new    (Id_::Mod,           "模块"));
+		let mod_free       = Rc_::new(Item_::new    (Id_::ModFree,       "释放模块"));
+		let name           = Rc_::new(Item_::new    (Id_::Name,          "命名"));
+		let set            = Rc_::new(Item_::new    (Id_::Set,           "赋予"));
+		let alias          = Rc_::new(Item_::new    (Id_::Alias,         "别名"));
+		let def            = Rc_::new(Item_::new    (Id_::Def,           "定义"));
+		let equ            = Rc_::new(Item_::new    (Id_::Equ,           "以"));
+		let has            = Rc_::new(Item_::new    (Id_::Has,           "存在"));
+		let eval           = Rc_::new(Item_::new    (Id_::Eval,          "解释"));
+		let load           = Rc_::new(Item_::new    (Id_::Load,          "加载"));
+		let expl           = Rc_::new(Item_::new    (Id_::Expl,          "算术"));
+		let print          = Rc_::new(Item_::new    (Id_::Print,         "显示"));
+		let exec           = Rc_::new(Item_::new    (Id_::Exec,          "执行"));
+		let brkpoint       = Rc_::new(Item_::new    (Id_::Brkpoint,      "这断点"));
+		let par_brkpoint   = Rc_::new(Item_::new    (Id_::ParBrkpoint,   "这析断点"));
 
-		Self {a_:vec![
+		Self {a2_:vec![],
+			a_:vec![
 				begin_rem.clone(),
 				  end_rem.clone(),
 				begin_rem2.clone(),
@@ -224,7 +211,6 @@ impl List_ {
 				douhao.clone(),
 				maohao.clone(),
 				dunhao.clone(),
-				dunhao2.clone(),
 				for1.clone(),
 				break1.clone(),
 				continue1.clone(),
@@ -248,6 +234,7 @@ impl List_ {
 				guandaodu.clone(),
 				guandaojie.clone(),
 				mod1.clone(),
+				mod_free.clone(),
 				name.clone(),
 				set.clone(),
 				alias.clone(),
@@ -263,7 +250,7 @@ impl List_ {
 				par_brkpoint.clone(),
 
 			],
-			undef_:Rc::new(Item_::new2(Id_::Undef)),
+			undef_:Rc_::new(Item_::new2(Id_::Undef)),
 			begin_rem_:begin_rem,
 			  end_rem_:  end_rem,
 			begin_rem2_:begin_rem2,
@@ -284,7 +271,6 @@ impl List_ {
 			douhao_:douhao,
 			maohao_:maohao,
 			dunhao_:dunhao,
-			dunhao2_:dunhao2,
 			for_:for1,
 			break_:break1,
 			continue_:continue1,
@@ -308,6 +294,7 @@ impl List_ {
 			guandaodu_:guandaodu,
 			guandaojie_:guandaojie,
 			mod_:mod1,
+			mod_free_:mod_free,
 			name_:name,
 			set_:set,
 			alias_:alias,
@@ -323,5 +310,13 @@ impl List_ {
 			par_brkpoint_:par_brkpoint,
 
 		}
+	}
+
+	pub fn add__(&mut self, s:&str, id:Id_) {
+		self.a_.push(Rc_::new(Item_::new(id, s)))
+	}
+	#[allow(dead_code)]
+	pub fn add2__(&mut self, s_:&'static str, id_:Vec<Id_>) {
+		self.a2_.push(Rc_::new(Item2_ {id_, s_}))
 	}
 }

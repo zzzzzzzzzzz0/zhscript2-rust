@@ -1,4 +1,4 @@
-use super::*;
+use super::{*, super::{as_ref__}};
 
 #[macro_export]
 macro_rules! p__ {
@@ -54,6 +54,7 @@ macro_rules! lc_kw__ {
 #[macro_export] macro_rules! lc5__ {($($arg:tt)*) => (lc_kw__!(&keyword_::Id_::U5, $($arg)*);)}
 #[macro_export] macro_rules! lc6__ {($($arg:tt)*) => (lc_kw__!(&keyword_::Id_::U7, $($arg)*);)}
 
+#[derive(Default, Clone, Debug)]
 pub struct Dbg_ {
 	pub tree_:bool,
 	pub arg_:bool,
@@ -64,10 +65,6 @@ pub struct Dbg_ {
 }
 
 impl Dbg_ {
-	pub fn new() -> Self {
-		Self {tree_:false, arg_:false, lc_:false, par_lc_:false, expl_:false, if_:false}
-	}
-
 	pub fn tree__(&self, l:&code_::List_, w:&World_) {
 		println!();
 		let mut wei:[char;64] = ['*';64];
@@ -84,26 +81,26 @@ impl Dbg_ {
 		};
 		for i in l.iter() {
 			i2 += 1;
-			let is_end = end__(i.kw2__(), i2);
+			let is_end = end__(as_ref__!(i).kw2__(), i2);
 			let is_end2 = end2__(is_end, i2);
-			self.tree2_i__(i.as_ref(), suojin, wei, is_end, i2 == 1, is_end2, w);
-			if let Some(a) = i.a__() {
+			self.tree2_i__(i, suojin, wei, is_end, i2 == 1, is_end2, w);
+			if let Some(a) = as_ref__!(i).a__() {
 				self.tree2__(a, suojin + 1, wei, is_end2, w)
 			}
 
-			let is_end = end__(i.kw3__(), i2);
+			let is_end = end__(as_ref__!(i).kw3__(), i2);
 			let is_end2 = end2__(is_end, i2);
-			if let Some(kw) = i.kw2__() {
+			if let Some(kw) = as_ref__!(i).kw2__() {
 				self.tree_line__(" ", &kw.s_, suojin, wei, is_end, false, is_end2)
 			}
-			if let Some(a) = i.a2__() {
+			if let Some(a) = as_ref__!(i).a2__() {
 				self.tree2__(a, suojin + 1, wei, is_end2, w)
 			}
 
-			if let Some(kw) = i.kw3__() {
+			if let Some(kw) = as_ref__!(i).kw3__() {
 				self.tree_line__(" ", &kw.s_, suojin, wei, i2 == len, false, is_end2)
 			}
-			if let Some(a) = i.a3__() {
+			if let Some(a) = as_ref__!(i).a3__() {
 				self.tree2__(a, suojin + 1, wei, is_end2, w)
 			}
 		}
@@ -134,9 +131,9 @@ impl Dbg_ {
 		end_ansi__();
 		println!();
 	}
-	fn tree2_i__(&self, i:&dyn code_::Item_, suojin:usize,  wei:&mut [char], is_end:bool, is_begin:bool, is_end2:bool, w:&World_) {
+	fn tree2_i__(&self, i:&code_::I_, suojin:usize,  wei:&mut [char], is_end:bool, is_begin:bool, is_end2:bool, w:&World_) {
 		let mut s = String::new();
-		i.s__(&mut s, w);
+		as_ref__!(i).s__(&mut s, w);
 		self.tree_line__("-", &s, suojin, wei, is_end, is_begin, is_end2)
 	}
 	
@@ -149,7 +146,7 @@ impl Dbg_ {
 		for (idx, i) in a.iter().enumerate() {
 			let mut s = String::new();
 			s.push_str(&format!("({:2}", idx));
-			if let result_::Val_::Kw(_) = i.borrow().val_ {
+			if let result_::Val_::K(_) = &*as_ref__!(as_ref__!(i).val_) {
 				i2 += 1;
 				i3 = 0;
 				s.push(')');
@@ -163,9 +160,9 @@ impl Dbg_ {
 					s.push_str(&" ".repeat(4))
 				}
 			}
-			i.borrow().s2__(&mut s, true, true, true);
+			as_ref__!(i).s2__(&mut s, true, true, true);
 			self.arg3__(&s, false);
-			for rem in &i.borrow().rem_ {
+			for rem in &as_ref__!(i).rem_ {
 				self.rem__(rem);
 			}
 			println!();
@@ -183,10 +180,10 @@ impl Dbg_ {
 		}
 	}
 
-	pub fn lc__(&self, i:&dyn code_::Item_, w:&World_) {
+	pub fn lc__(&self, i:&code_::I_, w:&World_) {
 		let mut s = String::new();
-		i.s__(&mut s, w);
-		self.lc2__(i.kw__(), &s);
+		as_ref__!(i).s__(&mut s, w);
+		self.lc2__(as_ref__!(i).kw__(), &s);
 	}
 	pub fn lc2__(&self, kw:&keyword_::Item_, s:&str) {
 		self.lc3__(&kw.id_, s)
@@ -200,9 +197,9 @@ impl Dbg_ {
 		self.lc3__(&kw.id_, &kw.s_)
 	}
 
-	pub fn def__(&self, i:&var_::RRI_) {
+	pub fn def__(&self, i:&def_::I_) {
 		self.begin_ansi_kw__(&keyword_::Id_::U10);
-		let i = i.borrow();
+		let i = as_ref__!(i);
 		let name = i.arg0__();
 		let argc = i.argc__();
 		p__!("{}({})", name, if argc > 99 {99} else {argc});

@@ -16,8 +16,8 @@ impl code_::Item_ for Item_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
 	fn add__(&mut self, a:code_::List_) -> Result2_ {Item1_::add__(self, a)}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
-		Item1_::hello__(self, gd, q, w, ret)
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		Item1_::hello__(self, gd, q, w, wm, ret)
 	}
 }
 
@@ -26,7 +26,7 @@ impl Item1_ for Item_ {
 	fn codes__(&self) -> &code_::OL_ {&self.a_}
 	fn sp2__(&mut self, i:usize) {self.sp_ = i}
 	fn sp__(&self) -> usize {self.sp_}
-	fn src__(&self, s:String, src2:&mut String, _q:&mut Qv_, _w:&mut World_) -> Result2_ {
+	fn src__(&self, s:String, src2:&mut String, _q:&mut Qv_, _w:&World_, _dbg:&mut Dbg_) -> Result2_ {
 		*src2 = s;
 		ok__()
 	}
@@ -37,7 +37,7 @@ pub trait Item1_ : code_::Item_ {
 	fn codes__(&self) -> &code_::OL_;
 	fn sp2__(&mut self, i:usize);
 	fn sp__(&self) -> usize;
-	fn src__(&self, s:String, src2:&mut String, q:&mut Qv_, w:&mut World_) -> Result2_;
+	fn src__(&self, s:String, src2:&mut String, q:&mut Qv_, w:&World_, dbg:&mut Dbg_) -> Result2_;
 
 	fn add__(&mut self, a:code_::List_) -> Result2_ {
 		if a.is_empty() {
@@ -50,7 +50,7 @@ pub trait Item1_ : code_::Item_ {
 		ok__()
 	}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut q2 = Qv_::new2(Some(q.clone()));
 		let mut src2 = String::new();
 		{
@@ -61,11 +61,12 @@ pub trait Item1_ : code_::Item_ {
 				i.borrow().s__(&mut src);
 				ok__()
 			})?;*/
-			code_::Item1_::split2_2__(self.codes__().as_ref(), self.sp__(), &mut src, |_| false,
-				gd, q.clone(), w, args)?;
+			code_::Item1_::split2_2__(self.codes__().as_ref(), self.sp__(), &mut src,
+				|rem| as_ref__!(w).no_rem2__(&rem),
+				gd, q.clone(), w.clone(), wm, args)?;
 			q2.src_ = src.to_string();
-			self.src__(src, &mut src2, &mut q2, w)?;
+			self.src__(src, &mut src2, &mut q2, &as_ref__!(w), &mut wm.dbg_)?;
 		}
-		eval_::hello__(&src2, gd, qv_::t__(q2), q, w, ret)
+		eval_::hello__(&src2, gd, qv_::t__(q2), w, wm, ret)
 	}
 }

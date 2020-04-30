@@ -1,5 +1,4 @@
-use super::u_::*;
-use super::rem2_;
+use super::{u_::*, rem2_, as_ref__};
 
 mod args_;
 use args_::*;
@@ -9,7 +8,7 @@ mod arg_;
 use arg_::*;
 pub mod simp_;
 
-pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> Box<dyn code_::Item_ + 'static> {
+pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::I_ {
 	let mut bad = false;
 	let mut name = String::new();
 	let mut rem = String::new();
@@ -25,9 +24,9 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> Box<dyn code_::Item_ + 
 				break
 			}
 		}
-		match i.kw__().id_ {
+		match as_ref__!(i).kw__().id_ {
 			keyword_::Id_::BeginText => {
-				name.push_str(i.s2__())
+				name.push_str(as_ref__!(i).s2__())
 			}
 			_ => {
 				bad = true;
@@ -37,24 +36,24 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> Box<dyn code_::Item_ + 
 	}
 	if !bad {
 		if let Some((begin, end)) = Args_::with__(&name, &mut rems) {
-			return Box::new(Args_::new(kws, rems, begin, end))
+			return code_::i__(Args_::new(kws, rems, begin, end))
 		}
 		if Argc_::with__(&name) {
-			return Box::new(Argc_::new(kws, rems))
+			return code_::i__(Argc_::new(kws, rems))
 		}
 		if Arg_::with__(&name) {
-			return Box::new(Arg_::new(kws, rems))
+			return code_::i__(Arg_::new(kws, rems))
 		}
 		if let Some(i) = Argi_::with__(&name) {
 			if i == 0 {
-				return Box::new(Arg0_::new(kws, rems))
+				return code_::i__(Arg0_::new(kws, rems))
 			} else {
-				return Box::new(Argi_::new(kws, rems, i))
+				return code_::i__(Argi_::new(kws, rems, i))
 			}
 		}
-		return Box::new(simp_::Item_::new(kws, name, rems))
+		return code_::i__(simp_::Item_::new(kws, name, rems))
 	}
-	Box::new(Item_::new(kws, rems))
+	code_::i__(Item_::new(kws, rems))
 }
 
 pub struct Item1_ {
@@ -65,8 +64,8 @@ impl Item1_ {
 	fn new(kws:&keyword_::List_, rems:Vec<String>) -> Self {
 		Self::new2(code_::Item1_::new2(&kws.begin_var_, &kws.end_var_), rems)
 	}
-	pub fn new2(i1:code_::Item1_, rems:Vec<String>) -> Self {
-		Self {super_:i1, rems_:rems}
+	pub fn new2(super_:code_::Item1_, rems_:Vec<String>) -> Self {
+		Self {super_, rems_}
 	}
 
 	fn s__(&self, s:&str, ret:&mut String, w:&World_) {
@@ -79,58 +78,75 @@ impl Item1_ {
 	}
 	
 	fn argnames__(&self, name:&str, q2:qv_::T_, ret:&mut result_::List_) -> bool {
-		if let Some(argnames) = &q2.borrow().argnames_ {
+		let q2 = &as_ref__!(q2);
+		if let Some(argnames) = &q2.argnames_ {
 			for i in argnames.iter() {
 				if i.is_ge_ {
 					continue
 				}
 				if name == i.s_ {
-					ret.add__(&q2.borrow().args2_[i.i_]);
+					let a = &q2.args2_;
+					if i.i_ < a.len() {
+						ret.add__(&a[i.i_]);
+					}
 					return true
 				}
 			}
 		}
 		false
 	}
-}
-
-pub struct Item_ {
-	pub super_:Item1_,
-	a_:code_::OL_,
-}
-
-impl Item_ {
-	fn new(kws:&keyword_::List_, rems:Vec<String>) -> Self {
-		Self::new2(Item1_::new(&kws, rems))
-	}
-	pub fn new2(i1:Item1_) -> Self {
-		Self {super_:i1, a_:None}
+	
+	fn not_exist__(&self, name:&str, w:world_::T_) -> Result2_ {
+		result2_::err__(["变量", &as_ref__!(w).text__(name), "不存在"].concat())
 	}
 	
-	pub fn hello2__(&self, ret2:&result_::List_, is_has:bool,
-			_:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	
+	pub fn get__(&self, ret2:&result_::List_, is_has:bool, q:qv_::T_, w:world_::T_, ret:&mut result_::List_) -> Result2_ {
 		let mut name = String::new();
 		let mut rems:Vec<String> = vec![];
-		let mut q2 = Some(q);
+		let mut q2 = Some(q.clone());
 		for i in ret2.iter() {
-			let i = i.borrow();
+			let i = as_ref__!(i);
 			i.s__(&mut name);
-			match self.super_.super_.qv4rem__(&i.rem_, |i2| {
+			match self.super_.qv4rem__(&i.rem_, |i2| {
 				rems.push(i2.to_string());
 				true
-			}, q2.unwrap(), w) {
+			}, q2.unwrap(), w.clone()) {
 				Ok(q3) => q2 = q3,
 				Err(e) => return e,
 			}
 		}
+		if !rems.is_empty() {
+			if Args_::with2__(&name, &rems) {}
+			else {
+				return if is_has {ok__()} else {result2_::err2__("注解不支持")}
+			}
+		}
 		let q2 = q2.unwrap();
-		
-		if self.super_.argnames__(&name, q2.clone(), ret) {
+
+		let get__ = |name, can_up, ret:&mut result_::List_| {
+			let mut ret_alias = result_::List_::new();
+			let mut q2 = q2.clone();
+			if qv_::get__(name, is_has, can_up, can_up, q2.clone(), w.clone(), ret, &mut ret_alias, &mut q2) {
+				if !ret_alias.is_empty() {
+					return Some(self.get__(&ret_alias, is_has, q2, w.clone(), ret))
+				}
+				return Some(ok__())
+			}
+			None
+		};
+
+		if let Some(ret3) = get__(&name, false, ret) {
+			return ret3
+		}
+		if self.argnames__(&name, q, ret) {
 			return ok__()
 		}
-		
+
 		if name.is_empty() {
-			qv_::get__("", is_has, q2, w, ret)
+			if let Some(ret3) = get__(&name, true, ret) {
+				return ret3
+			}
 		} else {
 			if let Some((begin, end)) = Args_::with__(&name, &mut rems) {
 				return Args_::hello__(is_has, q2, begin, end, ret)
@@ -148,8 +164,26 @@ impl Item_ {
 					return Argi_::hello__(i, is_has, q2, ret)
 				}
 			}
-			qv_::get__(&name, is_has, q2, w, ret)
+			if let Some(ret3) = get__(&name, true, ret) {
+				return ret3
+			}
 		}
+		
+		self.not_exist__(&name, w)
+	}
+}
+
+pub struct Item_ {
+	pub super_:Item1_,
+	a_:code_::OL_,
+}
+
+impl Item_ {
+	fn new(kws:&keyword_::List_, rems:Vec<String>) -> Self {
+		Self::new2(Item1_::new(&kws, rems))
+	}
+	pub fn new2(super_:Item1_) -> Self {
+		Self {super_, a_:None}
 	}
 }
 
@@ -162,12 +196,12 @@ impl code_::Item_ for Item_ {
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q.clone(), w, &mut ret2)?;
-		if w.dbg_.lc_ {
-			w.dbg_.lc_kw__(t_::or__(&self.super_.super_.kw2__()));
+		t_::o__(&self.a_).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
+		if wm.dbg_.lc_ {
+			wm.dbg_.lc_kw__(t_::or__(&self.super_.super_.kw2__()));
 		}
-		self.hello2__(&ret2, false, gd, q, w, ret)
+		self.super_.get__(&ret2, false, q, w, ret)
 	}
 }

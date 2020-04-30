@@ -1,7 +1,7 @@
-use std::rc::Rc;
+use super::Rc_;
 use std::io::Write;
 
-pub fn or__<'a, T>(o:&'a Option<Rc<T>>) -> &'a T {
+pub fn or__<'a, T>(o:&'a Option<Rc_<T>>) -> &'a T {
 	o.as_ref().unwrap()
 }
 pub fn o__<T>(o:&Option<T>) -> &T {

@@ -19,9 +19,7 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
-		let mut gd2 = gd;
-		gd2.guandao_jie_ = true;
-		t_::o__(&self.a_).hello__(gd2, q, w, ret)
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		t_::o__(&self.a_).hello__(code_::Opt_ {guandao_jie_:true, ..gd}, q, w, wm, ret)
 	}
 }

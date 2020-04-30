@@ -1,4 +1,4 @@
-use super::*;
+use super::{*, super::{as_mut_ref__}};
 
 const ARG_:&str = "参数";
 
@@ -15,7 +15,7 @@ impl Arg_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(q.borrow_mut().args_1__())
+			ret.add__(as_mut_ref__!(q).args_1__())
 		}
 		ok__()
 	}
@@ -23,7 +23,7 @@ impl Arg_ {
 impl code_::Item_ for Arg_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARG_, ret, w)}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), ret),
@@ -38,8 +38,8 @@ pub struct Argi_ {
 	i_:usize,
 }
 impl Argi_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>, i:usize) -> Self {
-		Self {super_:Item1_::new(&kws, rems), i_:i}
+	pub fn new(kws:&keyword_::List_, rems:Vec<String>, i_:usize) -> Self {
+		Self {super_:Item1_::new(&kws, rems), i_}
 	}
 	pub fn with__(name:&str) -> Option<usize> {
 		if name.starts_with(ARG_) {
@@ -51,7 +51,7 @@ impl Argi_ {
 	}
 
 	pub fn hello__(i:usize, is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
-		let a = &q.borrow().args2_;
+		let a = &as_ref__!(q).args2_;
 		if i <= a.len() {
 			if is_has {
 				ret.add__("1")
@@ -67,7 +67,7 @@ impl code_::Item_ for Argi_ {
 	fn s__(&self, ret:&mut String, w:&World_) {
 		self.super_.s__(&format!("{}{}", ARG_, self.i_), ret, w)
 	}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
 			Ok(q2) =>
 				Self::hello__(self.i_, false, q2.unwrap(), ret),
@@ -88,7 +88,7 @@ impl Arg0_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(&q.borrow().src_)
+			ret.add__(&as_ref__!(q).src_)
 		}
 		ok__()
 	}
@@ -96,7 +96,7 @@ impl Arg0_ {
 impl code_::Item_ for Arg0_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(&[ARG_, "0"].concat(), ret, w)}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), ret),

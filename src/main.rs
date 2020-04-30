@@ -29,7 +29,12 @@ mod switch_;
 mod expl_;
 mod has_;
 mod alias_;
+#[macro_use]
+mod u3_;
+mod mod_free_;
 
 fn main() {
-	std::process::exit(u_::World_::new().hello__(&mut std::env::args(), true))
+	let mut w = u_::World_::new();
+	w.kws_.add__("为", u_::keyword_::Id_::Dunhao);
+	std::process::exit(w.hello__(&mut std::env::args()))
 }

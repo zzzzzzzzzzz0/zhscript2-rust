@@ -33,16 +33,17 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q, w, &mut ret2)?;
+		t_::o__(&self.a_).hello__(gd, q, w.clone(), wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		if v.is_empty() {
 			return result2_::qve__();
 		}
 
 		let src = &v[0];
-		if w.codes_cache2_.get__(src).is_none() {
+		let mut codes = wm.codes_cache2_.get__(src);
+		if codes.is_none() {
 			let mut v2 = vec![];
 			let mut buf = String::new();
 			for i in src.chars() {
@@ -55,22 +56,23 @@ impl code_::Item_ for Item_ {
 						buf.push(i),
 					_ => {
 						buf.push(i);
-						return result2_::err__([&w.text__(&buf), "表达式非法"].concat())
+						return result2_::err__([&as_ref__!(w).text__(&buf), "表达式非法"].concat())
 					}
 				}
 			}
 			self.add_n__(&mut buf, &mut v2)?;
 			
-			if w.dbg_.expl_ {
+			if wm.dbg_.expl_ {
 				for i in &v2 {
 					lc3__!("\n{:?}", i);
 				}
 			}
-			w.codes_cache2_.set__(src, expl_::List_ {a_:v2});
+			wm.codes_cache2_.set__(src, expl_::List_ {a_:v2});
+			codes = wm.codes_cache2_.get__(src);
 		}
 		let mut i = 0;
-		let ret2 = w.codes_cache2_.get__(src).unwrap().z2__(&mut i);
-		if w.dbg_.expl_ {
+		let ret2 = codes.unwrap().z2__(&mut i);
+		if wm.dbg_.expl_ {
 			lc3__!("\n{:?}\n", ret2);
 		}
 		match ret2 {
@@ -80,7 +82,7 @@ impl code_::Item_ for Item_ {
 					if let Some(i) = t_::s2n__(s2) {
 						ret.add__(format!("{:.i$}", n, i = i));
 					} else {
-						return result2_::err__([&w.text__(&s2), "点后位数非法"].concat())
+						return result2_::err__([&as_ref__!(w).text__(&s2), "点后位数非法"].concat())
 					}
 				} else {
 					ret.add__(format!("{}", n));

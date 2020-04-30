@@ -1,4 +1,4 @@
-use super::*;
+use super::{*, super::{as_ref__}};
 
 const ARGC_:&str = "参数数目";
 
@@ -16,7 +16,7 @@ impl Argc_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(q.borrow().args2_.len())
+			ret.add__(as_ref__!(q).args2_.len())
 		}
 		ok__()
 	}
@@ -25,7 +25,7 @@ impl Argc_ {
 impl code_::Item_ for Argc_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARGC_, ret, w)}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), ret),

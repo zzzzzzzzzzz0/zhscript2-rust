@@ -1,9 +1,10 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Item_ {
 	N(f64),
 	C(char),
 }
 
+#[derive(Default, Clone)]
 pub struct List_ {
 	pub a_:Vec<Item_>,
 }

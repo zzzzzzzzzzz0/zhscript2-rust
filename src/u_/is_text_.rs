@@ -1,8 +1,9 @@
+#[derive(Default)]
 pub struct IsText_ {
 	text_:i32,
-	yuanyang_:i32,
-	code_:i32,
 	text2_:i32,
+	pub yuanyang_:i32,
+	code_:i32,
 	undef_:i32,
 	rem_:i32,
 	rem2_:i32,
@@ -10,9 +11,6 @@ pub struct IsText_ {
 }
 
 impl IsText_ {
-	pub fn new() -> Self {
-		Self {text_:0, yuanyang_:0, code_:0, text2_:0, undef_:0, rem_:0, rem2_:0, var_:0}
-	}
 	pub fn sp__(c:u8) -> bool {
 		c <= b' '
 	}
@@ -27,7 +25,6 @@ impl IsText_ {
 	pub fn      var__(&self) -> bool {self.var_ > 0}
 	
 	pub fn add__(&self, c:u8) -> bool {
-		//print!("({}{}{}{}{})",self.rem_,self.yuanyang_,self.text_,self.code_,self.text2_);
 		if self.rem_ > 0 {
 			return false
 		}
@@ -36,6 +33,9 @@ impl IsText_ {
 		}
 		if self.text_ > 0 || self.var_ > 0 {
 			return c >= b' '
+		}
+		if self.text2_ > 0 {
+			return true
 		}
 		c > b' '
 	}
@@ -59,8 +59,17 @@ impl IsText_ {
 			*i -= 1;
 			*i > 0
 		};
-		if self.code__() && c != b'c' {
-			return 2
+		if self.code__() {
+			match c {
+				b'c' | b'r' => {}
+				_ => return 2
+			}
+		}
+		if self.text2__() {
+			match c {
+				b'e' | b'r' => {}
+				_ => return 2
+			}
 		}
 		if b {i2} else {1}
 	}
@@ -72,7 +81,7 @@ impl IsText_ {
 	pub fn rem23__(&mut self) {self.rem2_ -= 1}
 	
 	pub fn as2__(&self) -> bool {
-		self.yuanyang__() || self.code__() || self.text2__()
+		self.yuanyang__() || self.code__()
 	}
 	
 	pub fn need_clear__(&mut self) -> bool {

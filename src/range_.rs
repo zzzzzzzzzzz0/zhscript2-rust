@@ -1,5 +1,4 @@
-use super::u_::*;
-use super::for_;
+use super::{u_::*, for_};
 
 pub struct Item_ {
 	kw_:keyword_::RI_,
@@ -20,15 +19,15 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {for_::Item1_::a__(self)}
 	fn a2__(&self) -> code_::ORL_ {for_::Item1_::a2__(self)}
 	fn s__(&self, ret:&mut String, w:&World_) {for_::Item1_::s__(self, ret, w)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
-		for_::Item1_::hello__(self, gd, q, w, ret)
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		for_::Item1_::hello__(self, gd, q, w, wm, ret)
 	}
 }
 
 impl for_::Item1_ for Item_ {
 	fn cnt2__(&mut self) ->  &mut for_::Cnt_ {&mut self.cnt_}
 	fn codes2__(&mut self, a:code_::OL_) {self.codes_ = a}
-	fn rems_push__(&mut self, i:code_::BI_) {self.rems_.push(i)}
+	fn rems_push__(&mut self, i:code_::I_) {self.rems_.push(i)}
 	fn cnt__(&self) ->  &for_::Cnt_ {&self.cnt_}
 	fn rems__(&self) -> &code_::List_ {&self.rems_}
 	fn codes__(&self) -> &code_::OL_ {&self.codes_}

@@ -1,5 +1,4 @@
 use super::*;
-use std::rc::Rc;
 
 pub struct LayerMut_ {
 	pub kw_:keyword_::ORI_,
@@ -17,7 +16,7 @@ impl LayerMut2_ {
 	pub fn new() -> Self {Self{block_:0, case_:0}}
 }
 
-pub type RL_ = Rc<Layer_>;
+pub type RL_ = Rc_<Layer_>;
 
 pub struct Layer_ {
 	pub i_:i32,
@@ -32,14 +31,14 @@ impl<'a> Layer_ {
 		Self::new3(0, 0, None, None)
 	}
 	pub fn new2(c:Self) -> RL_ {
-		Rc::new(c)
+		Rc_::new(c)
 	}
-	pub fn new3(i:i32, block2:i32, kw:keyword_::ORI_, up:Option<RL_>) -> Self {
-		Layer_ {i_:i, kw_:kw, block_:0, block2_:block2, up_:up}
+	pub fn new3(i_:i32, block2_:i32, kw_:keyword_::ORI_, up_:Option<RL_>) -> Self {
+		Layer_ {i_, kw_, block_:0, block2_, up_}
 	}
 
-	pub fn i1__(&self, kw:keyword_::RI_, mut2:&LayerMut2_, w:&World_) -> i32 {
-		if w.dbg_.par_lc_ {
+	pub fn i1__(&self, kw:keyword_::RI_, mut2:&LayerMut2_, kws:&keywords_::A_, dbg:&Dbg_) -> i32 {
+		if dbg.par_lc_ {
 			lc__!("(b{}{})", mut2.block_, self.line__());
 		}
 		let mut ret = self.i_;
@@ -52,7 +51,7 @@ impl<'a> Layer_ {
 					if b {
 						ret = c.i_;
 						if let Some(kw) = &c.kw_ {
-							if w.dbg_.par_lc_ {
+							if dbg.par_lc_ {
 								lc6__!("{:?} ", kw.id_);
 							}
 							match kw.id_ {
@@ -67,7 +66,7 @@ impl<'a> Layer_ {
 						return true
 					}
 					if let Some(kw) = &c.kw_ {
-						if w.dbg_.par_lc_ {
+						if dbg.par_lc_ {
 							lc__!("{:?} ", kw.id_);
 						}
 						match kw.id_ {
@@ -81,7 +80,7 @@ impl<'a> Layer_ {
 								b = true;
 							}
 							_ => {
-								if kw.g_.print_ {
+								if kws.print_.contains(kw) { //kw.g_.print_
 									b = true;
 									must = true;
 								}
@@ -130,7 +129,7 @@ impl<'a> Layer_ {
 			keyword_::Id_::Equ => {
 				self.for__(|c| {
 					if let Some(kw) = &c.kw_ {
-						if kw.g_.set_ {
+						if kws.set_.contains(kw) { //kw.g_.set_
 							ret = c.i_;
 							return true
 						}
@@ -139,7 +138,7 @@ impl<'a> Layer_ {
 				});
 			}
 			_ => {
-				if kw.g_.if_ {
+				if kws.if_.contains(&kw) { //kw.g_.if_
 					self.for__(|c| {
 						if let Some(kw) = &c.kw_ {
 							match kw.id_ {
@@ -154,7 +153,7 @@ impl<'a> Layer_ {
 						false
 					});
 				}
-				else if kw.g_.if2_ {
+				else if kws.if2_.contains(&kw) { //kw.g_.if2_
 					self.for__(|c| {
 						if let Some(kw) = &c.kw_ {
 							match kw.id_ {
@@ -172,7 +171,7 @@ impl<'a> Layer_ {
 			}
 		}
 		let ret2 = if must || ret < self.i_ {ret} else {-1};
-		if w.dbg_.par_lc_ {
+		if dbg.par_lc_ {
 			lc__!("{}{} {})\n", ret, t_::b__(must), ret2);
 		}
 		ret2

@@ -87,54 +87,49 @@ impl Item_ {
 		}
 		0
 	}
-	fn cmp__(&self, cmp:&mut Cmp_, b:&mut bool, w:&mut World_) {
-		if cmp.op_.id_ == self.undef_.id_ {
-			if w.dbg_.if_ {
-				lc3__!("\n({}{:?})", t_::b__(*b), cmp.val_);
-			}
-			for i in &cmp.val_ {
-				match i.as_str() {
-					"" | "0" | "false" | "NULL" => {}
-					_ => {
-						*b = true;
-						break
-					}
-				}
-			}
-			return
-		}
+	fn cmp__(&self, cmp:&mut Cmp_, b:&mut bool, dbg:&Dbg_) {
 		let mut i = 0;
 		let mut i2 = 0;
 		let no = core::usize::MAX;
 		let end = if cmp.left_val_.is_empty() {no} else {cmp.left_val_.len() - 1};
 		let end2 = if cmp.val_.is_empty() {no} else {cmp.val_.len() - 1};
 		loop {
-			let lv = if end == no {""} else {&cmp.left_val_[i]};
 			let rv = if end2 == no {""} else {&cmp.val_[i2]};
-			if w.dbg_.if_ {
-				lc3__!("\n({}{}/{}-{}/{}", t_::b__(*b), i, end, i2, end2);
-				lc3__!("({}", lv);
-				lc5__!("{}", &cmp.op_.s_);
-				lc3__!("{})", rv);
-			}
-			let ret = self.cmp2__(lv, rv);
-			*b = if cmp.op_.id_ == self.dengyu_.id_ {
-				ret == 0
-			} else if cmp.op_.id_ == self.xiaoyudengyu_.id_ {
-				ret <= 0
-			} else if cmp.op_.id_ == self.xiaoyu_.id_ {
-				ret < 0
-			} else if cmp.op_.id_ == self.dayudengyu_.id_ {
-				ret >= 0
-			} else if cmp.op_.id_ == self.dayu_.id_ {
-				ret > 0
+			if cmp.op_.id_ == self.undef_.id_ {
+				if dbg.if_ {
+					lc3__!("\n({}({})", t_::b__(*b), rv);
+				}
+				*b = match rv {
+					"" | "0" | "false" | "NULL" => false,
+					_ => true,
+				}
 			} else {
-				false
-			};
+				let lv = if end == no {""} else {&cmp.left_val_[i]};
+				if dbg.if_ {
+					lc3__!("\n({}{}/{}-{}/{}", t_::b__(*b), i, end, i2, end2);
+					lc3__!("({}", lv);
+					lc5__!("{}", &cmp.op_.s_);
+					lc3__!("{})", rv);
+				}
+				let ret = self.cmp2__(lv, rv);
+				*b = if cmp.op_.id_ == self.dengyu_.id_ {
+					ret == 0
+				} else if cmp.op_.id_ == self.xiaoyudengyu_.id_ {
+					ret <= 0
+				} else if cmp.op_.id_ == self.xiaoyu_.id_ {
+					ret < 0
+				} else if cmp.op_.id_ == self.dayudengyu_.id_ {
+					ret >= 0
+				} else if cmp.op_.id_ == self.dayu_.id_ {
+					ret > 0
+				} else {
+					false
+				};
+			}
 			if cmp.not_ {
 				*b = !*b
 			}
-			if w.dbg_.if_ {
+			if dbg.if_ {
 				lc3__!("{}{})", t_::b__(*b), t_::b__(cmp.not_));
 			}
 			if *b {
@@ -152,25 +147,26 @@ impl Item_ {
 		}
 	}
 	
-	fn b__(&self, b:&mut bool, q:qv_::T_, w:&mut World_) -> Result2_ {
-		self.b2__(t_::o__(&self.a_), b, q, w)
+	fn b__(&self, b:&mut bool, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
+		self.b2__(t_::o__(&self.a_), b, q, w, wm)
 	}
-	fn b2__(&self, codes:&code_::List_, b:&mut bool, q:qv_::T_, w:&mut World_) -> Result2_ {
+	fn b2__(&self, codes:&code_::List_, b:&mut bool, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
 		let mut idx = 0;
 		let mut ret2 = result_::List_::new();
 		let mut cmp = Cmp_{left_val_:vec![], val_:vec![], op_:self.undef_.clone(),
 			not_:false, from_:0};
 		while idx < codes.len() {
 			let i = &codes[idx];
-			let kw = &i.kw__();
+			let r_i = as_ref__!(i);
+			let kw = &r_i.kw__();
 			let id = &kw.id_;
 			if *id == keyword_::Id_::BeginBlock {
-				self.b2__(i.a__().unwrap(), b, q.clone(), w)?;
+				self.b2__(as_ref__!(i).a__().unwrap(), b, q.clone(), w.clone(), wm)?;
 			} else if let Some(kw2) = self.kws_.iter().find(|kw2| kw2.id_ == *id) {
 				if *id == self.or_.id_ || *id == self.and_.id_ {
-					cmp.mv__(codes, idx, q.clone(), w, &mut ret2)?;
-					self.cmp__(&mut cmp, b, w);
-					if w.dbg_.if_ {
+					cmp.mv__(codes, idx, q.clone(), w.clone(), wm, &mut ret2)?;
+					self.cmp__(&mut cmp, b, &wm.dbg_);
+					if wm.dbg_.if_ {
 						lc3__!("\n({}", t_::b__(*b));
 						lc5__!("{}", kw.s_);
 						lc3__!(")");
@@ -186,15 +182,15 @@ impl Item_ {
 					cmp.not_ = !cmp.not_;
 				} else {
 					cmp.op_ = kw2.clone();
-					cmp.mv__(codes, idx, q.clone(), w, &mut ret2)?;
+					cmp.mv__(codes, idx, q.clone(), w.clone(), wm, &mut ret2)?;
 					idx = cmp.from_;
 					continue
 				}
 			}
 			idx += 1;
 		}
-		cmp.mv__(codes, idx, q.clone(), w, &mut ret2)?;
-		self.cmp__(&mut cmp, b, w);
+		cmp.mv__(codes, idx, q, w, wm, &mut ret2)?;
+		self.cmp__(&mut cmp, b, &wm.dbg_);
 		result2_::n__(OK_)
 	}
 }
@@ -209,8 +205,8 @@ struct Cmp_ {
 
 impl Cmp_ {
 	fn mv__(&mut self, codes:&code_::List_, idx:usize,
-			q:qv_::T_, w:&mut World_, ret2:&mut result_::List_) -> Result2_ {
-		codes.hello2__(&mut self.from_, idx, code_::Opt_::new(), q, w, ret2)?;
+			q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
+		codes.hello2__(&mut self.from_, idx, Default::default(), q, w, wm, ret2)?;
 		
 		//self.left_val_ = self.val_;
 		self.left_val_.clear();
@@ -244,12 +240,9 @@ impl code_::Item_ for Item_ {
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&&self.then_)}
 	fn a3__(&self) -> code_::ORL_ {t_::some__(&self.else_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:&mut World_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut b = false;
-		if w.dbg_.if_ {
-			println!();
-		}
-		result2_::item__(self.b__(&mut b, q.clone(), w), |i| {
+		result2_::item__(self.b__(&mut b, q.clone(), w.clone(), wm), |i| {
 			if let Err((OK_, _, _)) = i {
 				ok__()
 			} else {
@@ -257,15 +250,15 @@ impl code_::Item_ for Item_ {
 			}
 		})?;
 		if b {
-			if w.dbg_.lc_ {
-				w.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
+			if wm.dbg_.lc_ {
+				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 			}
-			t_::o__(&self.then_).hello__(gd, q.clone(), w, ret)
+			t_::o__(&self.then_).hello__(gd, q, w, wm, ret)
 		} else {
-			if w.dbg_.lc_ {
-				w.dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
+			if wm.dbg_.lc_ {
+				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
 			}
-			t_::o__(&self.else_).hello__(gd, q.clone(), w, ret)
+			t_::o__(&self.else_).hello__(gd, q, w, wm, ret)
 		}
 	}
 }
