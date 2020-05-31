@@ -30,9 +30,15 @@
 		赋予id以先调用‘串截取’、‘id’、0、‘_’了
 			先调用‘大写方法’、先调用‘串截取’、‘id’、算术‘_’+1了、0、1了。
 	了。
-	如果‘id’尾匹配1那么
+	如果是避讳‘id’那么
 		赋予id以调用‘串截取’、‘id’、0、-1。
 	‘id’。
+上代码。
+定义是避讳、id以下代码
+	如果‘id’尾匹配1那么先
+		赋予1以调用‘串截取’、‘id’、1、2。
+		如果‘1’大于等于0并且小于等于9那么否则1。
+	了。
 上代码。
 
 加载lib/clpars4。
@@ -70,7 +76,7 @@
 			赋予‘量’id1【上】以‘宽’。
 			
 			别名1/2以1/0。
-			如果‘1/2’尾匹配1那么
+			如果是避讳‘1/2’那么
 				赋予1/2以调用‘串截取’、‘1/2’、0、-1。
 			赋予‘量’/1_【上】以‘1/2’_。
 		上代码、4、
@@ -139,7 +145,8 @@
 		、u6、、-、
 		、u7、、-、
 		、u9、、-、
-		、u10、、。
+		、u10、、-、
+		、u11、、。
 
 		显示“// ‘量’ ‘最宽1’,‘最宽2’,‘最宽id’”换行。
 		循环‘量’次先
@@ -148,6 +155,8 @@
 		了。
 
 		显示下原样
+#![allow(dead_code)]
+
 use super::Rc_;
 
 pub type RI_ = Rc_<Item_>;
@@ -170,21 +179,42 @@ pub enum Id_ {
 		显示下原样
 }
 
+#[derive(Default, PartialEq, Debug)]
+pub struct Grp_ {
+	pub print_:bool,
+	pub if_:bool,
+	pub if2_:bool,
+	pub set_:bool,
+}
+
 #[derive(PartialEq, Debug)]
 pub struct Item_ {
 	pub s_:String,
 	pub id_:Id_,
+	pub g_:Grp_,
 }
 
 impl Item_ {
 	pub fn new(id:Id_, s:&str) -> Self {
-		Self::new3(id, s)
+		Self::new3(id, s, Default::default())
+	}
+	pub fn new_p(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {print_:true, ..Default::default()})
+	}
+	pub fn new_sp(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {print_:true, set_:true, ..Default::default()})
+	}
+	pub fn new_if(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {if_:true, ..Default::default()})
+	}
+	pub fn new_if2(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {if2_:true, ..Default::default()})
 	}
 	pub fn new2(id:Id_) -> Self {
 		Self::new(id, "")
 	}
-	pub fn new3(id_:Id_, s:&str) -> Self {
-		Self {s_:s.to_string(), id_}
+	pub fn new3(id_:Id_, s:&str, g_:Grp_) -> Self {
+		Self {s_:s.to_string(), id_, g_}
 	}
 }
 
@@ -202,12 +232,12 @@ pub struct List_ {
 			显示先
 				如果‘3’内包含前回那么换行。
 				跳表1下
-			了“pub ”‘‘次’/1_’:Rc_<Item_>,换行先
+			了“pub ”‘‘次’/1_’:RI_,换行先
 				如果‘3’内包含后回那么换行。
 			了。
 		了。
 		显示下原样
-	pub a_:Vec<Rc_<Item_>>,
+	pub a_:Vec<RI_>,
 	pub a2_:Vec<Rc_<Item2_>>,
 }
 
@@ -249,7 +279,9 @@ impl List_ {
 	pub fn add__(&mut self, s:&str, id:Id_) {
 		self.a_.push(Rc_::new(Item_::new(id, s)))
 	}
-	#[allow(dead_code)]
+	pub fn add3__(&mut self, s:&str, id:Id_, g:Grp_) {
+		self.a_.push(Rc_::new(Item_::new3(id, s, g)))
+	}
 	pub fn add2__(&mut self, s_:&'static str, id_:Vec<Id_>) {
 		self.a2_.push(Rc_::new(Item2_ {id_, s_}))
 	}

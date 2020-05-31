@@ -55,6 +55,7 @@ impl code_::Item_ for Item_ {
 						eprintln!("{}", e);
 					}
 				}
+				true
 			}) {
 				return ok__()
 			}
@@ -70,7 +71,6 @@ impl code_::Item_ for Item_ {
 
 		let mut out_src = String::new();
 		let mut err_src = String::new();
-		//let mut sta_src = String::new();
 		let mut mode = "";
 		let mut slave_init_src = String::new();
 		let mut slave_mode2 = false;

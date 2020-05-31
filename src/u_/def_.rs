@@ -1,4 +1,4 @@
-use super::{*, super::{/*lc3__, lc5__, lc_kw__, p__,*/ as_ref__, as_mut_ref__, cfg_if}};
+use super::{*, super::{/*lc3__, lc5__, lc_kw__, p__,*/ as_ref__, as_mut_ref__}};
 use std::ops::Deref;
 
 pub type ORL_<'a> = Option<&'a result_::List_>;
@@ -76,23 +76,7 @@ impl ArgNames_ {
 	}
 }
 
-//*mut u8
-//*mut ::std::os::raw::c_void
-pub type ObjTyp_ = *const std::ffi::c_void;
-pub struct Obj_ {
-	pub p_: ObjTyp_,
-}
-cfg_if! {
-	if #[cfg(feature = "thread")] {
-		unsafe impl Send for Obj_ {}
-		unsafe impl Sync for Obj_ {}
-	}
-}
-pub type BJS_ = Rc_<RefCell_<Vec<Obj_>>>;
-pub type OBJS_ = Option<BJS_>;
-
 #[allow(dead_code)]
-//#[derive(Debug)]
 pub enum Val_ {
 	S(String),
 	Si(String),
@@ -101,14 +85,13 @@ pub enum Val_ {
 
 pub type I_ = Rc_<RefCell_<Item_>>;
 
-//#[derive(Debug)]
 pub struct Item_ {
 	name_:String,
 	names_:ORAN_,
 	pub val_:Val_,
 	argc_:usize,
 	arg0_:String,
-	pub objs_:BJS_,
+	pub objs_:qv_::BJS_,
 }
 
 impl Item_ {
@@ -144,13 +127,10 @@ impl Item_ {
 	}
 	pub fn arg0__(&self) -> &str {&self.arg0_}
 	pub fn argc__(&self) -> usize {self.argc_}
-	fn argc2__(&mut self, i:usize) {self.argc_ = i}
 
 	#[allow(dead_code)]	
 	pub fn objs_add__<T>(&mut self, i:&T) {
-		unsafe {
-			as_mut_ref__!(self.objs_).push(Obj_ {p_:std::mem::transmute::<*const T, ObjTyp_>(i)});
-		}
+		qv_::objs_add__(&self.objs_, i)
 	}
 }
 
@@ -173,7 +153,7 @@ impl List_ {
 			let mut di = as_mut_ref__!(i);
 			di.val_ = val;
 			di.names2__(names, w)?;
-			di.argc2__(argc);
+			di.argc_ = argc;
 		} else {
 			let names = match ArgNames_::new(names, w) {
 				Ok(names) => Some(Rc_::new(names)),
@@ -204,16 +184,18 @@ impl List_ {
 		}
 	}
 	
-	pub fn find__(&self, cs:&[char], from:usize, paichu:&Vec<String>) -> Option<(usize, usize, I_)> {
+	pub fn find__(&self, cs:&[char], from:usize, can_eq:bool, _no_self:bool, paichu:&[String]) -> Option<(usize, usize, I_)> {
 		let mut len = 0;
 		if let Some(i) = self.a_.iter().find(|i| {
 			let i = as_ref__!(i);
 			if paichu.iter().any(|i2| i2 == i.arg0__()) {
 				return false
 			}
-			if let Some(idx2) = t_::with__(cs, i.name__(), from) {
-				len = idx2;
-				return true
+			if let Some((idx2, eq)) = t_::with__(cs, i.name__(), from) {
+				if can_eq || !eq {
+					len = idx2;
+					return true
+				}
 			}
 			false
 		}) {

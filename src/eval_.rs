@@ -26,7 +26,7 @@ impl Item1_ for Item_ {
 	fn codes__(&self) -> &code_::OL_ {&self.a_}
 	fn sp2__(&mut self, i:usize) {self.sp_ = i}
 	fn sp__(&self) -> usize {self.sp_}
-	fn src__(&self, s:String, src2:&mut String, _q:&mut Qv_, _w:&World_, _dbg:&mut Dbg_) -> Result2_ {
+	fn src__(&self, s:String, src2:&mut String, _q:qv_::T_, _w:world_::T_, _wm:&mut WorldMut_) -> Result2_ {
 		*src2 = s;
 		ok__()
 	}
@@ -37,7 +37,7 @@ pub trait Item1_ : code_::Item_ {
 	fn codes__(&self) -> &code_::OL_;
 	fn sp2__(&mut self, i:usize);
 	fn sp__(&self) -> usize;
-	fn src__(&self, s:String, src2:&mut String, q:&mut Qv_, w:&World_, dbg:&mut Dbg_) -> Result2_;
+	fn src__(&self, s:String, src2:&mut String, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_;
 
 	fn add__(&mut self, a:code_::List_) -> Result2_ {
 		if a.is_empty() {
@@ -51,22 +51,17 @@ pub trait Item1_ : code_::Item_ {
 	}
 
 	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut q2 = Qv_::new2(Some(q.clone()));
+		let q2 = qv_::t__(Qv_::new2(Some(q.clone())));
+		let gd = code_::Opt_ {guandao_du_:gd.guandao_du_, guandao_jie_:gd.guandao_jie_, ..Default::default()};
 		let mut src2 = String::new();
 		{
-			let args = &mut q2.args_;
 			let mut src = String::new();
-			/*t_::o__(self.codes__()).hello__(gd, q.clone(), w, args)?;
-			code_::Item1_::split__(args, |i| {
-				i.borrow().s__(&mut src);
-				ok__()
-			})?;*/
 			code_::Item1_::split2_2__(self.codes__().as_ref(), self.sp__(), &mut src,
 				|rem| as_ref__!(w).no_rem2__(&rem),
-				gd, q.clone(), w.clone(), wm, args)?;
-			q2.src_ = src.to_string();
-			self.src__(src, &mut src2, &mut q2, &as_ref__!(w), &mut wm.dbg_)?;
+				gd, q, w.clone(), wm, &mut as_mut_ref__!(q2).args_)?;
+			as_mut_ref__!(q2).src_ = src.to_string();
+			self.src__(src, &mut src2, q2.clone(), w.clone(), wm)?;
 		}
-		eval_::hello__(&src2, gd, qv_::t__(q2), w, wm, ret)
+		eval_::hello__(&src2, gd, q2, w, wm, ret)
 	}
 }

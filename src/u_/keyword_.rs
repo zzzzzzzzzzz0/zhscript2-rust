@@ -1,4 +1,6 @@
-// 66 14,8,13
+// 67 14,8,13
+
+#![allow(dead_code)]
 
 use super::Rc_;
 
@@ -35,25 +37,46 @@ pub enum Id_ {
 	Print,
 	Exec,
 	Brkpoint, ParBrkpoint,
-	U2, U3, U4, U5, U6, U7, U9, U10,
+	U2, U3, U4, U5, U6, U7, U9, U10, U11,
 
+}
+
+#[derive(Default, PartialEq, Debug)]
+pub struct Grp_ {
+	pub print_:bool,
+	pub if_:bool,
+	pub if2_:bool,
+	pub set_:bool,
 }
 
 #[derive(PartialEq, Debug)]
 pub struct Item_ {
 	pub s_:String,
 	pub id_:Id_,
+	pub g_:Grp_,
 }
 
 impl Item_ {
 	pub fn new(id:Id_, s:&str) -> Self {
-		Self::new3(id, s)
+		Self::new3(id, s, Default::default())
+	}
+	pub fn new_p(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {print_:true, ..Default::default()})
+	}
+	pub fn new_sp(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {print_:true, set_:true, ..Default::default()})
+	}
+	pub fn new_if(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {if_:true, ..Default::default()})
+	}
+	pub fn new_if2(id:Id_, s:&str) -> Self {
+		Self::new3(id, s, Grp_ {if2_:true, ..Default::default()})
 	}
 	pub fn new2(id:Id_) -> Self {
 		Self::new(id, "")
 	}
-	pub fn new3(id_:Id_, s:&str) -> Self {
-		Self {s_:s.to_string(), id_}
+	pub fn new3(id_:Id_, s:&str, g_:Grp_) -> Self {
+		Self {s_:s.to_string(), id_, g_}
 	}
 }
 
@@ -64,68 +87,68 @@ pub struct Item2_ {
 
 #[derive(Clone)]
 pub struct List_ {
-	pub undef_:Rc_<Item_>,
+	pub undef_:RI_,
 
-	pub begin_rem_:Rc_<Item_>,
-	pub   end_rem_:Rc_<Item_>,
-	pub begin_rem2_:Rc_<Item_>,
-	pub   end_rem2_:Rc_<Item_>,
-	pub begin_var_:Rc_<Item_>,
-	pub   end_var_:Rc_<Item_>,
-	pub begin_text_:Rc_<Item_>,
-	pub   end_text_:Rc_<Item_>,
-	pub begin_yuanyang_:Rc_<Item_>,
-	pub   end_yuanyang_:Rc_<Item_>,
-	pub begin_code_:Rc_<Item_>,
-	pub   end_code_:Rc_<Item_>,
-	pub begin_text2_:Rc_<Item_>,
-	pub   end_text2_:Rc_<Item_>,
-	pub begin_block_:Rc_<Item_>,
-	pub   end_block_:Rc_<Item_>,
-	pub jvhao_:Rc_<Item_>,
-	pub douhao_:Rc_<Item_>,
-	pub maohao_:Rc_<Item_>,
-	pub dunhao_:Rc_<Item_>,
-	pub for_:Rc_<Item_>,
-	pub break_:Rc_<Item_>,
-	pub continue_:Rc_<Item_>,
-	pub range_:Rc_<Item_>,
-	pub break2_:Rc_<Item_>,
-	pub continue2_:Rc_<Item_>,
-	pub return_:Rc_<Item_>,
-	pub quit_:Rc_<Item_>,
-	pub if_:Rc_<Item_>,
-	pub dengyu_:Rc_<Item_>,
-	pub xiaoyudengyu_:Rc_<Item_>,
-	pub xiaoyu_:Rc_<Item_>,
-	pub dayudengyu_:Rc_<Item_>,
-	pub dayu_:Rc_<Item_>,
-	pub not_:Rc_<Item_>,
-	pub and_:Rc_<Item_>,
-	pub or_:Rc_<Item_>,
-	pub then_:Rc_<Item_>,
-	pub else_:Rc_<Item_>,
-	pub switch_:Rc_<Item_>,
-	pub guandaodu_:Rc_<Item_>,
-	pub guandaojie_:Rc_<Item_>,
-	pub mod_:Rc_<Item_>,
-	pub mod_free_:Rc_<Item_>,
-	pub name_:Rc_<Item_>,
-	pub set_:Rc_<Item_>,
-	pub alias_:Rc_<Item_>,
-	pub def_:Rc_<Item_>,
-	pub equ_:Rc_<Item_>,
-	pub has_:Rc_<Item_>,
-	pub eval_:Rc_<Item_>,
-	pub load_:Rc_<Item_>,
-	pub expl_:Rc_<Item_>,
-	pub print_:Rc_<Item_>,
-	pub exec_:Rc_<Item_>,
+	pub begin_rem_:RI_,
+	pub   end_rem_:RI_,
+	pub begin_rem2_:RI_,
+	pub   end_rem2_:RI_,
+	pub begin_var_:RI_,
+	pub   end_var_:RI_,
+	pub begin_text_:RI_,
+	pub   end_text_:RI_,
+	pub begin_yuanyang_:RI_,
+	pub   end_yuanyang_:RI_,
+	pub begin_code_:RI_,
+	pub   end_code_:RI_,
+	pub begin_text2_:RI_,
+	pub   end_text2_:RI_,
+	pub begin_block_:RI_,
+	pub   end_block_:RI_,
+	pub jvhao_:RI_,
+	pub douhao_:RI_,
+	pub maohao_:RI_,
+	pub dunhao_:RI_,
+	pub for_:RI_,
+	pub break_:RI_,
+	pub continue_:RI_,
+	pub range_:RI_,
+	pub break2_:RI_,
+	pub continue2_:RI_,
+	pub return_:RI_,
+	pub quit_:RI_,
+	pub if_:RI_,
+	pub dengyu_:RI_,
+	pub xiaoyudengyu_:RI_,
+	pub xiaoyu_:RI_,
+	pub dayudengyu_:RI_,
+	pub dayu_:RI_,
+	pub not_:RI_,
+	pub and_:RI_,
+	pub or_:RI_,
+	pub then_:RI_,
+	pub else_:RI_,
+	pub switch_:RI_,
+	pub guandaodu_:RI_,
+	pub guandaojie_:RI_,
+	pub mod_:RI_,
+	pub mod_free_:RI_,
+	pub name_:RI_,
+	pub set_:RI_,
+	pub alias_:RI_,
+	pub def_:RI_,
+	pub equ_:RI_,
+	pub has_:RI_,
+	pub eval_:RI_,
+	pub load_:RI_,
+	pub expl_:RI_,
+	pub print_:RI_,
+	pub exec_:RI_,
 
-	pub brkpoint_:Rc_<Item_>,
-	pub par_brkpoint_:Rc_<Item_>,
+	pub brkpoint_:RI_,
+	pub par_brkpoint_:RI_,
 
-	pub a_:Vec<Rc_<Item_>>,
+	pub a_:Vec<RI_>,
 	pub a2_:Vec<Rc_<Item2_>>,
 }
 
@@ -315,7 +338,9 @@ impl List_ {
 	pub fn add__(&mut self, s:&str, id:Id_) {
 		self.a_.push(Rc_::new(Item_::new(id, s)))
 	}
-	#[allow(dead_code)]
+	pub fn add3__(&mut self, s:&str, id:Id_, g:Grp_) {
+		self.a_.push(Rc_::new(Item_::new3(id, s, g)))
+	}
 	pub fn add2__(&mut self, s_:&'static str, id_:Vec<Id_>) {
 		self.a2_.push(Rc_::new(Item2_ {id_, s_}))
 	}

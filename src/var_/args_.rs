@@ -61,7 +61,7 @@ impl Args_ {
 		let ls = &as_ref__!(q).args_;
 		let a = &ls.a_;
 		if !a.is_empty() {
-			let len = ls.dunhao_ + 2;
+			let len = ls.len__() + 2;
 			let begin2 = t_::i2u__(begin, len);
 			let end2 = t_::i2u__(end, len);
 			if end2 >= begin2 {

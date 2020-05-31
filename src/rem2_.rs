@@ -21,15 +21,15 @@ pub fn text__(i:&code_::I_, ret:&mut String) -> (bool, bool) {
 	}
 }
 
-pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::I_ {
+pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 	let super_ = code_::Item1_::new2(&kws.begin_rem2_, &kws.end_rem2_);
 	if codes.len() == 1 {
 		let i = &codes[0];
 		if as_ref__!(i).kw__().id_ == keyword_::Id_::BeginText {
-			return code_::i__(SimpItem_ {super_, s_:as_ref__!(i).s2__().to_string()})
+			return code_::oi__(SimpItem_ {super_, s_:as_ref__!(i).s2__().to_string()})
 		}
 	}
-	code_::i__(Item_ {super_, a_:None})
+	code_::oi__(Item_ {super_, a_:None})
 }
 
 struct Item_ {

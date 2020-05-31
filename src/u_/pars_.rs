@@ -3,8 +3,26 @@ use super::{*, super::*};
 mod layer_;
 use layer_::*;
 
-#[derive(Clone)]
-pub struct Pars_ {}
+cfg_if! {
+	if #[cfg(feature = "thread")] {
+
+pub trait U11_ : Sync + Send {
+	fn u11__(&self, kw:keyword_::RI_, kws:&keyword_::List_, codes:& code_::List_) -> code_::OI_;
+}
+
+	} else {
+
+pub trait U11_ {
+	fn u11__(&self, kw:keyword_::RI_, kws:&keyword_::List_, codes:& code_::List_) -> code_::OI_;
+}
+
+	}
+}
+
+#[derive(Clone, Default)]
+pub struct Pars_ {
+	pub u11_:Option<Rc_<dyn U11_>>,
+}
 
 type Ret_<'a> = (&'a mut i32,
 	       &'a mut code_::List_,
@@ -139,7 +157,7 @@ impl Pars_ {
 					keyword_::Id_::EndBlock |
 					keyword_::Id_::Equ => true,
 					_ => false,
-				} || kws.if_.contains(kw) || kws.if2_.contains(kw) {
+				} || kw.g_.if_ || kw.g_.if2_ || kws.if_.contains(kw) || kws.if2_.contains(kw) {
 					let i1 = layer.i1__(kw.clone(), layer_mut2, kws, dbg);
 					if i1 >= 0 {
 						layer_mut.i_ = i1;
@@ -152,7 +170,7 @@ impl Pars_ {
 					keyword_::Id_::Dunhao |
 					keyword_::Id_::Brkpoint => true,
 					_ => false
-				} || kws.if_.contains(kw) {
+				} || kw.g_.if_ || kws.if_.contains(kw) {
 					self.add_kw__(&kw, ret, w)?;
 					continue
 				}
@@ -208,7 +226,7 @@ impl Pars_ {
 						ret2_3 = Some(&mut ret2_3t);
 					}
 					_ => {
-						if kws.set_.contains(kw) {
+						if kw.g_.set_ || kws.set_.contains(kw) {
 							ret2_2 = Some(&mut ret2_2t)
 						}
 					}
@@ -224,9 +242,6 @@ impl Pars_ {
 				}
 				if dbg.par_lc_ {
 					lc__!("(");
-					/*if let Some(kw) = &layer.kw_ {
-						lc__!("({})", kw.s_);
-					}*/
 					lc__!("{}{}codes[{}])", kw.s_,ret.0, ret2_1.len());
 					if !ret2_2t.is_empty() {
 						lc__!("2[{}])", ret2_2t.len());
@@ -236,10 +251,10 @@ impl Pars_ {
 					}
 					println!();
 				}
-				if let Some(code2) = self.code2__(&kw, &ret2_1, w) {
+				if let Some(code2) = self.code2__(kw.clone(), &ret2_1, w) {
 					{
 						let mut r = as_mut_ref__!(code2);
-						w.ret4__(r.add__(ret2_1), /*as_ref__!(code2).kw__()*/kw)?;
+						w.ret4__(r.add__(ret2_1), kw)?;
 						r.add2__(ret2_2t)?;
 						r.add3__(ret2_3t)?;
 					}
@@ -247,7 +262,7 @@ impl Pars_ {
 				} else {return result2_::err__([&w.text__(&kw.s_), "没实现"].concat())}
 				if let Some(kw) = &layer2_mut.kw_ {
 					if dbg.par_lc_ {
-						lc__!("({}{}ceng{}>{})", kw.s_, ret2_0, layer.i_, layer2_mut.i_);
+						lc__!("({}{}ceng{}>{} {}={})", kw.s_, ret2_0, layer.i_, layer2_mut.i_, layer.block_, layer_mut2.block_);
 					}
 					*ret.0 = ret2_0;
 					if layer.i_ > layer2_mut.i_ {
@@ -258,7 +273,9 @@ impl Pars_ {
 						}
 						break 'l1
 					}
-					if kw.id_ == keyword_::Id_::EndBlock && layer.block_ == layer_mut2.block_ + 1 {
+					if kw.id_ == keyword_::Id_::EndBlock && (layer.block_ == layer_mut2.block_ + 1
+						|| (layer.block_ > 0 && layer.block_ == layer_mut2.block_)
+					) {
 						if dbg.par_lc_ {
 							lc__!("{}+1)\n", layer_mut2.block_);
 						}
@@ -267,7 +284,7 @@ impl Pars_ {
 					if match kw.id_ {
 						keyword_::Id_::Jvhao | keyword_::Id_::Douhao => true,
 						_ => false
-					} || kws.if_.contains(kw) {
+					} || kw.g_.if_ || kws.if_.contains(kw) {
 						*ret.0 = 1;
 						self.add_kw__(&kw, ret, w)?;
 					}
@@ -358,62 +375,69 @@ impl Pars_ {
 		)), ret)
 	}
 
-	fn code2__(&self, kw:&keyword_::Item_, codes:&code_::List_, w:&World_) -> Option<code_::I_> {
+	fn code2__(&self, kw:keyword_::RI_, codes:&code_::List_, w:&World_) -> code_::OI_ {
 		match kw.id_ {
 			keyword_::Id_::BeginRem2 =>
-				Some(rem2_::new(&w.kws_, &codes)),
+				rem2_::new(&w.kws_, codes),
 			keyword_::Id_::BeginVar =>
-				Some(super::super::var_::new(&w.kws_, &codes)),
+				super::super::var_::new(&w.kws_, codes),
 			keyword_::Id_::BeginBlock =>
-				Some(code_::i__(block_::Item_::new(&w.kws_))),
+				code_::oi__(block_::Item_::new(&w.kws_)),
 			keyword_::Id_::For =>
-				Some(code_::i__(for_::Item_::new(&w.kws_))),
+				code_::oi__(for_::Item_::new(&w.kws_)),
 			keyword_::Id_::Break =>
-				Some(code_::i__(break_::Item_::new(&w.kws_))),
+				code_::oi__(break_::Item_::new(&w.kws_)),
 			keyword_::Id_::Continue =>
-				Some(code_::i__(continue_::Item_::new(&w.kws_))),
+				code_::oi__(continue_::Item_::new(&w.kws_)),
 			keyword_::Id_::Range =>
-				Some(code_::i__(range_::Item_::new(&w.kws_))),
+				code_::oi__(range_::Item_::new(&w.kws_)),
 			keyword_::Id_::Break2 =>
-				Some(code_::i__(break2_::Item_::new(&w.kws_))),
+				code_::oi__(break2_::Item_::new(&w.kws_)),
 			keyword_::Id_::Continue2 =>
-				Some(code_::i__(continue2_::Item_::new(&w.kws_))),
+				code_::oi__(continue2_::Item_::new(&w.kws_)),
 			keyword_::Id_::Return =>
-				Some(code_::i__(return_::Item_::new(&w.kws_))),
+				code_::oi__(return_::Item_::new(&w.kws_)),
 			keyword_::Id_::Quit =>
-				Some(code_::i__(quit_::Item_::new(&w.kws_))),
+				code_::oi__(quit_::Item_::new(&w.kws_)),
 			keyword_::Id_::If =>
-				Some(code_::i__(if_::Item_::new(&w.kws_))),
+				code_::oi__(if_::Item_::new(&w.kws_)),
 			keyword_::Id_::Switch =>
-				Some(code_::i__(switch_::Item_::new(&w.kws_))),
+				code_::oi__(switch_::Item_::new(&w.kws_)),
 			keyword_::Id_::Guandaodu =>
-				Some(code_::i__(guandaodu_::Item_::new(&w.kws_))),
+				code_::oi__(guandaodu_::Item_::new(&w.kws_)),
 			keyword_::Id_::Guandaojie =>
-				Some(code_::i__(guandaojie_::Item_::new(&w.kws_))),
+				code_::oi__(guandaojie_::Item_::new(&w.kws_)),
 			keyword_::Id_::Mod =>
-				Some(code_::i__(mod_::Item_::new(&w.kws_))),
+				code_::oi__(mod_::Item_::new(&w.kws_)),
 			keyword_::Id_::ModFree =>
-				Some(code_::i__(mod_free_::Item_::new(&w.kws_))),
+				code_::oi__(mod_free_::Item_::new(&w.kws_)),
 			keyword_::Id_::Name =>
-				Some(code_::i__(name_::Item_::new(&w.kws_))),
+				code_::oi__(name_::Item_::new(&w.kws_)),
 			keyword_::Id_::Set =>
-				Some(code_::i__(set_::Item_::new(&w.kws_))),
+				code_::oi__(set_::Item_::new(&w.kws_)),
 			keyword_::Id_::Alias =>
-				Some(code_::i__(alias_::Item_::new(&w.kws_))),
+				code_::oi__(alias_::Item_::new(&w.kws_)),
 			keyword_::Id_::Def =>
-				Some(code_::i__(super::super::def_::Item_::new(&w.kws_))),
+				code_::oi__(super::super::def_::Item_::new(&w.kws_)),
 			keyword_::Id_::Has =>
-				Some(code_::i__(has_::Item_::new(&w.kws_))),
+				code_::oi__(has_::Item_::new(&w.kws_)),
 			keyword_::Id_::Eval =>
-				Some(code_::i__(super::super::eval_::Item_::new(&w.kws_))),
+				code_::oi__(super::super::eval_::Item_::new(&w.kws_)),
 			keyword_::Id_::Load =>
-				Some(code_::i__(load_::Item_::new(&w.kws_))),
+				code_::oi__(load_::Item_::new(&w.kws_)),
 			keyword_::Id_::Print =>
-				Some(code_::i__(print_::Item_::new(&w.kws_))),
+				code_::oi__(print_::Item_::new(&w.kws_)),
 			keyword_::Id_::Expl =>
-				Some(code_::i__(super::super::expl_::Item_::new(&w.kws_))),
+				code_::oi__(super::super::expl_::Item_::new(&w.kws_)),
 			keyword_::Id_::Exec =>
-				Some(code_::i__(exec_::Item_::new(&w.kws_))),
+				code_::oi__(exec_::Item_::new(&w.kws_)),
+			keyword_::Id_::U11 => {
+				if let Some(u11) = &self.u11_ {
+					u11.u11__(kw, &w.kws_, codes)
+				} else {
+					None
+				}
+			}
 			_ => None,
 		}
 	}

@@ -1,6 +1,6 @@
 mod cfg_;
 pub mod world_;
-mod pars_;
+pub mod pars_;
 mod is_text_;
 pub mod result_;
 pub mod result2_;

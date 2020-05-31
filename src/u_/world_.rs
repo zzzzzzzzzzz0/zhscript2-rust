@@ -10,6 +10,7 @@ pub fn t__(w:World_) -> T_ {
 
 #[derive(Default, Clone)]
 pub struct WorldMut_ {
+	pub cfg_:Cfg_,
 	pub dbg_:Dbg_,
 
 	codes_cache_:codes_cache_::List_<code_::List_>,
@@ -30,7 +31,8 @@ impl WorldMut_ {
 
 #[derive(Clone)]
 pub struct World_ {
-	pars_:Pars_,
+	
+	pub pars_:Pars_,
 	
 	pub top_q_:qv_::T_,
 	pub kws_:keyword_::List_,
@@ -48,7 +50,7 @@ impl World_ {
 		q.simp_def__("制表符", "\t").unwrap();
 		q.simp_def__("ESC", "\x1b").unwrap();
 		
-		Self {pars_:Pars_{}, top_q_:qv_::t__(q), kws_, mods_:vec![]}
+		Self {pars_:Default::default(), top_q_:qv_::t__(q), kws_, mods_:vec![]}
 	}
 	
 	pub fn text__(&self, s:&str) -> String {
@@ -69,7 +71,10 @@ impl World_ {
 	pub fn clpars__(&self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
 			cfg:&mut Cfg_, dbg:&mut Dbg_, q:&mut Qv_) -> Result2_ {
 		if has_shl {
-			cfg.shl_ = a.next().unwrap().to_string();
+			let shl = a.next().unwrap().to_string();
+			if shl.starts_with('/') || cfg.shl_.is_empty() {
+				cfg.shl_ = shl;
+			}
 		}
 		let mut has_src = has_src;
 		let mut a2 = vec![];
@@ -113,6 +118,7 @@ impl World_ {
 			clpars_::Item_::new("-zhscript-src-is-code"),
 			clpars_::Item_::new("-zhscript-d-tree"),
 			clpars_::Item_::new("-zhscript-d-arg"),
+			clpars_::Item_::new("-zhscript-d-path"),
 			clpars_::Item_::new("-zhscript-d-lc"),
 			clpars_::Item_::new("-zhscript-d-par-lc"),
 			clpars_::Item_::new("-zhscript-d-expl"),
@@ -136,6 +142,7 @@ impl World_ {
 				"-zhscript-src-is-code" => cfg.src_is_file_ = false,
 				"-zhscript-d-tree" => dbg.tree_ = true,
 				"-zhscript-d-arg" => dbg.arg_ = true,
+				"-zhscript-d-path" => dbg.path_ = true,
 				"-zhscript-d-lc" => dbg.lc_ = true,
 				"-zhscript-d-par-lc" => dbg.par_lc_ = true,
 				"-zhscript-d-expl" => dbg.expl_ = true,
@@ -197,9 +204,6 @@ impl World_ {
 			}
 		}
 	}
-	/*pub fn ret2__(&self, ret:Result2_) -> bool {
-		self.ret__(ret) != 0
-	}*/
 	pub fn ret3__(&self, mut ret:Result2_, a2:&[u8], from:usize, to:usize) -> Result2_ {
 		if let Err((_, _, s)) = &mut ret {
 			s.push('\n');
@@ -218,33 +222,37 @@ impl World_ {
 		ret
 	}
 	
-	pub fn hello2__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
-			q:&mut Qv_, wm:&mut WorldMut_) -> Result2_ {
+	pub fn hello3__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
+			q:&mut Qv_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		let q2 = qv_::t__(q.clone());
+		let w = t__(self.clone());
 		let mut src = String::new();
 		{
-			let mut cfg = Cfg_::new();
-			self.clpars__(a, has_shl, has_src, other_z, &mut cfg, &mut wm.dbg_, q)?;
+			self.clpars__(a, has_shl, has_src, other_z, &mut wm.cfg_, &mut wm.dbg_, q)?;
 			if has_shl {
 				let mut top_q = as_mut_ref__!(self.top_q_);
-				top_q.val__("外壳", &cfg.shl_);
+				top_q.val__("外壳", &wm.cfg_.shl_);
 				top_q.val__("窗口", "linux");
 			}
-			if wm.dbg_.arg_ {
+			if wm.dbg_.arg_ || wm.dbg_.path_ {
 				println!();
-				wm.dbg_.arg2__(&cfg.shl_);
-				wm.dbg_.arg2__(&q.src_);
+				wm.dbg_.arg2__(&wm.cfg_.shl_);
 			}
 			if !has_src {
 				return ok__()
 			}
-			if cfg.src_is_file_ {
+			if wm.cfg_.src_is_file_ {
 				let src2 = q.src_.to_string();
-				eval_::src__(&src2, &mut src, q, &self, &mut wm.dbg_)?;
+				eval_::src__(&src2, &mut src, q2.clone(), w.clone(), wm)?;
 			} else {
 				src.push_str(&q.src_)
 			};
 		}
-		eval_::hello__(&src, Default::default(), qv_::t__(q.clone()), t__(self), wm, &mut result_::List_::new())
+		eval_::hello__(&src, Default::default(), q2, w, wm, ret)
+	}
+	pub fn hello2__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
+			q:&mut Qv_, wm:&mut WorldMut_) -> Result2_ {
+		self.hello3__(a, has_shl, has_src, other_z, q, wm, &mut result_::List_::new())
 	}
 	pub fn hello__(self, a:&mut clpars_::A_) -> i32 {
 		let mut wm:WorldMut_ = Default::default();

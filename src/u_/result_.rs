@@ -4,8 +4,11 @@ use std::{fmt, any::Any, ops::{Deref, DerefMut}};
 pub fn si__<S:ToString>(s:S) -> I_ {
 	sri__(s, vec![])
 }
-pub fn sri__<S:ToString>(s:S, rem_:Vec<String>) -> I_ {
-	Rc_::new(RefCell_::new(Item_ {val_:sv__(s), rem_}))
+pub fn sri__<S:ToString>(s:S, rem:Vec<String>) -> I_ {
+	vri__(sv__(s), rem)
+}
+pub fn vri__(val_:V_, rem_:Vec<String>) -> I_ {
+	Rc_::new(RefCell_::new(Item_ {val_, rem_}))
 }
 pub fn v__(v:Val_) -> V_ {
 	Rc_::new(RefCell_::new(v))
@@ -18,18 +21,27 @@ pub type I_ = Rc_<RefCell_<Item_>>;
 pub type V_ = Rc_<RefCell_<Val_>>;
 cfg_if! {
 	if #[cfg(feature = "thread")] {
-		type A_ = dyn Any + Send + Sync;
+		type O_ = dyn Any + Send + Sync;
 	} else {
-		type A_ = dyn Any;
+		type O_ = dyn Any;
 	}
 }
-type BA_ = Box<A_>;
+pub type BO_ = Box<O_>;
+pub type RBO_ = RefCell_<BO_>;
+pub type RO_ = Rc_<RefCell_<BO_>>;
+#[allow(dead_code)]
+pub fn oi__(i:BO_) -> I_ {
+	vri__(v__(ov__(i)), vec![])
+}
+fn ov__(i:BO_) -> Val_ {
+	Val_::O(RefCell_::new(i))
+}
 
 #[derive(Debug)]
 pub enum Val_ {
 	S(String),
 	K(keyword_::RI_),
-	O(RefCell_<BA_>),
+	O(RBO_),
 }
 
 #[derive(Debug)]
@@ -85,11 +97,6 @@ impl Item_ {
 	}
 }
 
-/*impl ToString for Item_ {
-	fn to_string(&self) -> String {
-		s
-	}
-}*/
 impl fmt::Display for Item_ {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		let mut s = String::new();
@@ -101,7 +108,7 @@ impl fmt::Display for Item_ {
 #[derive(Clone, Default, Debug)]
 pub struct List_ {
 	pub a_:Vec<I_>,
-	pub dunhao_:usize,
+	pub dunhao_:Vec<usize>,
 }
 
 impl Deref for List_ {
@@ -117,12 +124,9 @@ impl List_ {
 	pub fn add__<S:ToString>(&mut self, s:S) {
 		self.add_r__(s, vec![])
 	}
-	pub fn add_obj__(&mut self, i:BA_) {
-		self.add_r2__(v__(Val_::O(RefCell_::new(i))), vec![])
+	pub fn add_obj__(&mut self, i:BO_) {
+		self.add_r2__(v__(ov__(i)), vec![])
 	}
-	/*pub fn add_obj2__(&mut self, i:A_) {
-		self.add_r2__(v__(Val_::O(RefCell_::new(Box::new(i)))), vec![])
-	}*/
 	pub fn add_r__<S:ToString>(&mut self, s:S, rem_:Vec<String>) {
 		self.add_r2__(sv__(s), rem_);
 	}
@@ -137,26 +141,27 @@ impl List_ {
 	}
 	pub fn add4__(&mut self, i:I_) {
 		if as_ref__!(i).dunhao__() {
-			self.dunhao_ += 1
+			self.dunhao_.push(self.a_.len())
 		}
 		self.a_.push(i);
 	}
+	pub fn len__(&self) -> usize {
+		if self.a_.is_empty() {0} else {self.dunhao_.len() + 1}
+	}
 	
 	#[allow(dead_code)]
-	pub fn obj__<T: 'static>(&self, i:usize, mut f:impl FnMut(&T)) -> bool {
+	pub fn obj__<T: 'static>(&self, i:usize, mut f:impl FnMut(&T) -> bool) -> bool {
 		if let Val_::O(o) = &*as_ref__!(as_ref__!(self.a_[i]).val_) {
 			if let Some(o) = as_ref__!(o).downcast_ref::<T>() {
-				f(o);
-				return true
+				return f(o)
 			}
 		}
 		false
 	}
-	pub fn obj_mut__<T: 'static>(&self, i:usize, mut f:impl FnMut(&mut T)) -> bool {
+	pub fn obj_mut__<T: 'static>(&self, i:usize, mut f:impl FnMut(&mut T) -> bool) -> bool {
 		if let Val_::O(o) = &*as_ref__!(as_ref__!(self.a_[i]).val_) {
 			if let Some(o) = as_mut_ref__!(o).downcast_mut::<T>() {
-				f(o);
-				return true
+				return f(o)
 			}
 		}
 		false
@@ -172,10 +177,17 @@ impl List_ {
 		self.to_vec4__(len, true)
 	}
 	pub fn to_vec4__(&self, len:usize, otherkw:bool) -> Vec<String> {
+		self.to_vec0__(0, len, otherkw)
+	}
+	#[allow(dead_code)]
+	pub fn to_vec5__(&self, start:usize) -> Vec<String> {
+		self.to_vec0__(start, self.a_.len(), true)
+	}
+	pub fn to_vec0__(&self, start:usize, len:usize, otherkw:bool) -> Vec<String> {
 		let mut v = vec![];
 		let mut s = String::new();
 		let mut b = false;
-		for i in 0..len {
+		for i in start..len {
 			let i = &self.a_[i];
 			let i = as_ref__!(i);
 			let val = &*as_ref__!(i.val_);
@@ -215,21 +227,40 @@ impl List_ {
 	}
 	
 	pub fn to1__(&mut self, s1:&mut String) {
-		if !self.a_.is_empty() {
-			s1.push('"')
-		}
+		if self.a_.is_empty() {return}
+		let mut s2 = String::new();
+		let to1__ = |s1:&mut String, s2:&mut String| {
+			let mut yin = s2.is_empty();
+			if !yin {
+				for c in s2.as_bytes() {
+					match c {
+						b'0'..=b'9' | b'.' |
+						b'a'..=b'z' |
+						b'A'..=b'Z' |
+						b'-' | b'_' => {}
+						_ => {
+							yin = true;
+							break
+						}
+					}
+				}
+			}
+			if yin {s1.push('"')}
+			s1.push_str(&s2);
+			if yin {s1.push('"')}
+			s2.clear();
+		};
 		for i in &self.a_ {
 			if let Val_::K(kw) = &*as_ref__!(as_ref__!(i).val_) {
 				if kw.id_ == keyword_::Id_::Dunhao {
-					s1.push_str("\" \"");
+					to1__(s1, &mut s2);
+					s1.push(' ');
 				}
 				continue
 			}
-			as_ref__!(i).s2__(s1, false, true, false);
+			as_ref__!(i).s2__(&mut s2, false, true, false);
 		}
-		if !self.a_.is_empty() {
-			s1.push('"')
-		}
+		to1__(s1, &mut s2);
 	}
 	
 	pub fn s__(&self) -> String {
@@ -238,6 +269,23 @@ impl List_ {
 			as_ref__!(i).s__(&mut s)
 		}
 		s
+	}
+	
+	pub fn ret__(&self, i:usize, ret:&mut result_::List_) {
+		let end2 = self.len__();
+		if end2 > 0 {
+			let end2 = end2 - 1;
+			let start = if i > 0 && i <= end2 {
+					self.dunhao_[i - 1] + 1
+				} else {
+					0
+				};
+			let a = &self.a_;
+			let end = if i >= end2 {a.len()} else {self.dunhao_[i]};
+			for idx in start..end {
+				ret.add4__(self.a_[idx].clone())
+			}
+		}
 	}
 	
 	pub fn end__(&self) -> Option<I_> {

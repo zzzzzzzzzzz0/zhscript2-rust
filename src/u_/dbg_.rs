@@ -58,6 +58,7 @@ macro_rules! lc_kw__ {
 pub struct Dbg_ {
 	pub tree_:bool,
 	pub arg_:bool,
+	pub path_:bool,
 	pub lc_:bool,
 	pub par_lc_:bool,
 	pub expl_:bool,

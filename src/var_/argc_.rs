@@ -16,7 +16,7 @@ impl Argc_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(as_ref__!(q).args2_.len())
+			ret.add__(as_ref__!(q).args_.len__())
 		}
 		ok__()
 	}

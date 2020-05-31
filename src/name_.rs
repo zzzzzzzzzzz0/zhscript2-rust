@@ -39,13 +39,14 @@ pub trait Item1_ : code_::Item_ {
 		let mut ret2 = result_::List_::new();
 		t_::o__(self.codes__()).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
 		let v = ret2.to_vec__();
-		for name in v {
-			if !self.can__(&name, q.clone(), w.clone()) {
-				return result2_::err2__("无法命名")
-			}
-			let mut q = as_mut_ref__!(q);
-			q.name_.push(name.to_string());
-			q.src_ = name;
+		let name = String::from(if v.is_empty() {""} else {&v[0]});
+		if name.is_empty() || !self.can__(&name, q.clone(), w) {
+			return result2_::err2__("无法命名")
+		}
+		let mut q = as_mut_ref__!(q);
+		q.name_.push(name);
+		if v.len() > 1 {
+			q.on_free_.push_str(&v[1]);
 		}
 		ok__()
 	}

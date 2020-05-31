@@ -51,12 +51,12 @@ impl Argi_ {
 	}
 
 	pub fn hello__(i:usize, is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
-		let a = &as_ref__!(q).args2_;
-		if i <= a.len() {
+		let a = &as_ref__!(q).args_;
+		if i <= a.len__() {
 			if is_has {
 				ret.add__("1")
 			} else {
-				ret.add__(&a[i - 1])
+				a.ret__(i - 1, ret);
 			}
 		}
 		ok__()

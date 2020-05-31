@@ -8,7 +8,7 @@ mod arg_;
 use arg_::*;
 pub mod simp_;
 
-pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::I_ {
+pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 	let mut bad = false;
 	let mut name = String::new();
 	let mut rem = String::new();
@@ -36,24 +36,24 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::I_ {
 	}
 	if !bad {
 		if let Some((begin, end)) = Args_::with__(&name, &mut rems) {
-			return code_::i__(Args_::new(kws, rems, begin, end))
+			return code_::oi__(Args_::new(kws, rems, begin, end))
 		}
 		if Argc_::with__(&name) {
-			return code_::i__(Argc_::new(kws, rems))
+			return code_::oi__(Argc_::new(kws, rems))
 		}
 		if Arg_::with__(&name) {
-			return code_::i__(Arg_::new(kws, rems))
+			return code_::oi__(Arg_::new(kws, rems))
 		}
 		if let Some(i) = Argi_::with__(&name) {
 			if i == 0 {
-				return code_::i__(Arg0_::new(kws, rems))
+				return code_::oi__(Arg0_::new(kws, rems))
 			} else {
-				return code_::i__(Argi_::new(kws, rems, i))
+				return code_::oi__(Argi_::new(kws, rems, i))
 			}
 		}
-		return code_::i__(simp_::Item_::new(kws, name, rems))
+		return code_::oi__(simp_::Item_::new(kws, name, rems))
 	}
-	code_::i__(Item_::new(kws, rems))
+	code_::oi__(Item_::new(kws, rems))
 }
 
 pub struct Item1_ {
@@ -75,25 +75,6 @@ impl Item1_ {
 			w.rem__(i, &mut s2);
 		}
 		self.super_.s2__(&s2, ret)
-	}
-	
-	fn argnames__(&self, name:&str, q2:qv_::T_, ret:&mut result_::List_) -> bool {
-		let q2 = &as_ref__!(q2);
-		if let Some(argnames) = &q2.argnames_ {
-			for i in argnames.iter() {
-				if i.is_ge_ {
-					continue
-				}
-				if name == i.s_ {
-					let a = &q2.args2_;
-					if i.i_ < a.len() {
-						ret.add__(&a[i.i_]);
-					}
-					return true
-				}
-			}
-		}
-		false
 	}
 	
 	fn not_exist__(&self, name:&str, w:world_::T_) -> Result2_ {
@@ -138,9 +119,6 @@ impl Item1_ {
 
 		if let Some(ret3) = get__(&name, false, ret) {
 			return ret3
-		}
-		if self.argnames__(&name, q, ret) {
-			return ok__()
 		}
 
 		if name.is_empty() {

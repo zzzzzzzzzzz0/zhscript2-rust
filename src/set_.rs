@@ -14,15 +14,19 @@ impl Item_ {
 		Self {super_:code_::Item1_::new2(kw, kw2), names_:None, vals_:None}
 	}
 	
-	pub fn hello2__(&self, is_alias:bool, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut names = result_::List_::new();
-		t_::o__(&self.names_).hello__(gd, q.clone(), w.clone(), wm, &mut names)?;
+	pub fn hello2_1__(&self, names:&mut result_::List_, vals:&mut result_::List_, gd:code_::Opt_,
+			q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
+		t_::o__(&self.names_).hello__(gd, q.clone(), w.clone(), wm, names)?;
 		if wm.dbg_.lc_ {
 			use super::u_::code_::Item_;
 			wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 		}
+		t_::o__(&self.vals_).hello__(code_::Opt_ {vals_:true, ..gd}, q, w, wm, vals)
+	}
+	pub fn hello2__(&self, is_alias:bool, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		let mut names = result_::List_::new();
 		let mut vals = result_::List_::new();
-		t_::o__(&self.vals_).hello__(code_::Opt_ {vals_:true, ..gd}, q.clone(), w.clone(), wm, &mut vals)?;
+		self.hello2_1__(&mut names, &mut vals, gd, q.clone(), w.clone(), wm)?;
 		let mut name = String::new();
 		let mut val = String::new();
 		let mut val_rem = vec![];
@@ -31,6 +35,7 @@ impl Item_ {
 		let mut i_name = 0;
 		let mut i_val = 0;
 		let mut cnt = 0;
+		let mut is_priv = false;
 		loop {
 			name.clear();
 			let mut q2 = Some(q.clone());
@@ -41,7 +46,11 @@ impl Item_ {
 					break
 				}
 				i.s2__(&mut name, false, false, true);
-				match self.super_.qv4rem__(&i.rem_, |_| {
+				match self.super_.qv4rem__(&i.rem_, |rem| {
+					if rem == "私" {
+						is_priv = true;
+						return true
+					}
 					false
 				}, q2.unwrap(), w.clone()) {
 					Ok(q3) => q2 = q3,
@@ -71,7 +80,7 @@ impl Item_ {
 				}
 			}
 			qv_::val2__(&name, if yes_val2 {val2.clone()} else {result_::sri__(&val, val_rem.clone())},
-				is_alias, q2.unwrap().clone(), w.clone());
+				is_alias, is_priv, q2.unwrap().clone(), w.clone());
 			cnt += 1;
 			if gd.guandao_jie_ {
 				if cnt > 1 {

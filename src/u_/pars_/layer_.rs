@@ -80,7 +80,7 @@ impl<'a> Layer_ {
 								b = true;
 							}
 							_ => {
-								if kws.print_.contains(kw) { //kw.g_.print_
+								if kw.g_.print_ || kws.print_.contains(kw) {
 									b = true;
 									must = true;
 								}
@@ -129,7 +129,7 @@ impl<'a> Layer_ {
 			keyword_::Id_::Equ => {
 				self.for__(|c| {
 					if let Some(kw) = &c.kw_ {
-						if kws.set_.contains(kw) { //kw.g_.set_
+						if kw.g_.set_ || kws.set_.contains(kw) {
 							ret = c.i_;
 							return true
 						}
@@ -138,7 +138,7 @@ impl<'a> Layer_ {
 				});
 			}
 			_ => {
-				if kws.if_.contains(&kw) { //kw.g_.if_
+				if kw.g_.if_ || kws.if_.contains(&kw) {
 					self.for__(|c| {
 						if let Some(kw) = &c.kw_ {
 							match kw.id_ {
@@ -153,7 +153,7 @@ impl<'a> Layer_ {
 						false
 					});
 				}
-				else if kws.if2_.contains(&kw) { //kw.g_.if2_
+				else if kw.g_.if2_ || kws.if2_.contains(&kw) {
 					self.for__(|c| {
 						if let Some(kw) = &c.kw_ {
 							match kw.id_ {

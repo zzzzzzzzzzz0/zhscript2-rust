@@ -1,4 +1,4 @@
-use super::{*, super::{as_ref__, as_mut_ref__, cfg_if}};
+use super::{*, super::{as_ref__, cfg_if}};
 use std::{sync::Mutex, ops::{Deref, DerefMut}};
 
 #[derive(Copy, Clone, Default)]
@@ -15,8 +15,6 @@ pub fn hello__(codes:&List_, gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_
 	if wm.dbg_.arg_ {
 		wm.dbg_.arg__(&as_ref__!(q).args_);
 	}
-	let v = as_ref__!(q).args_.to_vec__();
-	as_mut_ref__!(q).args2_ = v;
 	codes.hello__(gd, q, w, wm, ret)?;
 	ok__()
 }
@@ -47,14 +45,21 @@ cfg_if! {
 		pub fn i__(i:impl Item_ + Send + Sync + 'static) -> I_ {
 			Rc_::new(RefCell_::new(i))
 		}
+		pub fn oi__(i:impl Item_ + Send + Sync + 'static) -> OI_ {
+			Some(Rc_::new(RefCell_::new(i)))
+		}
 	} else {
 		pub type I_ = Rc_<RefCell_<dyn Item_>>;
 
 		pub fn i__(i:impl Item_ + 'static) -> I_ {
 			Rc_::new(RefCell_::new(i))
 		}
+		pub fn oi__(i:impl Item_ + 'static) -> OI_ {
+			Some(Rc_::new(RefCell_::new(i)))
+		}
 	}
 }
+pub type OI_ = Option<I_>;
 pub type OL_ = Option<List_>;
 pub type ORL_<'a> = Option<&'a List_>;
 
@@ -103,20 +108,6 @@ impl Item1_ {
 		ret.push_str(&t_::or__(&self.kw2_).s_);
 	}
 	
-	/*pub fn split__(args:&mut result_::List_, mut src:impl FnMut(result_::I_) -> Result2_) -> Result2_ {
-		let mut cnt = 0;
-		for i in args.iter() {
-			cnt += 1;
-			if i.borrow().dunhao__() {
-				break
-			}
-		}
-		for _ in 0..cnt {
-			src(args.remove(0))?;
-		}
-		ok__()
-	}*/
-	
 	pub fn split2_0__() -> usize {core::usize::MAX - 1}
 	pub fn split2_1__(a:&code_::List_, sp:&mut usize) {
 		for (idx, i) in a.iter().enumerate() {
@@ -156,7 +147,7 @@ impl Item1_ {
 				}
 			}
 			_ => {
-				let ret2 = qv_::for__(q2.clone().unwrap(), w.clone(), |q3, _| {
+				let ret2 = qv_::for__(q2.clone().unwrap(), w.clone(), |q3, _, _| {
 					if as_ref__!(q3).name_.contains(&rem.to_string()) {
 						q2 = Some(q3.clone());
 						Some(())
@@ -376,7 +367,7 @@ cfg_if! {
 								if argname.is_ge_ {
 									let mut idx = from;
 									while idx < end2 {
-										if let Some(len2) = t_::with__(cs, &argname.s_, idx) {
+										if let Some((len2, _)) = t_::with__(cs, &argname.s_, idx) {
 											//lc6__!("({}匹)", idx);
 											*i_argname += 2;
 											return Some((idx, len2))
@@ -487,7 +478,6 @@ cfg_if! {
 								hello__(&codes.unwrap(), gd, qv_::t__(q2), w.clone(), wm, ret)?;
 							}
 							def_::Val_::F(f) => {
-								q2.args2_ = q2.args_.to_vec__();
 								q2.objs_ = Some(def.objs_.clone());
 								f(&gd, qv_::t__(q2), w.clone(), wm, ret)?;
 							}
