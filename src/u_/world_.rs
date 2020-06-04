@@ -224,30 +224,28 @@ impl World_ {
 	
 	pub fn hello3__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
 			q:&mut Qv_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let q2 = qv_::t__(q.clone());
 		let w = t__(self.clone());
 		let mut src = String::new();
-		{
-			self.clpars__(a, has_shl, has_src, other_z, &mut wm.cfg_, &mut wm.dbg_, q)?;
-			if has_shl {
-				let mut top_q = as_mut_ref__!(self.top_q_);
-				top_q.val__("外壳", &wm.cfg_.shl_);
-				top_q.val__("窗口", "linux");
-			}
-			if wm.dbg_.arg_ || wm.dbg_.path_ {
-				println!();
-				wm.dbg_.arg2__(&wm.cfg_.shl_);
-			}
-			if !has_src {
-				return ok__()
-			}
-			if wm.cfg_.src_is_file_ {
-				let src2 = q.src_.to_string();
-				eval_::src__(&src2, &mut src, q2.clone(), w.clone(), wm)?;
-			} else {
-				src.push_str(&q.src_)
-			};
+		self.clpars__(a, has_shl, has_src, other_z, &mut wm.cfg_, &mut wm.dbg_, q)?;
+		if has_shl {
+			let mut top_q = as_mut_ref__!(self.top_q_);
+			top_q.val__("外壳", &wm.cfg_.shl_);
+			top_q.val__("窗口", "linux");
 		}
+		if wm.dbg_.arg_ || wm.dbg_.path_ {
+			println!();
+			wm.dbg_.arg2__(&wm.cfg_.shl_);
+		}
+		if !has_src {
+			return ok__()
+		}
+		let q2 = qv_::t__(q.clone());
+		if wm.cfg_.src_is_file_ {
+			let src2 = q.src_.to_string();
+			eval_::src__(&src2, &mut src, q2.clone(), w.clone(), wm)?;
+		} else {
+			src.push_str(&q.src_)
+		};
 		eval_::hello__(&src, Default::default(), q2, w, wm, ret)
 	}
 	pub fn hello2__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
