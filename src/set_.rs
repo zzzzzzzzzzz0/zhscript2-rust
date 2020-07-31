@@ -14,19 +14,19 @@ impl Item_ {
 		Self {super_:code_::Item1_::new2(kw, kw2), names_:None, vals_:None}
 	}
 	
-	pub fn hello2_1__(&self, names:&mut result_::List_, vals:&mut result_::List_, gd:code_::Opt_,
-			q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
-		t_::o__(&self.names_).hello__(gd, q.clone(), w.clone(), wm, names)?;
+	pub fn hello2_1__(&self, names:&mut result_::List_, vals:&mut result_::List_,
+			env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
+		t_::o__(&self.names_).hello__(env, wm, names)?;
 		if wm.dbg_.lc_ {
 			use super::u_::code_::Item_;
 			wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 		}
-		t_::o__(&self.vals_).hello__(code_::Opt_ {vals_:true, ..gd}, q, w, wm, vals)
+		t_::o__(&self.vals_).hello__(&code_::Env_::new3(code_::Opt_ {vals_:true, ..env.gd}, env), wm, vals)
 	}
-	pub fn hello2__(&self, is_alias:bool, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	pub fn hello2__(&self, is_alias:bool, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut names = result_::List_::new();
 		let mut vals = result_::List_::new();
-		self.hello2_1__(&mut names, &mut vals, gd, q.clone(), w.clone(), wm)?;
+		self.hello2_1__(&mut names, &mut vals, env, wm)?;
 		let mut name = String::new();
 		let mut val = String::new();
 		let mut val_rem = vec![];
@@ -36,55 +36,63 @@ impl Item_ {
 		let mut i_val = 0;
 		let mut cnt = 0;
 		let mut is_priv = false;
+		let mut douhao_in_end = false;
 		loop {
 			name.clear();
-			let mut q2 = Some(q.clone());
+			let mut q2 = Some(env.q.clone());
 			while i_name < names.len() {
 				let i = as_ref__!(names[i_name]);
 				i_name += 1;
 				if i.dunhao__() {
 					break
 				}
-				i.s2__(&mut name, false, false, true);
+				i.s_inc_some_kw__(&mut name);
 				match self.super_.qv4rem__(&i.rem_, |rem| {
 					if rem == "私" {
 						is_priv = true;
 						return true
 					}
 					false
-				}, q2.unwrap(), w.clone()) {
+				}, q2.unwrap(), env.w.clone()) {
 					Ok(q3) => q2 = q3,
 					Err(e) => return e,
 				}
 			}
-			if i_val < vals.len() {
+			if i_val < vals.len() || douhao_in_end {
 				val.clear();
 				val_rem.clear();
 				yes_val2 = false;
-				while i_val < vals.len() {
-					let i2 = &vals[i_val];
-					let i = as_ref__!(i2);
-					i_val += 1;
-					if i.dunhao__() {
-						break
-					}
-					if i.val_typ__() == "o" {
-						val2 = i2.clone();
-						yes_val2 = true;
-						continue
-					}
-					i.s2__(&mut val, false, false, true);
-					for i2 in &i.rem_ {
-						val_rem.push(i2.clone())
+				if douhao_in_end {
+					douhao_in_end = false
+				} else {
+					while i_val < vals.len() {
+						let i2 = &vals[i_val];
+						let i = as_ref__!(i2);
+						i_val += 1;
+						if i.dunhao__() {
+							if i_val == vals.len() {
+								douhao_in_end = true
+							}
+							break
+						}
+						if i.val_typ__() == "o" {
+							val2 = i2.clone();
+							yes_val2 = true;
+							continue
+						}
+						i.s_inc_some_kw__(&mut val);
+						for i2 in &i.rem_ {
+							val_rem.push(i2.clone())
+						}
 					}
 				}
 			}
 			qv_::val2__(&name, if yes_val2 {val2.clone()} else {result_::sri__(&val, val_rem.clone())},
-				is_alias, is_priv, q2.unwrap().clone(), w.clone());
+				is_alias, is_priv, q2.unwrap().clone(), env.w.clone());
 			cnt += 1;
-			if gd.guandao_jie_ {
+			if env.gd.guandao_jie_ {
 				if cnt > 1 {
-					as_ref__!(w).dunhao__(ret);
+					as_ref__!(env.w).dunhao__(ret);
 				}
 				ret.add__(&name);
 			}
@@ -111,7 +119,7 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.names_)}
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&self.vals_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		self.hello2__(false, gd, q, w, wm, ret)
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		self.hello2__(false, env, wm, ret)
 	}
 }

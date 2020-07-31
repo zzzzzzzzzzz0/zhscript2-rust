@@ -9,8 +9,6 @@ pub fn err__(s:String) -> Item_ {
 }
 pub fn err2__(s:&str) -> Item_ {err__(s.to_string())}
 pub fn qve__() -> Item_ {err2__("缺")}
-#[allow(dead_code)]
-pub fn keng__() -> Item_ {err2__("坑")}
 
 pub fn n__(i:i32) -> Item_ {
 	Err((i, "".to_string(), "".to_string()))

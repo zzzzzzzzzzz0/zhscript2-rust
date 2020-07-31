@@ -82,17 +82,18 @@ impl Item1_ {
 	}
 	
 	
-	pub fn get__(&self, ret2:&result_::List_, is_has:bool, q:qv_::T_, w:world_::T_, ret:&mut result_::List_) -> Result2_ {
+	pub fn get__(&self, ret2:&result_::List_, is_has:bool,
+			env:&code_::Env_, ret:&mut result_::List_) -> Result2_ {
 		let mut name = String::new();
 		let mut rems:Vec<String> = vec![];
-		let mut q2 = Some(q.clone());
+		let mut q2 = Some(env.q.clone());
 		for i in ret2.iter() {
 			let i = as_ref__!(i);
 			i.s__(&mut name);
 			match self.super_.qv4rem__(&i.rem_, |i2| {
 				rems.push(i2.to_string());
 				true
-			}, q2.unwrap(), w.clone()) {
+			}, q2.unwrap(), env.w.clone()) {
 				Ok(q3) => q2 = q3,
 				Err(e) => return e,
 			}
@@ -103,14 +104,17 @@ impl Item1_ {
 				return if is_has {ok__()} else {result2_::err2__("注解不支持")}
 			}
 		}
+		if code_::attr_::get__(env.fa, &name, is_has, ret) {
+			return ok__()
+		}
 		let q2 = q2.unwrap();
 
 		let get__ = |name, can_up, ret:&mut result_::List_| {
 			let mut ret_alias = result_::List_::new();
 			let mut q2 = q2.clone();
-			if qv_::get__(name, is_has, can_up, can_up, q2.clone(), w.clone(), ret, &mut ret_alias, &mut q2) {
+			if qv_::get__(name, is_has, can_up, can_up, q2.clone(), env.w.clone(), ret, &mut ret_alias, &mut q2).is_some() {
 				if !ret_alias.is_empty() {
-					return Some(self.get__(&ret_alias, is_has, q2, w.clone(), ret))
+					return Some(self.get__(&ret_alias, is_has, &code_::Env_::new2(q2, env), ret))
 				}
 				return Some(ok__())
 			}
@@ -147,7 +151,7 @@ impl Item1_ {
 			}
 		}
 		
-		self.not_exist__(&name, w)
+		self.not_exist__(&name, env.w.clone())
 	}
 }
 
@@ -174,12 +178,12 @@ impl code_::Item_ for Item_ {
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
+		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
 		if wm.dbg_.lc_ {
 			wm.dbg_.lc_kw__(t_::or__(&self.super_.super_.kw2__()));
 		}
-		self.super_.get__(&ret2, false, q, w, ret)
+		self.super_.get__(&ret2, false, env, ret)
 	}
 }

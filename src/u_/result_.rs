@@ -61,9 +61,9 @@ impl Item_ {
 	}
 	
 	pub fn s__(&self, s:&mut String) {
-		self.s2__(s, false, false, false)
+		self.s2__(s, false, false, false, false)
 	}
-	pub fn s2__(&self, s:&mut String, yin:bool, ma:bool, kw2:bool) {
+	pub fn s2__(&self, s:&mut String, yin:bool, ma:bool, kw2:bool, kw3:bool) {
 		let val = &*as_ref__!(self.val_);
 		if let Val_::S(s2) = val {
 			let mut s2 = s2.clone();
@@ -78,13 +78,16 @@ impl Item_ {
 		}
 		if let Val_::K(kw) = val {
 			if kw2 {
-				match kw.id_ {
-					keyword_::Id_::Jvhao => {}
-					_ => s.push_str(&kw.s_)
+				if !kw3 && kw.id_ == keyword_::Id_::Jvhao {
+					return
 				}
+				s.push_str(&kw.s_)
 			}
 			return
 		}
+	}
+	pub fn s_inc_some_kw__(&self, s:&mut String) {
+		self.s2__(s, false, false, true, false)
 	}
 	
 	pub fn dunhao__(&self) -> bool {
@@ -100,7 +103,7 @@ impl Item_ {
 impl fmt::Display for Item_ {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		let mut s = String::new();
-		self.s2__(&mut s, true, true, true);
+		self.s2__(&mut s, true, true, true, false);
 		write!(f, "{}", s)
 	}
 }
@@ -108,7 +111,7 @@ impl fmt::Display for Item_ {
 #[derive(Clone, Default, Debug)]
 pub struct List_ {
 	pub a_:Vec<I_>,
-	pub dunhao_:Vec<usize>,
+	dunhao_:Vec<usize>,
 }
 
 impl Deref for List_ {
@@ -121,6 +124,10 @@ impl DerefMut for List_ {
 
 impl List_ {
 	pub fn new() -> Self {Default::default()}
+	pub fn clear(&mut self) {
+		self.a_.clear();
+		self.dunhao_.clear();
+	}
 	pub fn add__<S:ToString>(&mut self, s:S) {
 		self.add_r__(s, vec![])
 	}
@@ -145,6 +152,7 @@ impl List_ {
 		}
 		self.a_.push(i);
 	}
+
 	pub fn len__(&self) -> usize {
 		if self.a_.is_empty() {0} else {self.dunhao_.len() + 1}
 	}
@@ -226,24 +234,38 @@ impl List_ {
 		v
 	}
 	
-	pub fn to1__(&mut self, s1:&mut String) {
+	pub fn s2__(&self, ctl:u8, s1:&mut String) {
 		if self.a_.is_empty() {return}
 		let mut s2 = String::new();
 		let to1__ = |s1:&mut String, s2:&mut String| {
 			let mut yin = s2.is_empty();
 			if !yin {
-				for c in s2.as_bytes() {
-					match c {
-						b'0'..=b'9' | b'.' |
-						b'a'..=b'z' |
-						b'A'..=b'Z' |
-						b'-' | b'_' => {}
-						_ => {
-							yin = true;
-							break
+				match ctl {
+					b'j' =>
+					match s2.as_str() {
+						"true" | "false" | "null" | "undefined" => {}
+						_ => yin = true
+					}
+					_ =>
+					for c in s2.as_bytes() {
+						match c {
+							b'0'..=b'9' | b'.' |
+							b'a'..=b'z' |
+							b'A'..=b'Z' |
+							b'-' | b'_' => {}
+							_ => {
+								yin = true;
+								break
+							}
 						}
 					}
 				}
+			}
+			if !s1.is_empty() {
+				s1.push(match ctl {
+					b'j' => ',',
+					_ => ' '
+				});
 			}
 			if yin {s1.push('"')}
 			s1.push_str(&s2);
@@ -254,13 +276,21 @@ impl List_ {
 			if let Val_::K(kw) = &*as_ref__!(as_ref__!(i).val_) {
 				if kw.id_ == keyword_::Id_::Dunhao {
 					to1__(s1, &mut s2);
-					s1.push(' ');
 				}
 				continue
 			}
-			as_ref__!(i).s2__(&mut s2, false, true, false);
+			as_ref__!(i).s2__(&mut s2, false, true, false, false);
 		}
 		to1__(s1, &mut s2);
+		match ctl {
+			b'j' => if self.len__() > 1 {
+				*s1 = format!("[{}]", s1);
+			}
+			_ => {}
+		}
+	}
+	pub fn to1__(&self, s1:&mut String) {
+		self.s2__(b'1', s1)
 	}
 	
 	pub fn s__(&self) -> String {
@@ -293,6 +323,14 @@ impl List_ {
 			None
 		} else {
 			Some(self.a_[self.a_.len() - 1].clone())
+		}
+	}
+	pub fn pop_end__(&mut self) {
+		if let Some(i) = self.end__() {
+			if as_ref__!(i).dunhao__() {
+				self.pop();
+				self.dunhao_.pop();
+			}
 		}
 	}
 }

@@ -147,10 +147,10 @@ impl Item_ {
 		}
 	}
 	
-	fn b__(&self, b:&mut bool, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
-		self.b2__(t_::o__(&self.a_), b, q, w, wm)
+	fn b__(&self, b:&mut bool, env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
+		self.b2__(t_::o__(&self.a_), b, env, wm)
 	}
-	fn b2__(&self, codes:&code_::List_, b:&mut bool, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
+	fn b2__(&self, codes:&code_::List_, b:&mut bool, env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
 		let mut idx = 0;
 		let mut ret2 = result_::List_::new();
 		let mut cmp = Cmp_{left_val_:vec![], val_:vec![], op_:self.undef_.clone(),
@@ -161,10 +161,10 @@ impl Item_ {
 			let kw = &r_i.kw__();
 			let id = &kw.id_;
 			if *id == keyword_::Id_::BeginBlock {
-				self.b2__(as_ref__!(i).a__().unwrap(), b, q.clone(), w.clone(), wm)?;
+				self.b2__(as_ref__!(i).a__().unwrap(), b, env, wm)?;
 			} else if let Some(kw2) = self.kws_.iter().find(|kw2| kw2.id_ == *id) {
 				if *id == self.or_.id_ || *id == self.and_.id_ {
-					cmp.mv__(codes, idx, q.clone(), w.clone(), wm, &mut ret2)?;
+					cmp.mv__(codes, idx, env, wm, &mut ret2)?;
 					self.cmp__(&mut cmp, b, &wm.dbg_);
 					if wm.dbg_.if_ {
 						lc3__!("\n({}", t_::b__(*b));
@@ -182,14 +182,14 @@ impl Item_ {
 					cmp.not_ = !cmp.not_;
 				} else {
 					cmp.op_ = kw2.clone();
-					cmp.mv__(codes, idx, q.clone(), w.clone(), wm, &mut ret2)?;
+					cmp.mv__(codes, idx, env, wm, &mut ret2)?;
 					idx = cmp.from_;
 					continue
 				}
 			}
 			idx += 1;
 		}
-		cmp.mv__(codes, idx, q, w, wm, &mut ret2)?;
+		cmp.mv__(codes, idx, env, wm, &mut ret2)?;
 		self.cmp__(&mut cmp, b, &wm.dbg_);
 		result2_::n__(OK_)
 	}
@@ -205,8 +205,8 @@ struct Cmp_ {
 
 impl Cmp_ {
 	fn mv__(&mut self, codes:&code_::List_, idx:usize,
-			q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
-		codes.hello2__(&mut self.from_, idx, Default::default(), q, w, wm, ret2)?;
+			env:&code_::Env_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
+		codes.hello2__(&mut self.from_, idx, &code_::Env_::new3(Default::default(), env), wm, ret2)?;
 		
 		//self.left_val_ = self.val_;
 		self.left_val_.clear();
@@ -240,9 +240,9 @@ impl code_::Item_ for Item_ {
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&&self.then_)}
 	fn a3__(&self) -> code_::ORL_ {t_::some__(&self.else_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut b = false;
-		result2_::item__(self.b__(&mut b, q.clone(), w.clone(), wm), |i| {
+		result2_::item__(self.b__(&mut b, env, wm), |i| {
 			if let Err((OK_, _, _)) = i {
 				ok__()
 			} else {
@@ -253,12 +253,12 @@ impl code_::Item_ for Item_ {
 			if wm.dbg_.lc_ {
 				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 			}
-			t_::o__(&self.then_).hello__(gd, q, w, wm, ret)
+			t_::o__(&self.then_).hello__(env, wm, ret)
 		} else {
 			if wm.dbg_.lc_ {
 				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
 			}
-			t_::o__(&self.else_).hello__(gd, q, w, wm, ret)
+			t_::o__(&self.else_).hello__(env, wm, ret)
 		}
 	}
 }

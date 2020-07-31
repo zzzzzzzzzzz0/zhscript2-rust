@@ -33,9 +33,9 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q, w.clone(), wm, &mut ret2)?;
+		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		if v.is_empty() {
 			return result2_::qve__();
@@ -56,7 +56,7 @@ impl code_::Item_ for Item_ {
 						buf.push(i),
 					_ => {
 						buf.push(i);
-						return result2_::err__([&as_ref__!(w).text__(&buf), "表达式非法"].concat())
+						return result2_::err__([&as_ref__!(env.w).text__(&buf), "表达式非法"].concat())
 					}
 				}
 			}
@@ -82,7 +82,7 @@ impl code_::Item_ for Item_ {
 					if let Some(i) = t_::s2n__(s2) {
 						ret.add__(format!("{:.i$}", n, i = i));
 					} else {
-						return result2_::err__([&as_ref__!(w).text__(&s2), "点后位数非法"].concat())
+						return result2_::err__([&as_ref__!(env.w).text__(&s2), "点后位数非法"].concat())
 					}
 				} else {
 					ret.add__(format!("{}", n));

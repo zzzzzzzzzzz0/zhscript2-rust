@@ -15,8 +15,8 @@ impl code_::Item_ for Item_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
 	fn add__(&mut self, a:code_::List_) -> Result2_ {Item1_::add__(self, a)}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		Item1_::hello__(self, gd, q, w, wm, ret)
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		Item1_::hello__(self, env, wm, ret)
 	}
 }
 
@@ -35,15 +35,15 @@ pub trait Item1_ : code_::Item_ {
 		self.codes2__(Some(a));
 		ok__()
 	}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, _ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, _ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(self.codes__()).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
+		t_::o__(self.codes__()).hello__(env, wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		let name = String::from(if v.is_empty() {""} else {&v[0]});
-		if name.is_empty() || !self.can__(&name, q.clone(), w) {
-			return result2_::err2__("无法命名")
+		if name.is_empty() || !self.can__(&name, env.q.clone(), env.w.clone()) {
+			return result2_::err__(["无法命名为", &as_ref__!(env.w).text__(&name)].concat())
 		}
-		let mut q = as_mut_ref__!(q);
+		let mut q = as_mut_ref__!(env.q);
 		q.name_.push(name);
 		if v.len() > 1 {
 			q.on_free_.push_str(&v[1]);

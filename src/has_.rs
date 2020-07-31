@@ -23,9 +23,9 @@ impl code_::Item_ for Item_ {
 	fn add__(&mut self, a:code_::List_) -> Result2_ {self.super_.add__(a)}
 	fn a__(&self) -> code_::ORL_ {self.super_.a__()}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a__()).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
-		self.super_.super_.get__(&ret2, true, q, w, ret)
+		t_::o__(&self.a__()).hello__(env, wm, &mut ret2)?;
+		self.super_.super_.get__(&ret2, true, env, ret)
 	}
 }

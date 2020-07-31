@@ -3,12 +3,17 @@
 use super::str_;
 use std::fmt::Write;
 
-#[derive(PartialEq, Debug)]
+pub trait Typ2_ : core::fmt::Debug {
+	fn with__(&self, tag:&str, argv:&mut Vec<String>, item:&Item_) -> bool;
+}
+
+#[derive(Debug)]
 pub enum Typ_ {
 	Full,
 	Starts,
 	Ends,
 	Has,
+	X(Box<dyn Typ2_>),
 }
 
 type Cb1_ = dyn Fn(&Vec<String>, &Item_) -> ();
@@ -100,18 +105,19 @@ impl Item_ {
 			tagv_:str_::split2__(tag, "|", false, true, true),
 			argc_, typ_, cb_, rem_:rem.to_string()}
 	}
-	pub fn tag__(&self, tag:&str) -> i32 {
+	pub fn tag__(&self, tag:&str, argv:&mut Vec<String>) -> i32 {
 		let v = &self.tagv_;
 		let mut i2 = -1;
 		for i in v.iter() {
 			i2 += 1;
-			if match self.typ_ {
-				Typ_::Full => {
-					if i.is_empty() {false} else {tag == i}
-				}
+			if match &self.typ_ {
+				Typ_::Full => if i.is_empty() {false} else {tag == i},
 				Typ_::Starts => tag.starts_with(i),
 				Typ_::Ends   => tag.  ends_with(i),
 				Typ_::Has    => tag.   contains(i),
+				Typ_::X(x) => {
+					x.with__(tag, argv, self)
+				}
 			} {
 				return i2;
 			}
@@ -157,17 +163,23 @@ impl List_ {
 		i2.tag_.is_empty() && i2.argc_ > 0 && i2.argc_ < ARGC_Z_
 	}
 
+	fn i5__(&self, i5:i32) {
+		if i5 == 251 {
+			print!("{}", self.help__());
+		}
+	}
+
 	pub fn for__(&self, a:&mut A_,
 			mut cb__:impl FnMut(&str, &Vec<String>, &Item_, u32) -> i32,
 			mut cb2__:impl FnMut(&str) -> i32) -> i32 {
 		let mut argv = vec![];
 		while let Some(i) = a.next() {
 			let mut i3 = 0;
-			let mut cbx__ = |i2, i3:&mut u32| -> i32 {
+			argv.clear();
+			let mut cbx__ = |i2, i3:&mut u32, argv:&mut Vec<String>| -> i32 {
 				*i3 += 1;
 				if *i3 == 1 {
-					argv.clear();
-					self.add__(i2, a, &mut argv);
+					self.add__(i2, a, argv);
 					loop {
 						let mut argc = i2.argc_;
 						if i2.argc_ >= ARGC_Z_ {
@@ -188,15 +200,13 @@ impl List_ {
 					}
 				}
 				let i5 = cb__(&i, &argv, i2, *i3);
-				if i5 == 251 {
-					println!("{}", self.help__());
-				}
+				self.i5__(i5);
 				i5
 			};
 			for i2 in self.a_.iter() {
-				let i4 = i2.tag__(&i);
+				let i4 = i2.tag__(&i, &mut argv);
 				if i4 >= 0 {
-					let i5 = cbx__(i2, &mut i3);
+					let i5 = cbx__(i2, &mut i3, &mut argv);
 					if i5 != 0 {
 						return i5;
 					}
@@ -205,7 +215,7 @@ impl List_ {
 			if i3 == 0 {
 				for i2 in self.a_.iter() {
 					if i2.tag_.is_empty() {
-						let i5 = cbx__(i2, &mut i3);
+						let i5 = cbx__(i2, &mut i3, &mut argv);
 						if i5 != 0 {
 							return i5;
 						}
@@ -213,6 +223,7 @@ impl List_ {
 				}
 				if i3 == 0 {
 					let i5 = cb2__(&i);
+					self.i5__(i5);
 					if i5 != 0 {
 						return i5;
 					}
@@ -232,7 +243,7 @@ impl List_ {
 				}
 			};
 			for i2 in self.a_.iter() {
-				let i4 = i2.tag__(&i);
+				let i4 = i2.tag__(&i, &mut argv);
 				if i4 >= 0 {
 					i3 += 1;
 					if i3 == 1 {
@@ -257,10 +268,16 @@ impl List_ {
 	pub fn help__(&self) -> String {
 		let mut s = self.rem_.clone();
 		for i in self.a_.iter() {
-			write!(&mut s, "\n{}", if i.tag_.is_empty() {"..."} else {&i.tag_}).unwrap();
+			write!(&mut s, "\n{}", if i.tag_.is_empty() {
+				if i.argc_ == ARGC_Z_ {"..."} else {".."}
+			} else {&i.tag_}).unwrap();
+			match i.typ_ {
+				Typ_::Full => {}
+				_ => write!(&mut s, " ({:?})", i.typ_).unwrap(),
+			}
 			match i.argc_ {
 				0 => {}
-				_ => {
+				_ => if !(i.tag_.is_empty() && i.argc_ == ARGC_Z_) {
 					write!(&mut s, " (").unwrap();
 					if i.argc_ >= ARGC_Z_ {
 						let argc = i.argc_ - ARGC_Z_;
@@ -274,12 +291,11 @@ impl List_ {
 					write!(&mut s, ")").unwrap();
 				}
 			}
-			match i.typ_ {
-				Typ_::Full => {}
-				_ => write!(&mut s, "{}", format!(" ({:?})", i.typ_)).unwrap(),
+			if !i.rem_.is_empty() {
+				write!(&mut s, " {}", i.rem_).unwrap();
 			}
-			write!(&mut s, " {}", i.rem_).unwrap();
 		}
+		writeln!(&mut s).unwrap();
 		s
 	}
 }

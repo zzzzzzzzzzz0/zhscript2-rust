@@ -23,16 +23,16 @@ pub fn def__(name:&str, val:&str, argc:usize, names:def_::ORL_, q:T_, w:world_::
 }
 
 pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, q:T_, w:world_::T_,
-		ret:&mut result_::List_, ret_alias:&mut result_::List_, q_get:&mut T_) -> bool {
+		ret:&mut result_::List_, ret_alias:&mut result_::List_, q_get:&mut T_) -> Option<bool> {
 	let ret2 = for2__(q, w, |q, _, no_self| {
 		let q2 = as_ref__!(q);
 		if q2.vars_.get__(name, is_has, no_self, ret, ret_alias) {
 			*q_get = q.clone();
-			return Some(())
+			return Some(true)
 		}
 		if q2.defs_.get__(name, is_has, ret) {
 			*q_get = q.clone();
-			return Some(())
+			return Some(true)
 		}
 		if let Some(argnames) = &q2.argnames_ {
 			for i in argnames.iter() {
@@ -41,16 +41,24 @@ pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, q:T_, w:world_::
 				}
 				if name == i.s_ {
 					if i.i_ < q2.args_.len__() {
-						q2.args_.ret__(i.i_, ret);
+						if is_has {
+							ret.add__("1")
+						} else {
+							q2.args_.ret__(i.i_, ret);
+						}
 					}
 					*q_get = q.clone();
-					return Some(())
+					return Some(true)
 				}
 			}
 		}
 		None
 	}, !is_has && can_up, no_self);
-	is_has || ret2.is_some()
+	if ret2.is_none() && is_has {
+		Some(false)
+	} else {
+		ret2
+	}
 }
 
 pub fn find_def__(cs:&[char], from:usize, end:usize, paichu:&[String], q:T_, w:world_::T_) -> Option<(usize, usize, def_::I_)> {

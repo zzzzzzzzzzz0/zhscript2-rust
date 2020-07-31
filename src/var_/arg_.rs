@@ -23,8 +23,8 @@ impl Arg_ {
 impl code_::Item_ for Arg_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARG_, ret, w)}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
+	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), ret),
 			Err(e) =>
@@ -67,8 +67,8 @@ impl code_::Item_ for Argi_ {
 	fn s__(&self, ret:&mut String, w:&World_) {
 		self.super_.s__(&format!("{}{}", ARG_, self.i_), ret, w)
 	}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
+	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(self.i_, false, q2.unwrap(), ret),
 			Err(e) =>
@@ -96,8 +96,8 @@ impl Arg0_ {
 impl code_::Item_ for Arg0_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(&[ARG_, "0"].concat(), ret, w)}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
+	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), ret),
 			Err(e) =>

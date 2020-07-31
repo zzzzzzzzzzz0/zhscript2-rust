@@ -18,15 +18,15 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q, w.clone(), wm, &mut ret2)?;
+		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		for name in v {
 			let mut q2 = None;
 			let mut i2 = None;
 			{
-				if let Some(i) = as_ref__!(w).mods_.iter().position(|q| {
+				if let Some(i) = as_ref__!(env.w).mods_.iter().position(|q| {
 					let is1 = as_ref__!(q).name_.contains(&name);
 					if is1 {
 						q2 = Some(q.clone());
@@ -40,9 +40,9 @@ impl code_::Item_ for Item_ {
 				let q2 = q2.unwrap();
 				let on_free = &as_ref__!(q2).on_free_;
 				if !on_free.is_empty() {
-					eval_::hello__(on_free, gd, q2.clone(), w.clone(), wm, ret)?;
+					eval_::hello__(on_free, &code_::Env_::new2(q2.clone(), env), wm, ret)?;
 				}
-				as_mut_ref__!(w).mods_.remove(i);
+				as_mut_ref__!(env.w).mods_.remove(i);
 			}
 		}
 		ok__()

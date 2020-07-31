@@ -69,6 +69,7 @@ impl Args_ {
 					ret.add__("1")
 				} else {
 					let mut i2 = 1;
+					let mut len2 = 0;
 					for i in a {
 						if as_ref__!(i).dunhao__() {
 							i2 += 1;
@@ -82,17 +83,17 @@ impl Args_ {
 						if i2 > end2 {
 							break
 						}
-						ret.add4__(i.clone())
+						ret.add4__(i.clone());
+						len2 += 1;
+					}
+					if len2 == 0 {
+						ret.pop_end__();
 					}
 				}
 				return ok__()
 			}
 		}
-		if let Some(i) = ret.end__() {
-			if as_ref__!(i).dunhao__() {
-				ret.pop();
-			}
-		}
+		ret.pop_end__();
 		ok__()
 	}
 }
@@ -110,8 +111,8 @@ impl code_::Item_ for Args_ {
 		}
 		self.super_.s__(&s, ret, w)
 	}
-	fn hello__(&self, _gd:code_::Opt_, q:qv_::T_, w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, q, w) {
+	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, ret),
 			Err(e) =>

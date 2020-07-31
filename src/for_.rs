@@ -19,8 +19,8 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {Item1_::a__(self)}
 	fn a2__(&self) -> code_::ORL_ {Item1_::a2__(self)}
 	fn s__(&self, ret:&mut String, w:&World_) {Item1_::s__(self, ret, w)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		Item1_::hello__(self, gd, q, w, wm, ret)
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		Item1_::hello__(self, env, wm, ret)
 	}
 }
 
@@ -155,13 +155,13 @@ pub trait Item1_ : code_::Item_ {
 		}
 	}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut cnt = Cnt_::new2(self.cnt__().max_, self.cnt__().name_.clone(),
 								self.cnt__().max2_, self.cnt__().name2_);
 		{
 			let mut ret3 = result_::List_::new();
-			ret3.add2__(as_ref__!(w).kws_.begin_text_.clone());
-			self.rems__().hello__(gd, q.clone(), w.clone(), wm, &mut ret3)?;
+			ret3.add2__(as_ref__!(env.w).kws_.begin_text_.clone());
+			self.rems__().hello__(env, wm, &mut ret3)?;
 			for i in &as_ref__!(ret3.end__().unwrap()).rem_ {
 				let mut has = false;
 				cnt.hello__(i, 0, &mut has)?;
@@ -172,7 +172,7 @@ pub trait Item1_ : code_::Item_ {
 		}
 		while cnt.next__() {
 			if let Some(name) = &cnt.name_ {
-				qv_::val__(&name, &cnt.i_.to_string(), q.clone(), w.clone());
+				qv_::val__(&name, &cnt.i_.to_string(), env.q.clone(), env.w.clone());
 			}
 			let mut act = 0;
 			let mut ok__ = |i| {
@@ -183,7 +183,7 @@ pub trait Item1_ : code_::Item_ {
 				};
 				ok__()
 			};
-			result2_::item__(t_::o__(self.codes__()).hello__(gd, q.clone(), w.clone(), wm, ret), |ret| {
+			result2_::item__(t_::o__(self.codes__()).hello__(env, wm, ret), |ret| {
 				if let Err((i, s, _)) = &ret {
 					if *i == self.break__() || *i == self.continue__() {
 						if s.is_empty() {

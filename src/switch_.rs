@@ -84,17 +84,17 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {t_::some__(&&self.a_)}
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&self.case_)}
 
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
+		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
 		let v = ret2.to_vec__();
 		let s = if v.is_empty() {""} else {&v[0]};
 		let case0 = as_ref__!(t_::o__(&self.case_)[0]);
 		let case = case0.a__().unwrap();
 		//w.dbg_.tree__(case, w);
 
-		let gd2 = code_::Opt_ {jvhao_:true, dunhao_:true, ..gd};
-		let gd3 = code_::Opt_ {jvhao_:true, dunhao_:false, ..gd};
+		let gd2 = code_::Opt_ {jvhao_:true, dunhao_:true, ..env.gd};
+		let gd3 = code_::Opt_ {jvhao_:true, dunhao_:false, ..env.gd};
 
 		let mut need_default = true;
 		let mut idx = 0;
@@ -103,10 +103,10 @@ impl code_::Item_ for Item_ {
 			//lc3__!("\n({}-{})",from,to);
 			while from < to {
 				let mut ret3 = result_::List_::new();
-				case.hello2__(&mut from, to, gd2, q.clone(), w.clone(), wm, &mut ret3)?;
+				case.hello2__(&mut from, to, &code_::Env_::new3(gd2, env), wm, &mut ret3)?;
 				let mut s2 = String::new();
 				for i in ret3.iter() {
-					as_ref__!(i).s2__(&mut s2, false, false, true)
+					as_ref__!(i).s_inc_some_kw__(&mut s2)
 				}
 				if wm.dbg_.lc_ {
 					lc3__!("\n({}={})", s, s2);
@@ -115,14 +115,14 @@ impl code_::Item_ for Item_ {
 					let mut from2 = to;
 					//lc3__!("({})",from2);
 					need_default = false;
-					case.hello2__(&mut from2, core::usize::MAX, gd3, q.clone(), w.clone(), wm, ret)?;
+					case.hello2__(&mut from2, core::usize::MAX, &code_::Env_::new3(gd3, env), wm, ret)?;
 				}
 			}
 			idx += 1;
 		}
 		if need_default {
 			if let Some(mut i) = self.default_ {
-				case.hello2__(&mut i, core::usize::MAX, gd3, q, w, wm, ret)?;
+				case.hello2__(&mut i, core::usize::MAX, &code_::Env_::new3(gd3, env), wm, ret)?;
 			}
 		}
 		ok__()

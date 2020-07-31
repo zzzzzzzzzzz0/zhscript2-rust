@@ -23,48 +23,11 @@ impl Item_ {
 			}
 		}
 	}
-}
 
-#[derive(Default)]
-struct Obj_ {
-	i_:Option<ChildStdin>,
-	o_:Option<ChildStdout>,
-	e_:Option<ChildStderr>,
-}
-
-impl code_::Item_ for Item_ {
-	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
-	fn add__(&mut self, a:code_::List_) -> Result2_ {
-		self.super_.chk_empty__(&a, "缺")?;
-		self.a_ = Some(a);
-		ok__()
-	}
-	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let w2 = as_ref__!(w);
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(gd, q.clone(), w.clone(), wm, &mut ret2)?;
-		
-		if ret2.len() >= 1 {
-			let end = ret2.len() - 1;
-			if ret2.obj_mut__(end, |obj:&mut Obj_| {
-				let stdin = obj.i_.as_mut().expect("! stdin");
-				let v = ret2.to_vec3__(end);
-				for i in &v {
-					if let Err(e) = stdin.write_all(i.as_bytes()) {
-						eprintln!("{}", e);
-					}
-				}
-				true
-			}) {
-				return ok__()
-			}
-		}
-
-		let mut v2 = ret2.to_vec__();
-		if v2.is_empty() {return self.super_.err__("空命令")};
+	pub fn hello2__(&self, mut v2:Vec<String>, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		if v2.is_empty() {return result2_::qve__()};
 		let mut args = str_::split__(&v2.remove(0));
-		if args.is_empty() {return self.super_.err__("空命令")};
+		if args.is_empty() {return result2_::qve__()};
 		let cmd = args.remove(0);
 		let mut cmd2 = Command::new(cmd);
 		let cmd2 = cmd2.args(args);
@@ -106,7 +69,7 @@ impl code_::Item_ for Item_ {
 					}
 					"-h" | "--help" => return 251,
 					_ => {
-						err_src = [&w2.text__(tag), "无效选项"].concat();
+						err_src = [&as_ref__!(env.w).text__(tag), "无效选项"].concat();
 						return 1
 					}
 				};
@@ -118,8 +81,8 @@ impl code_::Item_ for Item_ {
 			}
 		}
 
-		fn f3__(src:&str, args:Option<Vec<String>>, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-			let mut q2 = Qv_::new2(Some(q.clone()));
+		fn f3__(src:&str, args:Option<Vec<String>>, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+			let mut q2 = Qv_::new2(Some(env.q.clone()));
 			if let Some(args) = args {
 				for s in args {
 					q2.args_.add__(
@@ -128,7 +91,7 @@ impl code_::Item_ for Item_ {
 						else {s})
 				}
 			}
-			eval_::hello__(src, gd, qv_::t__(q2), w, wm, ret)
+			eval_::hello__(src, &code_::Env_::new2(qv_::t__(q2), env), wm, ret)
 		}
 
 		if mode.is_empty() && (!out_src.is_empty() || !err_src.is_empty()) {
@@ -145,7 +108,7 @@ impl code_::Item_ for Item_ {
 						let stdin = child.stdin.as_mut().expect("! stdin");
 						let mut f2__ = |src, args| {
 							let mut ret3 = result_::List_::new();
-							f3__(src, args, gd, q.clone(), w.clone(), wm, &mut ret3)?;
+							f3__(src, args, env, wm, &mut ret3)?;
 							let ret2 = ret3.to_vec__();
 							for i in ret2 {
 								if let Err(e) = stdin.write_all(i.as_bytes()) {
@@ -191,17 +154,17 @@ impl code_::Item_ for Item_ {
 								}
 							}
 						}
-						w2.dunhao__(ret);
+						as_ref__!(env.w).dunhao__(ret);
 					}
 					Err(e) => {
-						w2.dunhao__(ret);
+						as_ref__!(env.w).dunhao__(ret);
 						ret.add__(e);
 					}
 				},
 			"r" =>
 				match cmd2.output() {
 					Ok(output) => {
-						self.exitcode__(output.status.code(), &w2, ret);
+						self.exitcode__(output.status.code(), &as_ref__!(env.w), ret);
 						let mut f__ = |src:&str, v: &[u8]| -> Result2_ {
 							if src.is_empty() {
 								match String::from_utf8(v.to_vec()) {
@@ -214,13 +177,13 @@ impl code_::Item_ for Item_ {
 									match line {
 										Ok(i) => {
 											let mut ret3 = result_::List_::new();
-											f3__(src, Some(vec![i]), gd, q.clone(), w.clone(), wm, &mut ret3)?;
+											f3__(src, Some(vec![i]), env, wm, &mut ret3)?;
 										}
 										Err(e) => eprintln!("{}", e),
 									}
 								}
 							}
-							w2.dunhao__(ret);
+							as_ref__!(env.w).dunhao__(ret);
 							ok__()
 						};
 						if out_src == "0" {
@@ -233,21 +196,79 @@ impl code_::Item_ for Item_ {
 						f__(&err_src, &output.stderr)?;
 					}
 					Err(e) => {
-						w2.dunhao__(ret);
+						as_ref__!(env.w).dunhao__(ret);
 						ret.add__(e);
 					}
 				},
 			_ =>
 				match cmd2.status() {
 					Ok(st) => {
-						self.exitcode__(st.code(), &w2, ret);
+						self.exitcode__(st.code(), &as_ref__!(env.w), ret);
 					}
 					Err(e) => {
-						w2.dunhao__(ret);
+						as_ref__!(env.w).dunhao__(ret);
 						ret.add__(e);
 					}
 				}
 		}
 		ok__()
+	}
+	
+	pub fn obj__(&self, ret2:&result_::List_, i:usize, f__:impl Fn(&mut Obj_, &result_::List_, usize) -> Result2_) -> Option<Result2_> {
+		if ret2.is_empty() {
+			return None
+		}
+		let i = match i {
+			core::usize::MAX => ret2.len() - 1,
+			_ => i
+		};
+		let mut ret3 = ok__();
+		if ret2.obj_mut__(i, |obj:&mut Obj_| {
+			ret3 = f__(obj, ret2, i);
+			true
+		}) {
+			return Some(ret3)
+		}
+		None
+	}
+}
+
+#[derive(Default)]
+pub struct Obj_ {
+	pub i_:Option<ChildStdin>,
+	pub o_:Option<ChildStdout>,
+	pub e_:Option<ChildStderr>,
+}
+
+impl code_::Item_ for Item_ {
+	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
+	fn add__(&mut self, a:code_::List_) -> Result2_ {
+		self.super_.chk_empty__(&a, "缺")?;
+		self.a_ = Some(a);
+		ok__()
+	}
+	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		let mut ret2 = result_::List_::new();
+		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
+		
+		if let Some(ret3) = self.obj__(&ret2, core::usize::MAX, |obj, ret2, end| {
+			if let Some(stdin) = obj.i_.as_mut() {
+				let v = ret2.to_vec3__(end);
+				for i in &v {
+					if let Err(e) = stdin.write_all(i.as_bytes()) {
+						eprintln!("{}", e);
+						break
+					}
+				}
+			} else {
+				eprintln!("! stdin")
+			}
+			ok__()
+		}) {
+			return ret3
+		}
+
+		self.hello2__(ret2.to_vec__(), env, wm, ret)
 	}
 }

@@ -8,6 +8,8 @@ pub struct IsText_ {
 	rem_:i32,
 	rem2_:i32,
 	var_:i32,
+
+	pub data_:bool,
 }
 
 impl IsText_ {
@@ -18,6 +20,7 @@ impl IsText_ {
 	pub fn     text__(&self) -> bool {self.text_ > 0}
 	pub fn yuanyang__(&self) -> bool {self.yuanyang_ > 0}
 	pub fn     code__(&self) -> bool {self.code_ > 0}
+	pub fn     data__(&self) -> bool {self.data_}
 	pub fn    text2__(&self) -> bool {self.text2_ > 0}
 	pub fn    undef__(&self) -> bool {self.undef_ > 0}
 	pub fn      rem__(&self) -> bool {self.rem_ > 0}

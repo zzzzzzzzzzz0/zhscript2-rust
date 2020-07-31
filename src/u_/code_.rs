@@ -1,6 +1,13 @@
 use super::{*, super::{as_ref__, cfg_if}};
 use std::{sync::Mutex, ops::{Deref, DerefMut}};
 
+mod item1_;
+pub type Item1_ = item1_::Item1_;
+pub mod attr_;
+pub type FA_ = attr_::ORI_;
+mod env_;
+pub type Env_<'a> = env_::Env_<'a>;
+
 #[derive(Copy, Clone, Default)]
 pub struct Opt_ {
 	pub jvhao_:bool,
@@ -11,12 +18,11 @@ pub struct Opt_ {
 	pub vals_:bool,
 }
 
-pub fn hello__(codes:&List_, gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+pub fn hello__(codes:&List_, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 	if wm.dbg_.arg_ {
-		wm.dbg_.arg__(&as_ref__!(q).args_);
+		wm.dbg_.arg__(&as_ref__!(env.q).args_);
 	}
-	codes.hello__(gd, q, w, wm, ret)?;
-	ok__()
+	codes.hello__(env, wm, ret)
 }
 
 pub fn for_i__(i:&I_, mut fkw:impl FnMut(&keyword_::Item_, i32), mut fa:impl FnMut(&List_, i32)) {
@@ -63,7 +69,7 @@ pub type OI_ = Option<I_>;
 pub type OL_ = Option<List_>;
 pub type ORL_<'a> = Option<&'a List_>;
 
-pub type SR3_<'a> = &'a Mutex<&'a mut String>;
+type SR3_<'a> = &'a Mutex<&'a mut String>;
 
 pub trait Item_ {
 	fn kw__(&self) -> &keyword_::Item_;
@@ -82,118 +88,7 @@ pub trait Item_ {
 	fn a__(&self) -> ORL_ {None}
 	fn a2__(&self) -> ORL_ {None}
 	fn a3__(&self) -> ORL_ {None}
-	fn hello__(&self, gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_;
-}
-
-pub struct Item1_ {
-	kw_:keyword_::RI_,
-	kw2_:keyword_::ORI_,
-	kw3_:keyword_::ORI_,
-}
-
-impl Item1_ {
-	pub fn new(kw:&keyword_::RI_) -> Self {
-		Self {kw_:kw.clone(), kw2_:None, kw3_:None}
-	}
-	pub fn new2(kw:&keyword_::RI_, kw2:&keyword_::RI_) -> Self {
-		Self {kw_:kw.clone(), kw2_:Some(kw2.clone()), kw3_:None}
-	}
-	pub fn new3(kw:&keyword_::RI_, kw2:&keyword_::RI_, kw3:&keyword_::RI_) -> Self {
-		Self {kw_:kw.clone(), kw2_:Some(kw2.clone()), kw3_:Some(kw3.clone())}
-	}
-
-	pub fn s2__(&self, s:&str, ret:&mut String) {
-		ret.push_str(&self.kw_.s_);
-		ret.push_str(s);
-		ret.push_str(&t_::or__(&self.kw2_).s_);
-	}
-	
-	pub fn split2_0__() -> usize {core::usize::MAX - 1}
-	pub fn split2_1__(a:&code_::List_, sp:&mut usize) {
-		for (idx, i) in a.iter().enumerate() {
-			if as_ref__!(i).kw__().id_ == keyword_::Id_::Dunhao {
-				*sp = idx;
-				break
-			}
-		}
-	}
-	pub fn split2_2__(a:code_::ORL_, sp:usize, s: &mut String, mut frem:impl FnMut(&str) -> Result2_,
-			gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret2: &mut result_::List_) -> Result2_ {
-		let a = t_::o__(&a);
-		let mut ret4 = result_::List_::new();
-		let mut idx = 0;
-		a.hello2__(&mut idx, sp, gd, q.clone(), w.clone(), wm, &mut ret4)?;
-		for i in ret4.iter() {
-			let i = as_ref__!(i);
-			i.s__(s);
-			for rem in &i.rem_ {
-				frem(rem)?;
-			}
-		}
-		idx = sp + 1;
-		a.hello2__(&mut idx, core::usize::MAX, gd, q, w, wm, ret2)
-	}
-	
-	pub fn qv4rem_1__(&self, rem:&str, mut shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
-			-> Result<Option<qv_::T_>, Result2_> {
-		let mut q2 = Some(q);
-		match rem {
-			"顶" =>
-				q2 = Some(as_ref__!(w).top_q_.clone()),
-			"上" => {
-				q2 = match &as_ref__!(q2.unwrap()).up_ {
-					Some(q3) => Some(q3.clone()),
-					None => return Err(result2_::err2__("无上")),
-				}
-			}
-			_ => {
-				let ret2 = qv_::for__(q2.clone().unwrap(), w.clone(), |q3, _, _| {
-					if as_ref__!(q3).name_.contains(&rem.to_string()) {
-						q2 = Some(q3.clone());
-						Some(())
-					} else {None}
-				});
-				if ret2.is_none() && !shou(rem) {
-					return Err(result2_::err__([&as_ref__!(w).text__(rem), "注解不支持"].concat()))
-				}
-			}
-		}
-		Ok(q2)
-	}
-	pub fn qv4rem__(&self, rems:&[String], mut shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
-			-> Result<Option<qv_::T_>, Result2_> {
-		let mut q2 = Some(q);
-		for rem in rems {
-			match self.qv4rem_1__(rem.as_str(), &mut shou, q2.clone().unwrap(), w.clone()) {
-				Ok(q3) => q2 = q3,
-				e => return e
-			}
-		}
-		Ok(q2)
-	}
-	
-	pub fn err__(&self, s:&str) -> Result2_ {
-		result2_::err__([&self.kw__().s_, s].concat())
-	}
-	pub fn chk_empty__(&self, a:&List_, s:&str) -> Result2_ {
-		if a.a_.is_empty() {self.err__(s)} else {ok__()}
-	}
-}
-
-impl Item_ for Item1_ {
-	fn kw__(&self) -> &keyword_::Item_ {&self.kw_}
-	fn kw2__(&self) -> keyword_::ORI_ {self.kw2_.clone()}
-	fn kw3__(&self) -> keyword_::ORI_ {self.kw3_.clone()}
-	fn hello__(&self, _gd:Opt_, _q:qv_::T_, _w:world_::T_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		if let keyword_::Id_::Brkpoint = &self.kw_.id_ {
-			#[allow(non_snake_case)]
-			#[allow(unused_variables)]
-			let o_X_o = true;
-		} else {
-			ret.add2__(self.kw_.clone());
-		}
-		ok__()
-	}
+	fn hello__(&self, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_;
 }
 
 #[derive(Default, Clone)]
@@ -239,22 +134,22 @@ cfg_if! {
 		}
 	}
 	
-	pub fn hello__(&self, gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		self.hello2__(&mut 0, core::usize::MAX, gd, q, w, wm, ret)
+	pub fn hello__(&self, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		self.hello2__(&mut 0, core::usize::MAX, env, wm, ret)
 	}
 	pub fn hello2__(&self, idx:&mut usize, end:usize,
-			gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let a = &self.a_;
 		let end = if end > a.len() {a.len()} else {end};
-		let mut ret2 = self.z2__(idx, end, None, gd, q, w.clone(), wm, ret);
+		let mut ret2 = self.z2__(idx, end, None, env, wm, ret);
 		if let Err((_, _, s)) = &mut ret2 {
 			if *idx < end {
 				s.push('\n');
-				let kws = &as_ref__!(w).kws_;
+				let kws = &as_ref__!(env.w).kws_;
 				s.push_str(&kws.begin_text_.s_);
 				let ms = Mutex::new(s);
 				for idx in *idx..end {
-					Self::s3_i__(&a[idx], &ms, &as_ref__!(w))
+					Self::s3_i__(&a[idx], &ms, &as_ref__!(env.w))
 				}
 				ms.lock().unwrap().push_str(&kws.end_text_.s_);
 			}
@@ -262,16 +157,16 @@ cfg_if! {
 		ret2
 	}
 	fn z2__(&self, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, usize)>>,
-			gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let a = &self.a_;
 		while *idx < end {
 			let i = &a[*idx];
 			if wm.dbg_.lc_ {
-				wm.dbg_.lc__(i, &as_ref__!(w));
+				wm.dbg_.lc__(i, &as_ref__!(env.w));
 			}
 			match as_ref__!(i).kw__().id_ {
 				keyword_::Id_::Undef => {
-					if !gd.undef_eq_text_ {
+					if !env.gd.undef_eq_text_ {
 						let cs:Vec<char> = as_ref__!(i).s2__().chars().collect();
 						let mut has = false;
 						if let Some(v_dunhao3) = &v_dunhao3 {
@@ -282,7 +177,7 @@ cfg_if! {
 							for i in v_dunhao3 {
 								let mut has2 = false;
 								self.z5__(&cs, &mut has, idx, &mut idx5, end, i, &mut first, &mut has2,
-									gd, q.clone(), w.clone(), wm, ret)?;
+									env, wm, ret)?;
 								if has2 {
 									i2 += 1
 								}
@@ -296,28 +191,28 @@ cfg_if! {
 								continue
 							}
 						}
-						self.z4__(&cs, &mut 0, cs.len(), &mut has, idx, end, gd, q.clone(), w.clone(), wm, ret)?;
+						self.z4__(&cs, &mut 0, cs.len(), &mut has, idx, end, env, wm, ret)?;
 						if has {
 							continue
 						}
 					}
-					as_ref__!(i).hello__(gd, q.clone(), w.clone(), wm, ret)?;
+					as_ref__!(i).hello__(env, wm, ret)?;
 				}
 				keyword_::Id_::Jvhao => {
-					if gd.jvhao_ {
+					if env.gd.jvhao_ {
 						break
 					}
-					as_ref__!(i).hello__(gd, q.clone(), w.clone(), wm, ret)?;
+					as_ref__!(i).hello__(env, wm, ret)?;
 				}
 				keyword_::Id_::Dunhao => {
-					if gd.dunhao_ {
+					if env.gd.dunhao_ {
 						*idx += 1;
 						break
 					}
-					as_ref__!(i).hello__(gd, q.clone(), w.clone(), wm, ret)?;
+					as_ref__!(i).hello__(env, wm, ret)?;
 				}
 				_ => {
-					as_ref__!(i).hello__(gd, q.clone(), w.clone(), wm, ret)?;
+					as_ref__!(i).hello__(env, wm, ret)?;
 				}
 			}
 			*idx += 1
@@ -326,7 +221,7 @@ cfg_if! {
 	}
 	fn z5__(&self, cs:&[char], has:&mut bool, idx:&usize, idx5:&mut usize, end:usize,
 			dunhao3:&(usize, usize, usize), first:&mut bool, has2:&mut bool,
-			gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
+			env:&Env_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
 		let (idx4, from4, end4) = dunhao3;
 		if idx4 == idx {
 			//lc3__!("\n{} {},{},{}",idx,idx4, from4, end4);
@@ -335,9 +230,9 @@ cfg_if! {
 			if *first {
 				*first = false
 			} else {
-				as_ref__!(w).dunhao__(ret2);
+				as_ref__!(env.w).dunhao__(ret2);
 			}
-			self.z4__(cs, &mut idx2, *end4, has, idx5, end, gd, q, w, wm, ret2)?;
+			self.z4__(cs, &mut idx2, *end4, has, idx5, end, env, wm, ret2)?;
 			*has2 = true
 		} else {
 			*has2 = false
@@ -347,10 +242,11 @@ cfg_if! {
 	#[allow(clippy::cognitive_complexity)]
 	#[allow(clippy::too_many_arguments)]
 	fn z4__(&self, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut usize, end:usize,
-			gd:Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
 		let mut paichu_def = vec![];
+		let mut buf = String::new();
 		'l1: while *idx2 < end2 {
-			if let Some((idx3, len, def)) = qv_::find_def__(&cs, *idx2, end2, &paichu_def, q.clone(), w.clone()) {
+			if let Some((idx3, len, def)) = qv_::find_def__(&cs, *idx2, end2, &paichu_def, env.q.clone(), env.w.clone()) {
 				if wm.dbg_.lc_ {
 					wm.dbg_.def__(&def)
 				}
@@ -447,18 +343,17 @@ cfg_if! {
 				match &def.val_ {
 					def_::Val_::Si(s) => ret.add__(s),
 					_ => {
-						let mut q2 = qv_::Qv_::new5(def.arg0__(), def.names__(), Some(q.clone()));
+						let mut q2 = qv_::Qv_::new5(def.arg0__(), def.names__(), Some(env.q.clone()));
 						if def.argc__() > 0 {
-							let gd2 = Opt_ {jvhao_:true, ..gd};
 							if v_dunhao3.is_empty() {
-								self.z4__(cs, idx2, end2, has, idx, end, gd, q.clone(), w.clone(), wm, &mut q2.args_)?;
+								self.z4__(cs, idx2, end2, has, idx, end, env, wm, &mut q2.args_)?;
 							} else {
 								let mut first = true;
 								let mut idx5 = *idx + 1;
 								while !v_dunhao3.is_empty() {
 									let mut has2 = false;
 									self.z5__(cs, has, idx, &mut idx5, end, &v_dunhao3[0], &mut first, &mut has2,
-										gd, q.clone(), w.clone(), wm, &mut q2.args_)?;
+										env, wm, &mut q2.args_)?;
 									if has2 {
 										v_dunhao3.remove(0);
 									} else {
@@ -468,18 +363,19 @@ cfg_if! {
 								*idx2 = end2;
 								*idx = idx5;
 							}
-							self.z2__(idx, end, Some(v_dunhao3), gd2, q.clone(), w.clone(), wm, &mut q2.args_)?;
+							self.z2__(idx, end, Some(v_dunhao3),
+								&Env_::new3(Opt_ {jvhao_:true, ..env.gd}, env), wm, &mut q2.args_)?;
 						};
 
 						match &def.val_ {
 							def_::Val_::S(src) => {
 								let mut codes = None;
-								wm.codes_cache__(&src, |_| {}, w.clone(), |i| codes = Some(i.unwrap().clone()))?;
-								hello__(&codes.unwrap(), gd, qv_::t__(q2), w.clone(), wm, ret)?;
+								wm.codes_cache__(&src, |_| {}, env.w.clone(), |i| codes = Some(i.unwrap().clone()))?;
+								hello__(&codes.unwrap(), &Env_::new2(qv_::t__(q2), env), wm, ret)?;
 							}
 							def_::Val_::F(f) => {
 								q2.objs_ = Some(def.objs_.clone());
-								f(&gd, qv_::t__(q2), w.clone(), wm, ret)?;
+								f(&Env_::new2(qv_::t__(q2), env), wm, ret)?;
 							}
 							_ => {}
 						}
@@ -487,12 +383,15 @@ cfg_if! {
 				}
 			} else {
 				if *has {
-					ret.add__(cs[*idx2]);
+					buf.push(cs[*idx2]);
 				}
 				*idx2 += 1
 			}
 		}
 		if *has {
+			if !buf.is_empty() {
+				ret.add__(buf);
+			}
 			*idx += 1;
 		}
 		ok__()

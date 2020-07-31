@@ -43,7 +43,6 @@ pub enum Id_ {
 
 #[derive(Default, PartialEq, Debug)]
 pub struct Grp_ {
-	pub print_:bool,
 	pub if_:bool,
 	pub if2_:bool,
 	pub set_:bool,
@@ -59,18 +58,6 @@ pub struct Item_ {
 impl Item_ {
 	pub fn new(id:Id_, s:&str) -> Self {
 		Self::new3(id, s, Default::default())
-	}
-	pub fn new_p(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, ..Default::default()})
-	}
-	pub fn new_sp(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {print_:true, set_:true, ..Default::default()})
-	}
-	pub fn new_if(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {if_:true, ..Default::default()})
-	}
-	pub fn new_if2(id:Id_, s:&str) -> Self {
-		Self::new3(id, s, Grp_ {if2_:true, ..Default::default()})
 	}
 	pub fn new2(id:Id_) -> Self {
 		Self::new(id, "")

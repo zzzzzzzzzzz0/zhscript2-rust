@@ -1,5 +1,7 @@
 use super::{*, super::{u2_::*, as_mut_ref__, as_ref__}};
 
+pub const HELP_: &'static str = "-zhscript-help";
+
 type Pars_ = pars_::Pars_;
 
 pub type T_ = Rc_<RefCell_<World_>>;
@@ -21,11 +23,14 @@ impl WorldMut_ {
 			mut f:impl FnMut(codes_cache_::ORI_<code_::List_>)) -> Result2_ {
 		if self.codes_cache_.get__(src).is_none() {
 			let mut codes = code_::List_::new();
-			as_ref__!(w).pars__(src, fit, &self.dbg_, &mut codes)?;
+			self.pars__(src, fit, &mut codes, w)?;
 			self.codes_cache_.set__(src, codes);
 		}
 		f(self.codes_cache_.get__(src));
 		ok__()
+	}
+	pub fn pars__(&self, src:&str, fit:impl Fn(&mut IsText_), codes: &mut code_::List_, w:T_) -> Result2_ {
+		as_ref__!(w).pars__(src, fit, &self.dbg_, codes)
 	}
 }
 
@@ -121,9 +126,10 @@ impl World_ {
 			clpars_::Item_::new("-zhscript-d-path"),
 			clpars_::Item_::new("-zhscript-d-lc"),
 			clpars_::Item_::new("-zhscript-d-par-lc"),
+			clpars_::Item_::new2t("-zhscript-d-parbp-", clpars_::Typ_::Starts),
 			clpars_::Item_::new("-zhscript-d-expl"),
 			clpars_::Item_::new("-zhscript-d-if"),
-			clpars_::Item_::new("-zhscript-help"),
+			clpars_::Item_::new(HELP_),
 			clpars_::Item_::new3t("-zhscript-", clpars_::Typ_::Starts, "以此为头之其他将忽略"),
 		]);
 		if other_z {
@@ -134,8 +140,11 @@ impl World_ {
 		
 		let kws = &self.kws_;
 		let ret = clpars.for__(&mut a2.into_iter(), |tag, argv, item, i3| {
-			if clpars_::Typ_::Starts == item.typ_ && i3 == 1 {
-				eprintln!("忽略 {}", tag);
+			if let clpars_::Typ_::Starts = item.typ_ {
+				match item.tag_.as_str() {
+					"-zhscript-d-parbp-" => dbg.parbp_.push_str(&tag[item.tag_.len() - 1..]),
+					_ => if i3 == 1 {eprintln!("忽略 {}", tag)}
+				}
 				return 0
 			}
 			match tag {
@@ -241,12 +250,12 @@ impl World_ {
 		}
 		let q2 = qv_::t__(q.clone());
 		if wm.cfg_.src_is_file_ {
-			let src2 = q.src_.to_string();
-			eval_::src__(&src2, &mut src, q2.clone(), w.clone(), wm)?;
+			eval_::ok_src__(&q.src_, q2.clone(), w.clone(), wm);
+			eval_::src__(&mut src, q2.clone(), w.clone(), wm)?;
 		} else {
 			src.push_str(&q.src_)
 		};
-		eval_::hello__(&src, Default::default(), q2, w, wm, ret)
+		eval_::hello__(&src, &code_::Env_::new(q2, w), wm, ret)
 	}
 	pub fn hello2__(self, a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool,
 			q:&mut Qv_, wm:&mut WorldMut_) -> Result2_ {

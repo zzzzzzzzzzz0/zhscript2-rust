@@ -9,10 +9,11 @@ pub struct A_ {
 	pub yuanyang_:Vec<keyword_::RI_>,
 	pub code_:Vec<keyword_::RI_>,
 	
-	pub print_:Vec<keyword_::RI_>,
 	pub if_:Vec<keyword_::RI_>,
 	pub if2_:Vec<keyword_::RI_>,
 	pub set_:Vec<keyword_::RI_>,
+
+	pub data_:Vec<keyword_::RI_>,
 }
 
 impl A_ {
@@ -24,18 +25,19 @@ impl A_ {
 		let mut text2_ = vec![];
 		let mut yuanyang_ = vec![];
 		let mut code_ = vec![];
+		let mut data_ = vec![];
 		
-		let mut print_ = vec![];
 		let mut if_ = vec![];
 		let mut if2_ = vec![];
 		let mut set_ = vec![];
-		
+
 		for i in &kws.a_ {
 			match i.id_ {
 				keyword_::Id_::BeginRem |
 				keyword_::Id_::EndRem => {
 					rem_.push(i.clone());
 					code_.push(i.clone());
+					data_.push(i.clone());
 					text2_.push(i.clone());
 				}
 				keyword_::Id_::BeginRem2 |
@@ -58,40 +60,34 @@ impl A_ {
 				keyword_::Id_::EndText => {
 					text_.push(i.clone());
 					code_.push(i.clone());
+					data_.push(i.clone());
 					text2_.push(i.clone());
 				}
 				keyword_::Id_::BeginText2 |
 				keyword_::Id_::EndText2 => {
 					text2_.push(i.clone());
 					code_.push(i.clone());
+					data_.push(i.clone());
 				}
 				keyword_::Id_::BeginYuanyang |
 				keyword_::Id_::EndYuanyang => {
 					yuanyang_.push(i.clone());
 					code_.push(i.clone());
+					data_.push(i.clone());
 					text2_.push(i.clone());
 				}
 				keyword_::Id_::BeginCode |
 				keyword_::Id_::EndCode => {
 					code_.push(i.clone());
+					data_.push(i.clone());
 					text2_.push(i.clone());
+				}
+				keyword_::Id_::Dunhao | keyword_::Id_::Jvhao | keyword_::Id_::Douhao => {
+					data_.push(i.clone());
 				}
 				_ => {}
 			}
 			match i.id_ {
-				keyword_::Id_::Return |
-				keyword_::Id_::Quit |
-				keyword_::Id_::Mod |
-				keyword_::Id_::Name |
-				keyword_::Id_::Eval |
-				keyword_::Id_::Load |
-				keyword_::Id_::Print |
-				keyword_::Id_::Exec |
-				keyword_::Id_::Set |
-				keyword_::Id_::Alias |
-				keyword_::Id_::Def => {
-					print_.push(i.clone());
-				}
 				keyword_::Id_::Dengyu |
 				keyword_::Id_::Xiaoyudengyu |
 				keyword_::Id_::Xiaoyu |
@@ -117,6 +113,6 @@ impl A_ {
 				_ => {}
 			}
 		}
-		Self {rem_, rem2_, var_, text_, yuanyang_, code_, text2_, print_, if_, if2_, set_}
+		Self {rem_, rem2_, var_, text_, yuanyang_, code_, data_, text2_, if_, if2_, set_}
 	}
 }

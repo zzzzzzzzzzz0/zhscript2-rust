@@ -61,6 +61,7 @@ pub struct Dbg_ {
 	pub path_:bool,
 	pub lc_:bool,
 	pub par_lc_:bool,
+	pub parbp_:String,
 	pub expl_:bool,
 	pub if_:bool,
 }
@@ -161,7 +162,7 @@ impl Dbg_ {
 					s.push_str(&" ".repeat(4))
 				}
 			}
-			as_ref__!(i).s2__(&mut s, true, true, true);
+			as_ref__!(i).s2__(&mut s, true, true, true, true);
 			self.arg3__(&s, false);
 			for rem in &as_ref__!(i).rem_ {
 				self.rem__(rem);

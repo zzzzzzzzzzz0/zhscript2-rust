@@ -19,8 +19,8 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {for_::Item1_::a__(self)}
 	fn a2__(&self) -> code_::ORL_ {for_::Item1_::a2__(self)}
 	fn s__(&self, ret:&mut String, w:&World_) {for_::Item1_::s__(self, ret, w)}
-	fn hello__(&self, gd:code_::Opt_, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		for_::Item1_::hello__(self, gd, q, w, wm, ret)
+	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+		for_::Item1_::hello__(self, env, wm, ret)
 	}
 }
 
