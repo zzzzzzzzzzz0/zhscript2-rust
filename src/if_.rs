@@ -147,26 +147,26 @@ impl Item_ {
 		}
 	}
 	
-	fn b__(&self, b:&mut bool, env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
-		self.b2__(t_::o__(&self.a_), b, env, wm)
+	fn b__(&self, b:&mut bool, env:&code_::Env_) -> Result2_ {
+		self.b2__(t_::o__(&self.a_), b, env)
 	}
-	fn b2__(&self, codes:&code_::List_, b:&mut bool, env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
+	fn b2__(&self, codes:&code_::List_, b:&mut bool, env:&code_::Env_) -> Result2_ {
 		let mut idx = 0;
-		let mut ret2 = result_::List_::new();
 		let mut cmp = Cmp_{left_val_:vec![], val_:vec![], op_:self.undef_.clone(),
 			not_:false, from_:0};
+		let env2 = &code_::Env_::new6(t__(result_::List_::new()), env);
 		while idx < codes.len() {
 			let i = &codes[idx];
 			let r_i = as_ref__!(i);
 			let kw = &r_i.kw__();
 			let id = &kw.id_;
 			if *id == keyword_::Id_::BeginBlock {
-				self.b2__(as_ref__!(i).a__().unwrap(), b, env, wm)?;
+				self.b2__(as_ref__!(i).a__().unwrap(), b, env)?;
 			} else if let Some(kw2) = self.kws_.iter().find(|kw2| kw2.id_ == *id) {
 				if *id == self.or_.id_ || *id == self.and_.id_ {
-					cmp.mv__(codes, idx, env, wm, &mut ret2)?;
-					self.cmp__(&mut cmp, b, &wm.dbg_);
-					if wm.dbg_.if_ {
+					cmp.mv__(codes, idx, &env2)?;
+					self.cmp__(&mut cmp, b, &as_ref__!(env.w).dbg_);
+					if as_ref__!(env.w).dbg_.if_ {
 						lc3__!("\n({}", t_::b__(*b));
 						lc5__!("{}", kw.s_);
 						lc3__!(")");
@@ -182,15 +182,15 @@ impl Item_ {
 					cmp.not_ = !cmp.not_;
 				} else {
 					cmp.op_ = kw2.clone();
-					cmp.mv__(codes, idx, env, wm, &mut ret2)?;
+					cmp.mv__(codes, idx, &env2)?;
 					idx = cmp.from_;
 					continue
 				}
 			}
 			idx += 1;
 		}
-		cmp.mv__(codes, idx, env, wm, &mut ret2)?;
-		self.cmp__(&mut cmp, b, &wm.dbg_);
+		cmp.mv__(codes, idx, &env2)?;
+		self.cmp__(&mut cmp, b, &as_ref__!(env.w).dbg_);
 		result2_::n__(OK_)
 	}
 }
@@ -204,16 +204,15 @@ struct Cmp_ {
 }
 
 impl Cmp_ {
-	fn mv__(&mut self, codes:&code_::List_, idx:usize,
-			env:&code_::Env_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
-		codes.hello2__(&mut self.from_, idx, &code_::Env_::new3(Default::default(), env), wm, ret2)?;
+	fn mv__(&mut self, codes:&code_::List_, idx:usize, env:&code_::Env_) -> Result2_ {
+		codes.hello2__(&mut self.from_, idx, &code_::Env_::new3(Default::default(), env))?;
 		
 		//self.left_val_ = self.val_;
 		self.left_val_.clear();
 		self.left_val_.append(&mut self.val_);
 
-		self.val_ = ret2.to_vec2__(false);
-		ret2.clear();
+		self.val_ = as_mut_ref__!(env.ret).to_vec2__(false);
+		as_mut_ref__!(env.ret).clear();
 		self.from_ += 1;
 		ok__()
 	}
@@ -240,9 +239,9 @@ impl code_::Item_ for Item_ {
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&&self.then_)}
 	fn a3__(&self) -> code_::ORL_ {t_::some__(&self.else_)}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let mut b = false;
-		result2_::item__(self.b__(&mut b, env, wm), |i| {
+		result2_::item__(self.b__(&mut b, env), |i| {
 			if let Err((OK_, _, _)) = i {
 				ok__()
 			} else {
@@ -250,15 +249,15 @@ impl code_::Item_ for Item_ {
 			}
 		})?;
 		if b {
-			if wm.dbg_.lc_ {
-				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
+			if as_ref__!(env.w).dbg_.lc_ {
+				as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 			}
-			t_::o__(&self.then_).hello__(env, wm, ret)
+			t_::o__(&self.then_).hello__(env)
 		} else {
-			if wm.dbg_.lc_ {
-				wm.dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
+			if as_ref__!(env.w).dbg_.lc_ {
+				as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
 			}
-			t_::o__(&self.else_).hello__(env, wm, ret)
+			t_::o__(&self.else_).hello__(env)
 		}
 	}
 }

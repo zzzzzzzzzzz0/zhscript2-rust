@@ -19,7 +19,7 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {self.super_.a__()}
 	fn a2__(&self) -> code_::ORL_ {self.super_.a2__()}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		self.super_.hello2__(true, env, wm, ret)
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		self.super_.hello2__(true, env)
 	}
 }

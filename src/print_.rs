@@ -21,10 +21,10 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
-		let v = ret2.to_vec__();
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let ret2 = t__(result_::List_::new());
+		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+		let v = as_ref__!(ret2).to_vec__();
 		if !v.is_empty() {
 			let s = &v[0];
 			let mut pf = false;
@@ -46,7 +46,7 @@ impl code_::Item_ for Item_ {
 				t_::pf__();
 			}
 			if env.gd.guandao_jie_ {
-				ret.add__(s);
+				as_mut_ref__!(env.ret).add__(s);
 			}
 		}
 		ok__()

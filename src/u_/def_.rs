@@ -80,7 +80,7 @@ impl ArgNames_ {
 pub enum Val_ {
 	S(String),
 	Si(String),
-	F(fn(&code_::Env_, wm:&mut WorldMut_, &mut result_::List_) -> Result2_),
+	F(fn(&code_::Env_) -> Result2_),
 }
 
 pub type I_ = Rc_<RefCell_<Item_>>;

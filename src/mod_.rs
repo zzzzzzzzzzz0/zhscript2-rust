@@ -15,8 +15,8 @@ impl code_::Item_ for Item_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
 	fn add__(&mut self, a:code_::List_) -> Result2_ {name_::Item1_::add__(self, a)}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		name_::Item1_::hello__(self, env, wm, ret)
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		name_::Item1_::hello__(self, env)
 	}
 }
 

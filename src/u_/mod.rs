@@ -24,7 +24,6 @@ use super::cfg_if;
 type Cfg_ = cfg_::Cfg_;
 pub type Dbg_ = dbg_::Dbg_;
 pub type World_ = world_::World_;
-pub type WorldMut_ = world_::WorldMut_;
 pub type Qv_ = qv_::Qv_;
 pub type VarTyp_ = var_::Typ_;
 pub type IsText_ = is_text_::IsText_;
@@ -46,6 +45,11 @@ pub type Rc_<T> = std::rc::Rc<T>;
 pub type RefCell_<T> = std::cell::RefCell<T>;
 
 	}
+}
+
+pub type T_<T> = Rc_<RefCell_<T>>;
+pub fn t__<T>(q:T) -> T_<T> {
+	Rc_::new(RefCell_::new(q))
 }
 
 #[cfg(not(feature = "thread"))]

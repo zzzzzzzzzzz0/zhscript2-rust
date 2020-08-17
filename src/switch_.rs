@@ -84,10 +84,10 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {t_::some__(&&self.a_)}
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&self.case_)}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
-		let v = ret2.to_vec__();
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let ret2 = t__(result_::List_::new());
+		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+		let v = as_ref__!(ret2).to_vec__();
 		let s = if v.is_empty() {""} else {&v[0]};
 		let case0 = as_ref__!(t_::o__(&self.case_)[0]);
 		let case = case0.a__().unwrap();
@@ -102,27 +102,27 @@ impl code_::Item_ for Item_ {
 			let (mut from, to) = self.from_[idx];
 			//lc3__!("\n({}-{})",from,to);
 			while from < to {
-				let mut ret3 = result_::List_::new();
-				case.hello2__(&mut from, to, &code_::Env_::new3(gd2, env), wm, &mut ret3)?;
+				let ret3 = t__(result_::List_::new());
+				case.hello2__(&mut from, to, &code_::Env_::new7(gd2, ret3.clone(), env))?;
 				let mut s2 = String::new();
-				for i in ret3.iter() {
+				for i in as_ref__!(ret3).iter() {
 					as_ref__!(i).s_inc_some_kw__(&mut s2)
 				}
-				if wm.dbg_.lc_ {
+				if as_ref__!(env.w).dbg_.lc_ {
 					lc3__!("\n({}={})", s, s2);
 				}
 				if s2 == s {
 					let mut from2 = to;
 					//lc3__!("({})",from2);
 					need_default = false;
-					case.hello2__(&mut from2, core::usize::MAX, &code_::Env_::new3(gd3, env), wm, ret)?;
+					case.hello2__(&mut from2, core::usize::MAX, &code_::Env_::new3(gd3, env))?;
 				}
 			}
 			idx += 1;
 		}
 		if need_default {
 			if let Some(mut i) = self.default_ {
-				case.hello2__(&mut i, core::usize::MAX, &code_::Env_::new3(gd3, env), wm, ret)?;
+				case.hello2__(&mut i, core::usize::MAX, &code_::Env_::new3(gd3, env))?;
 			}
 		}
 		ok__()

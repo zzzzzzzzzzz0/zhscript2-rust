@@ -24,7 +24,7 @@ impl Item_ {
 		}
 	}
 
-	pub fn hello2__(&self, mut v2:Vec<String>, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	pub fn hello2__(&self, mut v2:Vec<String>, env:&code_::Env_) -> Result2_ {
 		if v2.is_empty() {return result2_::qve__()};
 		let mut args = str_::split__(&v2.remove(0));
 		if args.is_empty() {return result2_::qve__()};
@@ -81,17 +81,17 @@ impl Item_ {
 			}
 		}
 
-		fn f3__(src:&str, args:Option<Vec<String>>, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-			let mut q2 = Qv_::new2(Some(env.q.clone()));
+		fn f3__(src:&str, args:Option<Vec<String>>, env:&code_::Env_) -> Result2_ {
+			let q2 = Qv_::new2(Some(env.q.clone()));
 			if let Some(args) = args {
 				for s in args {
-					q2.args_.add__(
+					as_mut_ref__!(q2.args_).add__(
 						if    s.ends_with("\r\n") {s[0..s.len() - 2].to_string()}
 						else if s.ends_with("\n") {s[0..s.len() - 1].to_string()}
 						else {s})
 				}
 			}
-			eval_::hello__(src, &code_::Env_::new2(qv_::t__(q2), env), wm, ret)
+			eval_::hello__(src, &code_::Env_::new2(t__(q2), env))
 		}
 
 		if mode.is_empty() && (!out_src.is_empty() || !err_src.is_empty()) {
@@ -107,9 +107,9 @@ impl Item_ {
 					Ok(mut child) => {
 						let stdin = child.stdin.as_mut().expect("! stdin");
 						let mut f2__ = |src, args| {
-							let mut ret3 = result_::List_::new();
-							f3__(src, args, env, wm, &mut ret3)?;
-							let ret2 = ret3.to_vec__();
+							let ret3 = t__(result_::List_::new());
+							f3__(src, args, &code_::Env_::new6(ret3.clone(), env))?;
+							let ret2 = as_ref__!(ret3).to_vec__();
 							for i in ret2 {
 								if let Err(e) = stdin.write_all(i.as_bytes()) {
 									eprintln!("{}", e);
@@ -124,7 +124,7 @@ impl Item_ {
 							obj.i_ = child.stdin;
 							obj.o_ = child.stdout;
 							obj.e_ = child.stderr;
-							ret.add_obj__(Box::new(obj));
+							as_mut_ref__!(env.ret).add_obj__(Box::new(obj));
 						} else {
 							let stdout = child.stdout.as_mut().expect("! stdout");
 							let stderr = child.stderr.as_mut().expect("! stderr");
@@ -154,21 +154,21 @@ impl Item_ {
 								}
 							}
 						}
-						as_ref__!(env.w).dunhao__(ret);
+						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(ret);
-						ret.add__(e);
+						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
+						as_mut_ref__!(env.ret).add__(e);
 					}
 				},
 			"r" =>
 				match cmd2.output() {
 					Ok(output) => {
-						self.exitcode__(output.status.code(), &as_ref__!(env.w), ret);
-						let mut f__ = |src:&str, v: &[u8]| -> Result2_ {
+						self.exitcode__(output.status.code(), &as_ref__!(env.w), &mut as_mut_ref__!(env.ret));
+						let f__ = |src:&str, v: &[u8]| -> Result2_ {
 							if src.is_empty() {
 								match String::from_utf8(v.to_vec()) {
-									Ok(s) => ret.add__(s),
+									Ok(s) => as_mut_ref__!(env.ret).add__(s),
 									Err(e) => eprintln!("{}", e),
 								}
 							} else if src == "0" {} else {
@@ -176,14 +176,13 @@ impl Item_ {
 								for line in br.lines() {
 									match line {
 										Ok(i) => {
-											let mut ret3 = result_::List_::new();
-											f3__(src, Some(vec![i]), env, wm, &mut ret3)?;
+											f3__(src, Some(vec![i]), &code_::Env_::new6(t__(result_::List_::new()), env))?;
 										}
 										Err(e) => eprintln!("{}", e),
 									}
 								}
 							}
-							as_ref__!(env.w).dunhao__(ret);
+							as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
 							ok__()
 						};
 						if out_src == "0" {
@@ -196,18 +195,18 @@ impl Item_ {
 						f__(&err_src, &output.stderr)?;
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(ret);
-						ret.add__(e);
+						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
+						as_mut_ref__!(env.ret).add__(e);
 					}
 				},
 			_ =>
 				match cmd2.status() {
 					Ok(st) => {
-						self.exitcode__(st.code(), &as_ref__!(env.w), ret);
+						self.exitcode__(st.code(), &as_ref__!(env.w), &mut as_mut_ref__!(env.ret));
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(ret);
-						ret.add__(e);
+						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
+						as_mut_ref__!(env.ret).add__(e);
 					}
 				}
 		}
@@ -248,17 +247,18 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
-		
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let ret2 = t__(result_::List_::new());
+		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+
+		let ret2 = as_ref__!(ret2);
 		if let Some(ret3) = self.obj__(&ret2, core::usize::MAX, |obj, ret2, end| {
 			if let Some(stdin) = obj.i_.as_mut() {
 				let v = ret2.to_vec3__(end);
 				for i in &v {
 					if let Err(e) = stdin.write_all(i.as_bytes()) {
 						eprintln!("{}", e);
-						break
+						//break
 					}
 				}
 			} else {
@@ -269,6 +269,6 @@ impl code_::Item_ for Item_ {
 			return ret3
 		}
 
-		self.hello2__(ret2.to_vec__(), env, wm, ret)
+		self.hello2__(ret2.to_vec__(), env)
 	}
 }

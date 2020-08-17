@@ -58,7 +58,8 @@ impl Args_ {
 	}
 
 	pub fn hello__(is_has:bool, q:qv_::T_, begin:i32, end:i32, ret:&mut result_::List_) -> Result2_ {
-		let ls = &as_ref__!(q).args_;
+		let q = as_ref__!(q);
+		let ls = &as_ref__!(q.args_);
 		let a = &ls.a_;
 		if !a.is_empty() {
 			let len = ls.len__() + 2;
@@ -111,10 +112,10 @@ impl code_::Item_ for Args_ {
 		}
 		self.super_.s__(&s, ret, w)
 	}
-	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, ret),
+				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, &mut as_mut_ref__!(env.ret)),
 			Err(e) =>
 				e,
 		}

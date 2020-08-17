@@ -33,16 +33,18 @@ impl code_::Item_ for Item_ {
 		ok__()
 	}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a_).hello__(env, wm, &mut ret2)?;
-		let v = ret2.to_vec__();
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let ret2 = t__(result_::List_::new());
+		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+		let v = as_ref__!(ret2).to_vec__();
 		if v.is_empty() {
 			return result2_::qve__();
 		}
 
 		let src = &v[0];
-		let mut codes = wm.codes_cache2_.get__(src);
+		let mut w = as_mut_ref__!(env.w);
+		let w2 = w.clone();
+		let mut codes = w.codes_cache2_.get__(src);
 		if codes.is_none() {
 			let mut v2 = vec![];
 			let mut buf = String::new();
@@ -56,23 +58,23 @@ impl code_::Item_ for Item_ {
 						buf.push(i),
 					_ => {
 						buf.push(i);
-						return result2_::err__([&as_ref__!(env.w).text__(&buf), "表达式非法"].concat())
+						return result2_::err__([&w2.text__(&buf), "表达式非法"].concat())
 					}
 				}
 			}
 			self.add_n__(&mut buf, &mut v2)?;
 			
-			if wm.dbg_.expl_ {
+			if w2.dbg_.expl_ {
 				for i in &v2 {
 					lc3__!("\n{:?}", i);
 				}
 			}
-			wm.codes_cache2_.set__(src, expl_::List_ {a_:v2});
-			codes = wm.codes_cache2_.get__(src);
+			w.codes_cache2_.set__(src, expl_::List_ {a_:v2});
+			codes = w.codes_cache2_.get__(src);
 		}
 		let mut i = 0;
 		let ret2 = codes.unwrap().z2__(&mut i);
-		if wm.dbg_.expl_ {
+		if w2.dbg_.expl_ {
 			lc3__!("\n{:?}\n", ret2);
 		}
 		match ret2 {
@@ -80,12 +82,12 @@ impl code_::Item_ for Item_ {
 				if v.len() > 1 {
 					let s2 = &v[1];
 					if let Some(i) = t_::s2n__(s2) {
-						ret.add__(format!("{:.i$}", n, i = i));
+						as_mut_ref__!(env.ret).add__(format!("{:.i$}", n, i = i));
 					} else {
-						return result2_::err__([&as_ref__!(env.w).text__(&s2), "点后位数非法"].concat())
+						return result2_::err__([&w2.text__(&s2), "点后位数非法"].concat())
 					}
 				} else {
-					ret.add__(format!("{}", n));
+					as_mut_ref__!(env.ret).add__(format!("{}", n));
 				}
 				ok__()
 			}

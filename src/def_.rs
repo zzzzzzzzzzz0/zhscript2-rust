@@ -24,10 +24,10 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {self.super_.a__()}
 	fn a2__(&self) -> code_::ORL_ {self.super_.a2__()}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, _ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let mut name = String::new();
 		let mut argc = core::usize::MAX;
-		let mut ret2 = result_::List_::new();
+		let ret2 = t__(result_::List_::new());
 		let mut q2 = Some(env.q.clone());
 		code_::Item1_::split2_2__(self.a__(), self.sp_, &mut name, |rem| {
 			match rem {
@@ -42,7 +42,7 @@ impl code_::Item_ for Item_ {
 				}
 			}
 			ok__()
-		}, &code_::Env_::new3(code_::Opt_ {undef_eq_text_:true, ..env.gd}, env), wm, &mut ret2)?;
+		}, &code_::Env_::new7(code_::Opt_ {undef_eq_text_:true, ..env.gd}, ret2.clone(), env))?;
 		
 		if name.is_empty() {return self.super_.super_.err__("名空")}
 		{
@@ -57,8 +57,11 @@ impl code_::Item_ for Item_ {
 			}
 		}
 		
-		let mut ret3 = result_::List_::new();
-		t_::o__(&self.a2__()).hello__(env, wm, &mut ret3)?;
+		let ret3 = t__(result_::List_::new());
+		t_::o__(&self.a2__()).hello__(&code_::Env_::new6(ret3.clone(), env))?;
+
+		let ret2 = as_ref__!(ret2);
+		let ret3 = as_ref__!(ret3);
 		if !ret2.is_empty() {
 			argc = ret2.len__()
 		}

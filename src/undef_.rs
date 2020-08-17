@@ -17,8 +17,8 @@ impl code_::Item_ for Item_ {
 		ret.push_str(&self.s_);
 	}
 	fn s2__(&self) -> &str {&self.s_}
-	fn hello__(&self, _env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		ret.add__(&self.s_);
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		as_mut_ref__!(env.ret).add__(&self.s_);
 		ok__()
 	}
 }

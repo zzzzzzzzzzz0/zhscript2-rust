@@ -1,12 +1,12 @@
-use super::{*, super::{as_ref__, cfg_if}};
+use super::{*, super::{as_ref__, as_mut_ref__, cfg_if}};
 use std::{sync::Mutex, ops::{Deref, DerefMut}};
 
 mod item1_;
 pub type Item1_ = item1_::Item1_;
 pub mod attr_;
-pub type FA_ = attr_::ORI_;
+pub type FA_ = attr_::I_;
 mod env_;
-pub type Env_<'a> = env_::Env_<'a>;
+pub type Env_ = env_::Env_;
 
 #[derive(Copy, Clone, Default)]
 pub struct Opt_ {
@@ -18,11 +18,11 @@ pub struct Opt_ {
 	pub vals_:bool,
 }
 
-pub fn hello__(codes:&List_, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-	if wm.dbg_.arg_ {
-		wm.dbg_.arg__(&as_ref__!(env.q).args_);
+pub fn hello__(codes:&List_, env:&Env_) -> Result2_ {
+	if as_ref__!(env.w).dbg_.arg_ {
+		as_ref__!(env.w).dbg_.arg__(&as_ref__!(as_ref__!(env.q).args_));
 	}
-	codes.hello__(env, wm, ret)
+	codes.hello__(env)
 }
 
 pub fn for_i__(i:&I_, mut fkw:impl FnMut(&keyword_::Item_, i32), mut fa:impl FnMut(&List_, i32)) {
@@ -88,7 +88,7 @@ pub trait Item_ {
 	fn a__(&self) -> ORL_ {None}
 	fn a2__(&self) -> ORL_ {None}
 	fn a3__(&self) -> ORL_ {None}
-	fn hello__(&self, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_;
+	fn hello__(&self, env:&Env_) -> Result2_;
 }
 
 #[derive(Default, Clone)]
@@ -134,14 +134,13 @@ cfg_if! {
 		}
 	}
 	
-	pub fn hello__(&self, env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		self.hello2__(&mut 0, core::usize::MAX, env, wm, ret)
+	pub fn hello__(&self, env:&Env_) -> Result2_ {
+		self.hello2__(&mut 0, core::usize::MAX, env)
 	}
-	pub fn hello2__(&self, idx:&mut usize, end:usize,
-			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	pub fn hello2__(&self, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
 		let a = &self.a_;
 		let end = if end > a.len() {a.len()} else {end};
-		let mut ret2 = self.z2__(idx, end, None, env, wm, ret);
+		let mut ret2 = self.z2__(idx, end, None, env);
 		if let Err((_, _, s)) = &mut ret2 {
 			if *idx < end {
 				s.push('\n');
@@ -156,13 +155,12 @@ cfg_if! {
 		}
 		ret2
 	}
-	fn z2__(&self, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, usize)>>,
-			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn z2__(&self, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, usize)>>, env:&Env_) -> Result2_ {
 		let a = &self.a_;
 		while *idx < end {
 			let i = &a[*idx];
-			if wm.dbg_.lc_ {
-				wm.dbg_.lc__(i, &as_ref__!(env.w));
+			if as_ref__!(env.w).dbg_.lc_ {
+				as_ref__!(env.w).dbg_.lc__(i, &as_ref__!(env.w));
 			}
 			match as_ref__!(i).kw__().id_ {
 				keyword_::Id_::Undef => {
@@ -177,7 +175,7 @@ cfg_if! {
 							for i in v_dunhao3 {
 								let mut has2 = false;
 								self.z5__(&cs, &mut has, idx, &mut idx5, end, i, &mut first, &mut has2,
-									env, wm, ret)?;
+									env)?;
 								if has2 {
 									i2 += 1
 								}
@@ -191,28 +189,28 @@ cfg_if! {
 								continue
 							}
 						}
-						self.z4__(&cs, &mut 0, cs.len(), &mut has, idx, end, env, wm, ret)?;
+						self.z4__(&cs, &mut 0, cs.len(), &mut has, idx, end, env)?;
 						if has {
 							continue
 						}
 					}
-					as_ref__!(i).hello__(env, wm, ret)?;
+					as_ref__!(i).hello__(env)?;
 				}
 				keyword_::Id_::Jvhao => {
 					if env.gd.jvhao_ {
 						break
 					}
-					as_ref__!(i).hello__(env, wm, ret)?;
+					as_ref__!(i).hello__(env)?;
 				}
 				keyword_::Id_::Dunhao => {
 					if env.gd.dunhao_ {
 						*idx += 1;
 						break
 					}
-					as_ref__!(i).hello__(env, wm, ret)?;
+					as_ref__!(i).hello__(env)?;
 				}
 				_ => {
-					as_ref__!(i).hello__(env, wm, ret)?;
+					as_ref__!(i).hello__(env)?;
 				}
 			}
 			*idx += 1
@@ -221,7 +219,7 @@ cfg_if! {
 	}
 	fn z5__(&self, cs:&[char], has:&mut bool, idx:&usize, idx5:&mut usize, end:usize,
 			dunhao3:&(usize, usize, usize), first:&mut bool, has2:&mut bool,
-			env:&Env_, wm:&mut WorldMut_, ret2:&mut result_::List_) -> Result2_ {
+			env:&Env_) -> Result2_ {
 		let (idx4, from4, end4) = dunhao3;
 		if idx4 == idx {
 			//lc3__!("\n{} {},{},{}",idx,idx4, from4, end4);
@@ -230,9 +228,9 @@ cfg_if! {
 			if *first {
 				*first = false
 			} else {
-				as_ref__!(env.w).dunhao__(ret2);
+				as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
 			}
-			self.z4__(cs, &mut idx2, *end4, has, idx5, end, env, wm, ret2)?;
+			self.z4__(cs, &mut idx2, *end4, has, idx5, end, env)?;
 			*has2 = true
 		} else {
 			*has2 = false
@@ -242,13 +240,13 @@ cfg_if! {
 	#[allow(clippy::cognitive_complexity)]
 	#[allow(clippy::too_many_arguments)]
 	fn z4__(&self, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut usize, end:usize,
-			env:&Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+			env:&Env_) -> Result2_ {
 		let mut paichu_def = vec![];
 		let mut buf = String::new();
 		'l1: while *idx2 < end2 {
 			if let Some((idx3, len, def)) = qv_::find_def__(&cs, *idx2, end2, &paichu_def, env.q.clone(), env.w.clone()) {
-				if wm.dbg_.lc_ {
-					wm.dbg_.def__(&def)
+				if as_ref__!(env.w).dbg_.lc_ {
+					as_ref__!(env.w).dbg_.def__(&def)
 				}
 				let def = as_ref__!(def);
 				let mut v_dunhao3 = vec![];
@@ -335,25 +333,27 @@ cfg_if! {
 				*has = true;
 				if v_dunhao3.is_empty() {
 					while *idx2 < idx3 {
-						ret.add__(cs[*idx2]);
+						as_mut_ref__!(env.ret).add__(cs[*idx2]);
 						*idx2 += 1
 					}
 				}
 				*idx2 += len;
 				match &def.val_ {
-					def_::Val_::Si(s) => ret.add__(s),
+					def_::Val_::Si(s) => as_mut_ref__!(env.ret).add__(s),
 					_ => {
-						let mut q2 = qv_::Qv_::new5(def.arg0__(), def.names__(), Some(env.q.clone()));
+						let q2 = qv_::Qv_::new5(def.arg0__(), def.names__(), Some(env.q.clone()));
+						let q2 = t__(q2);
 						if def.argc__() > 0 {
+							let args = &as_mut_ref__!(q2).args_;
 							if v_dunhao3.is_empty() {
-								self.z4__(cs, idx2, end2, has, idx, end, env, wm, &mut q2.args_)?;
+								self.z4__(cs, idx2, end2, has, idx, end, &Env_::new6(args.clone(), env))?;
 							} else {
 								let mut first = true;
 								let mut idx5 = *idx + 1;
 								while !v_dunhao3.is_empty() {
 									let mut has2 = false;
 									self.z5__(cs, has, idx, &mut idx5, end, &v_dunhao3[0], &mut first, &mut has2,
-										env, wm, &mut q2.args_)?;
+										&Env_::new6(args.clone(), env))?;
 									if has2 {
 										v_dunhao3.remove(0);
 									} else {
@@ -364,18 +364,18 @@ cfg_if! {
 								*idx = idx5;
 							}
 							self.z2__(idx, end, Some(v_dunhao3),
-								&Env_::new3(Opt_ {jvhao_:true, ..env.gd}, env), wm, &mut q2.args_)?;
-						};
+								&Env_::new7(Opt_ {jvhao_:true, ..env.gd}, args.clone(), env))?;
+						}
 
 						match &def.val_ {
 							def_::Val_::S(src) => {
 								let mut codes = None;
-								wm.codes_cache__(&src, |_| {}, env.w.clone(), |i| codes = Some(i.unwrap().clone()))?;
-								hello__(&codes.unwrap(), &Env_::new2(qv_::t__(q2), env), wm, ret)?;
+								as_mut_ref__!(env.w).codes_cache__(&src, |_| {}, |i| codes = Some(i.unwrap().clone()))?;
+								hello__(&codes.unwrap(), &Env_::new2(q2, env))?;
 							}
 							def_::Val_::F(f) => {
-								q2.objs_ = Some(def.objs_.clone());
-								f(&Env_::new2(qv_::t__(q2), env), wm, ret)?;
+								as_mut_ref__!(q2).objs_ = Some(def.objs_.clone());
+								f(&Env_::new2(q2, env))?;
 							}
 							_ => {}
 						}
@@ -390,7 +390,7 @@ cfg_if! {
 		}
 		if *has {
 			if !buf.is_empty() {
-				ret.add__(buf);
+				as_mut_ref__!(env.ret).add__(buf);
 			}
 			*idx += 1;
 		}

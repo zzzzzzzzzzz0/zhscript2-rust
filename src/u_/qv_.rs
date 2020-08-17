@@ -1,10 +1,6 @@
 use super::{*, super::{as_ref__, as_mut_ref__}};
 
-pub type T_ = Rc_<RefCell_<Qv_>>;
-
-pub fn t__(q:Qv_) -> T_ {
-	Rc_::new(RefCell_::new(q))
-}
+pub type T_ = super::T_<Qv_>;
 
 pub fn val__(name:&str, val:&str, q:T_, w:world_::T_) {
 	val2__(name, result_::si__(val), false, false, q, w)
@@ -22,15 +18,16 @@ pub fn def__(name:&str, val:&str, argc:usize, names:def_::ORL_, q:T_, w:world_::
 	}).unwrap()
 }
 
-pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, q:T_, w:world_::T_,
-		ret:&mut result_::List_, ret_alias:&mut result_::List_, q_get:&mut T_) -> Option<bool> {
-	let ret2 = for2__(q, w, |q, _, no_self| {
+pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, env:&code_::Env_,
+		ret_alias:&mut result_::List_, q_get:&mut T_) -> Option<bool> {
+	let ret2 = for2__(env.q.clone(), env.w.clone(), |q, _, no_self| {
 		let q2 = as_ref__!(q);
-		if q2.vars_.get__(name, is_has, no_self, ret, ret_alias) {
+		let mut ret = as_mut_ref__!(env.ret);
+		if q2.vars_.get__(name, is_has, no_self, &mut ret, ret_alias) {
 			*q_get = q.clone();
 			return Some(true)
 		}
-		if q2.defs_.get__(name, is_has, ret) {
+		if q2.defs_.get__(name, is_has, &mut ret) {
 			*q_get = q.clone();
 			return Some(true)
 		}
@@ -40,11 +37,12 @@ pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, q:T_, w:world_::
 					continue
 				}
 				if name == i.s_ {
-					if i.i_ < q2.args_.len__() {
+					let args = as_ref__!(q2.args_);
+					if i.i_ < args.len__() {
 						if is_has {
 							ret.add__("1")
 						} else {
-							q2.args_.ret__(i.i_, ret);
+							args.ret__(i.i_, &mut ret);
 						}
 					}
 					*q_get = q.clone();
@@ -134,7 +132,7 @@ pub struct Qv_ {
 	pub up_:Option<T_>,
 	pub on_free_:String,
 	
-	pub args_:result_::List_,
+	pub args_:super::T_<result_::List_>,
 	pub argnames_:OArgNames_,
 	args_to1_:bool,
 	args_1_:String,
@@ -144,19 +142,25 @@ pub struct Qv_ {
 }
 
 impl Qv_ {
-	pub fn new() -> Self {
-		Self::new2(None)
+	pub fn new(name:&str) -> Self {
+		Self::new3(name, None)
 	}
 	pub fn new2(up:Option<T_>) -> Self {
 		Self::new4("", up)
 	}
-	pub fn new4(src:&str, up:std::option::Option<T_>) -> Self {
+	pub fn new3(name:&str, up:Option<T_>) -> Self {
+		Self::new6(vec![name.to_string()], "", None, up)
+	}
+	pub fn new4(src:&str, up:Option<T_>) -> Self {
 		Self::new5(src, None, up)
 	}
-	pub fn new5(src:&str, argnames_:OArgNames_, up_:std::option::Option<T_>) -> Self {
+	pub fn new5(src:&str, argnames:OArgNames_, up:Option<T_>) -> Self {
+		Self::new6(vec![], src, argnames, up)
+	}
+	pub fn new6(name_:Vec<String>, src:&str, argnames_:OArgNames_, up_:Option<T_>) -> Self {
 		Self {up_, on_free_:String::new(), vars_:var_::List_::new(), defs_:def_::List_::new(),
-			name_:vec![], src_:src.to_string(), src_is_file_:false,
-			args_:result_::List_::new(), argnames_, args_to1_:false, args_1_:String::new(),
+			name_, src_:src.to_string(), src_is_file_:false,
+			args_:t__(result_::List_::new()), argnames_, args_to1_:false, args_1_:String::new(),
 			objs_:None, objs_mut_:vec![],}
 	}
 	
@@ -170,7 +174,7 @@ impl Qv_ {
 	pub fn args_1__(&mut self) -> &String {
 		if !self.args_to1_ {
 			self.args_to1_ = true;
-			self.args_.to1__(&mut self.args_1_)
+			as_mut_ref__!(self.args_).to1__(&mut self.args_1_)
 		}
 		&self.args_1_
 	}

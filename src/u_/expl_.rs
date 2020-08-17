@@ -72,10 +72,7 @@ impl List_ {
 			if c == '^' {
 				*idx += 1;
 				let ret2 = self.z4__(idx)?;
-				let n = ret.0;
-				for _ in 1..ret2.0 as i64 {
-					ret.0 *= n
-				}
+				ret.0 = ret.0.powf(ret2.0);
 			} else {break}
 		}
 		Ok(ret)

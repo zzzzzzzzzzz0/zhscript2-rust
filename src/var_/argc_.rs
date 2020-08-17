@@ -16,7 +16,7 @@ impl Argc_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(as_ref__!(q).args_.len__())
+			ret.add__(as_ref__!(as_ref__!(q).args_).len__())
 		}
 		ok__()
 	}
@@ -25,10 +25,10 @@ impl Argc_ {
 impl code_::Item_ for Argc_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARGC_, ret, w)}
-	fn hello__(&self, env:&code_::Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), ret),
+				Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
 			Err(e) =>
 				e,
 		}

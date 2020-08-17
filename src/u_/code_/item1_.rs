@@ -1,4 +1,4 @@
-use super::{*, };
+use super::{*, super::super::{lc3__, lc_kw__, p__}};
 
 pub struct Item1_ {
 	kw_:keyword_::RI_,
@@ -33,12 +33,12 @@ impl Item1_ {
 		}
 	}
 	pub fn split2_2__(a:code_::ORL_, sp:usize, s: &mut String, mut frem:impl FnMut(&str) -> Result2_,
-			env:&Env_, wm:&mut WorldMut_, ret2: &mut result_::List_) -> Result2_ {
+			env:&Env_) -> Result2_ {
 		let a = t_::o__(&a);
-		let mut ret4 = result_::List_::new();
+		let ret4 = t__(result_::List_::new());
 		let mut idx = 0;
-		a.hello2__(&mut idx, sp, env, wm, &mut ret4)?;
-		for i in ret4.iter() {
+		a.hello2__(&mut idx, sp, &Env_::new6(ret4.clone(), env))?;
+		for i in as_ref__!(ret4).iter() {
 			let i = as_ref__!(i);
 			i.s__(s);
 			for rem in &i.rem_ {
@@ -46,7 +46,7 @@ impl Item1_ {
 			}
 		}
 		idx = sp + 1;
-		a.hello2__(&mut idx, core::usize::MAX, env, wm, ret2)
+		a.hello2__(&mut idx, core::usize::MAX, env)
 	}
 	
 	pub fn qv4rem_1__(&self, rem:&str, mut shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
@@ -69,7 +69,7 @@ impl Item1_ {
 					} else {None}
 				});
 				if ret2.is_none() && !shou(rem) {
-					return Err(result2_::err__([&as_ref__!(w).text__(rem), "注解不支持"].concat()))
+					return Err(as_ref__!(w).no_rem2__(rem))
 				}
 			}
 		}
@@ -99,13 +99,21 @@ impl Item_ for Item1_ {
 	fn kw__(&self) -> &keyword_::Item_ {&self.kw_}
 	fn kw2__(&self) -> keyword_::ORI_ {self.kw2_.clone()}
 	fn kw3__(&self) -> keyword_::ORI_ {self.kw3_.clone()}
-	fn hello__(&self, _env:&Env_, _wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+	fn hello__(&self, env:&Env_) -> Result2_ {
 		if let keyword_::Id_::Brkpoint = &self.kw_.id_ {
+			let c__ = |s| {
+				as_ref__!(env.w).dbg_.bp_.contains(s)
+			};
+			if c__("-r_v-") {
+				println!();
+				lc3__!("{:?}", as_ref__!(env.ret).to_vec__());
+				println!();
+			}
 			#[allow(non_snake_case)]
 			#[allow(unused_variables)]
 			let o_X_o = true;
 		} else {
-			ret.add2__(self.kw_.clone());
+			as_mut_ref__!(env.ret).add2__(self.kw_.clone());
 		}
 		ok__()
 	}

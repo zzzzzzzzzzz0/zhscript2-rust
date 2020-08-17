@@ -1,21 +1,21 @@
-#![allow(dead_code)]
+#![allow(dead_code, unused_variables, unused_mut)]
 
 use super::{*, };
 use std::collections::HashMap;
 
-pub type ORI_ = Option<Rc_<Item_>>;
+pub type I_ = Rc_<Option<Item_>>;
 type A_ = HashMap<String, String>;
 
-pub fn ori__(i:Item_) -> ORI_ {
-	Some(Rc_::new(i))
+pub fn i__(i:Option<Item_>) -> I_ {
+	Rc_::new(i)
 }
 
-pub fn get__(i:&ORI_, name:&str, is_has:bool, ret:&mut result_::List_) -> bool {
+pub fn get__(i:I_, name:&str, is_has:bool, ret:&mut result_::List_) -> bool {
 	let head = "属性";
 	if name.starts_with(head) {
 		let mut name = name[head.len()..].to_string();
 		let mut i2 = i;
-		while let Some(i) = i2 {
+		while let Some(i) = &*i2 {
 			let a = &i.a_;
 			if let Ok(idx1) = name.parse::<usize>() {
 				let idx = &i.idx_;
@@ -31,7 +31,7 @@ pub fn get__(i:&ORI_, name:&str, is_has:bool, ret:&mut result_::List_) -> bool {
 				}
 				return true
 			}
-			i2 = &i.up_;
+			i2 = i.up_.clone();
 		}
 	}
 	false
@@ -39,12 +39,12 @@ pub fn get__(i:&ORI_, name:&str, is_has:bool, ret:&mut result_::List_) -> bool {
 
 pub struct Item_ {
 	a_:A_,
-	up_:ORI_,
+	up_:I_,
 	idx_:Vec<String>,
 }
 
 impl Item_ {
-	pub fn new(up_:ORI_) -> Self {
+	pub fn new(up_:I_) -> Self {
 		Self {up_, a_:A_::new(), idx_:vec![]}
 	}
 	pub fn add__<S:ToString>(&mut self, name:&str, val:S) {

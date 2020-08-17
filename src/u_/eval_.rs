@@ -1,12 +1,12 @@
 use super::{*, super::{u2_::*, {lc3__, lc_kw__, p__, as_ref__, as_mut_ref__}}};
 use std::{fs::File, io::{Read, Error as ioError}, path::{PathBuf}};
 
-pub fn ok_src__(src:&str, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> bool {
-	let shl = wm.cfg_.shl_.to_string();
+pub fn ok_src__(src:&str, q:qv_::T_, w:world_::T_) -> bool {
+	let shl = as_ref__!(w).cfg_.shl_.to_string();
 	let mut ok = false;
 	let op__ = |s:&str, ok:&mut bool| {
-		if wm.dbg_.path_ {
-			wm.dbg_.arg2__(s);
+		if as_ref__!(w).dbg_.path_ {
+			as_ref__!(w).dbg_.arg2__(s);
 		}
 		if File::open(s).is_ok() {
 			let mut q = as_mut_ref__!(q);
@@ -31,7 +31,7 @@ pub fn ok_src__(src:&str, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> bool {
 		if ok {
 			return ok
 		}
-		if qv_::for__(q.clone(), w, |q, _, _| {
+		if qv_::for__(q.clone(), w.clone(), |q, _, _| {
 			let q2 = as_ref__!(q);
 			if q2.src_is_file_ {
 				op2__(&q2.src_, &mut ok);
@@ -45,7 +45,7 @@ pub fn ok_src__(src:&str, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> bool {
 	ok
 }
 
-pub fn src__(src2:&mut String, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Result2_ {
+pub fn src__(src2:&mut String, q:qv_::T_, w:world_::T_) -> Result2_ {
 	let src = as_ref__!(q).src_.clone();
 	let err__ = |e:ioError| {
 		result2_::err__(["\"", &src, "\" ", &e.to_string()].concat())
@@ -57,8 +57,8 @@ pub fn src__(src2:&mut String, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Re
 					if src2.starts_with("#!") {
 						if let Some(i) = src2.find('\n') {
 							let mut q = as_mut_ref__!(q);
-							as_mut_ref__!(w).clpars__(&mut str_::split__(&src2[2..i]).into_iter(), true, false, false,
-								&mut wm.cfg_, &mut wm.dbg_, &mut q)?;
+							world_::clpars__(&mut as_mut_ref__!(w), &mut str_::split__(&src2[2..i]).into_iter(),
+								true, false, false, &mut q)?;
 							*src2 = src2[i+1..].to_string();
 						}
 					}
@@ -71,27 +71,25 @@ pub fn src__(src2:&mut String, q:qv_::T_, w:world_::T_, wm:&mut WorldMut_) -> Re
 	}
 }
 
-pub fn hello__(src:&str, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-	hello2__(src, |_| {}, env, wm, ret)
+pub fn hello__(src:&str, env:&code_::Env_) -> Result2_ {
+	hello2__(src, |_| {}, env)
 }
-pub fn hello2__(src:&str, fit:impl Fn(&mut IsText_),
-		env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-	hello3__(src, fit, true, env, wm, ret)
+pub fn hello2__(src:&str, fit:impl Fn(&mut IsText_), env:&code_::Env_) -> Result2_ {
+	hello3__(src, fit, true, env)
 }
-pub fn hello3__(src:&str, fit:impl Fn(&mut IsText_), cache:bool,
-		env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
+pub fn hello3__(src:&str, fit:impl Fn(&mut IsText_), cache:bool, env:&code_::Env_) -> Result2_ {
 	let mut codes = None;
 	if cache {
-		wm.codes_cache__(src, fit, env.w.clone(), |i| codes = Some(i.unwrap().clone()))?;
+		as_mut_ref__!(env.w).codes_cache__(src, fit, |i| codes = Some(i.unwrap().clone()))?;
 	} else {
 		let mut codes2 = code_::List_::new();
-		wm.pars__(src, fit, &mut codes2, env.w.clone())?;
+		as_mut_ref__!(env.w).pars__(src, fit, &mut codes2)?;
 		codes = Some(Rc_::new(codes2));
 	}
 	let codes = codes.unwrap();
-	result2_::item__(code_::hello__(&codes, env, wm, ret), |ret| {
+	result2_::item__(code_::hello__(&codes, env), |ret| {
 		if let Err((jump_::RETURN_, s, _)) = &ret {
-			if wm.dbg_.lc_ {
+			if as_ref__!(env.w).dbg_.lc_ {
 				lc3__!("({}={:?})", s, as_ref__!(env.q).name_);
 			}
 			if s.is_empty() || as_ref__!(env.q).name_.contains(s) {

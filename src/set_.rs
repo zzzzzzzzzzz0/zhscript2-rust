@@ -14,19 +14,21 @@ impl Item_ {
 		Self {super_:code_::Item1_::new2(kw, kw2), names_:None, vals_:None}
 	}
 	
-	pub fn hello2_1__(&self, names:&mut result_::List_, vals:&mut result_::List_,
-			env:&code_::Env_, wm:&mut WorldMut_) -> Result2_ {
-		t_::o__(&self.names_).hello__(env, wm, names)?;
-		if wm.dbg_.lc_ {
+	pub fn hello2_1__(&self, names:T_<result_::List_>, vals:T_<result_::List_>, env:&code_::Env_) -> Result2_ {
+		t_::o__(&self.names_).hello__(&code_::Env_::new6(names, env))?;
+		if as_ref__!(env.w).dbg_.lc_ {
 			use super::u_::code_::Item_;
-			wm.dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
+			as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 		}
-		t_::o__(&self.vals_).hello__(&code_::Env_::new3(code_::Opt_ {vals_:true, ..env.gd}, env), wm, vals)
+		t_::o__(&self.vals_).hello__(&code_::Env_::new7(code_::Opt_ {vals_:true, ..env.gd}, vals, env))
 	}
-	pub fn hello2__(&self, is_alias:bool, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut names = result_::List_::new();
-		let mut vals = result_::List_::new();
-		self.hello2_1__(&mut names, &mut vals, env, wm)?;
+	pub fn hello2__(&self, is_alias:bool, env:&code_::Env_) -> Result2_ {
+		let names = t__(result_::List_::new());
+		let vals = t__(result_::List_::new());
+		self.hello2_1__(names.clone(), vals.clone(), env)?;
+		let names = as_ref__!(names);
+		let vals = as_ref__!(vals);
+		
 		let mut name = String::new();
 		let mut val = String::new();
 		let mut val_rem = vec![];
@@ -92,9 +94,9 @@ impl Item_ {
 			cnt += 1;
 			if env.gd.guandao_jie_ {
 				if cnt > 1 {
-					as_ref__!(env.w).dunhao__(ret);
+					as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
 				}
-				ret.add__(&name);
+				as_mut_ref__!(env.ret).add__(&name);
 			}
 			if i_name >= names.len() {
 				break
@@ -119,7 +121,7 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.names_)}
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&self.vals_)}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		self.hello2__(false, env, wm, ret)
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		self.hello2__(false, env)
 	}
 }

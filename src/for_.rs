@@ -19,8 +19,8 @@ impl code_::Item_ for Item_ {
 	fn a__(&self) -> code_::ORL_ {Item1_::a__(self)}
 	fn a2__(&self) -> code_::ORL_ {Item1_::a2__(self)}
 	fn s__(&self, ret:&mut String, w:&World_) {Item1_::s__(self, ret, w)}
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		Item1_::hello__(self, env, wm, ret)
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		Item1_::hello__(self, env)
 	}
 }
 
@@ -36,37 +36,28 @@ impl Item1_ for Item_ {
 	fn loop__(&self) -> bool {true}
 }
 
+#[derive(Default)]
 pub struct Cnt_ {
-	max_:usize,
+	max_:Option<usize>,
+	start_:Option<i32>,
 	name_:Option<String>,
-	max2_:usize,
-	name2_:usize,
-	i_:usize,
 }
 
 impl Cnt_ {
-	const NO_:usize = core::usize::MAX - 1;
 	pub fn new() -> Self {
-		Self::new2(core::usize::MAX, None, core::usize::MAX, core::usize::MAX)
+		Default::default()
 	}
-	fn new2(max_:usize, name_:Option<String>, max2_:usize, name2_:usize) -> Self {
-		Self {max_, name_, max2_, name2_, i_:0}
+	fn new2(max_:Option<usize>, start_:Option<i32>, name_:Option<String>) -> Self {
+		Self {max_, start_, name_}
 	}
 	
-	#[allow(dead_code)]
 	pub fn max2__(&mut self, i:usize) {
-		self.max3__(i, Self::NO_)
+		self.max_ = Some(i);
 	}
-	fn max3__(&mut self, i:usize, idx:usize) {
-		self.max2_ = idx;
-		self.max_ = i;
+	pub fn start2__(&mut self, i:i32) {
+		self.start_ = Some(i);
 	}
-	#[allow(dead_code)]
 	pub fn name2__(&mut self, s:&str) -> Result2_ {
-		self.name3__(s, Self::NO_)
-	}
-	pub fn name3__(&mut self, s:&str, idx:usize) -> Result2_ {
-		self.name2_ = idx;
 		if s.is_empty() {
 			return result2_::err2__("名非法")
 		}
@@ -74,24 +65,26 @@ impl Cnt_ {
 		ok__()
 	}
 	
-	fn hello__(&mut self, rem:&str, idx:usize, has:&mut bool) -> Result2_ {
-		if self.max2_ == core::usize::MAX {
+	fn hello__(&mut self, rem:&str, has:&mut bool) -> Result2_ {
+		if self.max_.is_none() {
 			if let Some(i2) = t_::s2n__(rem) {
-				self.max3__(i2, idx);
+				self.max2__(i2);
 				*has = true;
 				return ok__()
 			}
-			//self.max2_ = Self::NO_;
 		}
-		if self.name2_ == core::usize::MAX {
-			self.name3__(rem, idx)?;
+		if self.start_.is_none() {
+			if let Some(i2) = t_::s2n__(rem) {
+				self.start2__(i2);
+				*has = true;
+				return ok__()
+			}
+		}
+		if self.name_.is_none() {
+			self.name2__(rem)?;
 			*has = true;
 		}
 		ok__()
-	}
-	fn next__(&mut self) -> bool {
-		self.i_ += 1;
-		self.i_ <= self.max_
 	}
 }
 
@@ -108,28 +101,28 @@ pub trait Item1_ : code_::Item_ {
 			{
 				let mut rem = String::new();
 				let cnt2 = self.cnt2__();
+				let mut v = vec![];
 				for (idx, i) in a.iter().enumerate() {
 					let (has, has2) = rem2_::text__(&i, &mut rem);
 					if has && has2 {
 						let mut has3 = false;
-						cnt2.hello__(&rem, idx, &mut has3)?;
+						cnt2.hello__(&rem, &mut has3)?;
 						if has3 {
+							v.push(idx);
 							continue
 						}
 						break
 					}
 				}
-				if cnt2.name2_ < Cnt_::NO_ {
-					a.remove(cnt2.name2_);
-				}
-				if cnt2.max2_ < Cnt_::NO_ {
-					a.remove(cnt2.max2_);
+				v.reverse();
+				for i in v {
+					a.remove(i);
 				}
 			}
 			{
 				let mut idx = 0;
 				while idx < a.len() {
-					if as_ref__!(a[idx]).kw__().id_ == keyword_::Id_::BeginRem2 /*|| idx < a.len() - 1*/ {
+					if as_ref__!(a[idx]).kw__().id_ == keyword_::Id_::BeginRem2 {
 						self.rems_push__(a.remove(idx));
 						continue
 					}
@@ -147,32 +140,56 @@ pub trait Item1_ : code_::Item_ {
 	fn a2__(&self) -> code_::ORL_ {t_::some__(&&self.codes__())}
 	fn s__(&self, ret:&mut String, w:&World_) {
 		ret.push_str(&self.kw__().s_);
-		if self.cnt__().max_ != core::usize::MAX {
-			w.rem__(&self.cnt__().max_.to_string(), ret);
+		if let Some(i) = self.cnt__().max_ {
+			w.rem__(&i.to_string(), ret);
+		}
+		if let Some(i) = self.cnt__().start_ {
+			w.rem__(&i.to_string(), ret);
 		}
 		if let Some(name) = &self.cnt__().name_ {
 			w.rem__(&name, ret);
 		}
 	}
 
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, ret:&mut result_::List_) -> Result2_ {
-		let mut cnt = Cnt_::new2(self.cnt__().max_, self.cnt__().name_.clone(),
-								self.cnt__().max2_, self.cnt__().name2_);
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let mut cnt = Cnt_::new2(self.cnt__().max_, self.cnt__().start_, self.cnt__().name_.clone());
 		{
 			let mut ret3 = result_::List_::new();
 			ret3.add2__(as_ref__!(env.w).kws_.begin_text_.clone());
-			self.rems__().hello__(env, wm, &mut ret3)?;
-			for i in &as_ref__!(ret3.end__().unwrap()).rem_ {
+			let ret3 = t__(ret3);
+			self.rems__().hello__(&code_::Env_::new6(ret3.clone(), env))?;
+			for i in &as_ref__!(as_ref__!(ret3).end__().unwrap()).rem_ {
 				let mut has = false;
-				cnt.hello__(i, 0, &mut has)?;
+				cnt.hello__(i, &mut has)?;
 				if has {
 					continue
 				}
+				return as_ref__!(env.w).no_rem2__(i)
 			}
 		}
-		while cnt.next__() {
+		let (max, use_i) = match cnt.max_ {
+			Some(i) => (i, true),
+			None => (core::usize::MAX - 1, cnt.name_.is_some())
+		};
+		let mut i = 0;
+		loop {
+			if use_i {
+				i += 1;
+				if i > max {
+					break
+				}
+			}
 			if let Some(name) = &cnt.name_ {
-				qv_::val__(&name, &cnt.i_.to_string(), env.q.clone(), env.w.clone());
+				let i = if let Some(i2) = cnt.start_ {
+					if i2 < 0 {
+						(i as i32 + i2).to_string()
+					} else {
+						(i + i2 as usize).to_string()
+					}
+				} else {
+					i.to_string()
+				};
+				qv_::val__(&name, &i, env.q.clone(), env.w.clone());
 			}
 			let mut act = 0;
 			let mut ok__ = |i| {
@@ -183,14 +200,14 @@ pub trait Item1_ : code_::Item_ {
 				};
 				ok__()
 			};
-			result2_::item__(t_::o__(self.codes__()).hello__(env, wm, ret), |ret| {
+			result2_::item__(t_::o__(self.codes__()).hello__(env), |ret| {
 				if let Err((i, s, _)) = &ret {
 					if *i == self.break__() || *i == self.continue__() {
 						if s.is_empty() {
 							return ok__(*i)
 						}
 						if let Some(name) = &cnt.name_ {
-							if wm.dbg_.lc_ {
+							if as_ref__!(env.w).dbg_.lc_ {
 								lc3__!("({}={})", s, name);
 							}
 							if s == name {

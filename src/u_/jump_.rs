@@ -1,4 +1,4 @@
-use super::*;
+use super::{*, super::{as_ref__}};
 
 pub const     BREAK_:i32 = 2101;
 pub const  CONTINUE_:i32 = 2102;
@@ -12,10 +12,10 @@ pub const      QUIT_:i32 = 2004;
 pub trait Item_ : code_::Item_ {
 	fn i__(&self) -> i32;
 	
-	fn hello__(&self, env:&code_::Env_, wm:&mut WorldMut_, _ret:&mut result_::List_) -> Result2_ {
-		let mut ret2 = result_::List_::new();
-		t_::o__(&self.a__()).hello__(env, wm, &mut ret2)?;
-		let v = ret2.to_vec__();
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		let ret2 = t__(result_::List_::new());
+		t_::o__(&self.a__()).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+		let v = as_ref__!(ret2).to_vec__();
 		Err((self.i__(), if !v.is_empty() {
 			v[0].to_string()
 		} else {
