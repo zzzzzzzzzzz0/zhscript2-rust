@@ -3,6 +3,9 @@
 use super::{*, };
 use std::collections::HashMap;
 
+pub const ATTR_:&str = "属性";
+pub const ATTRNAME_:&str = "属性名";
+
 pub type I_ = Rc_<Option<Item_>>;
 type A_ = HashMap<String, String>;
 
@@ -11,9 +14,28 @@ pub fn i__(i:Option<Item_>) -> I_ {
 }
 
 pub fn get__(i:I_, name:&str, is_has:bool, ret:&mut result_::List_) -> bool {
-	let head = "属性";
-	if name.starts_with(head) {
-		let mut name = name[head.len()..].to_string();
+	if name.starts_with(ATTRNAME_) {
+		if let Ok(idx1) = name[ATTRNAME_.len()..].parse::<usize>() {
+			if idx1 > 0 {
+				let idx1 = idx1 - 1;
+				let mut i2 = i.clone();
+				while let Some(i) = &*i2 {
+					let idx = &i.idx_;
+					if idx1 < idx.len() {
+						if is_has {
+							ret.add__("1");
+						} else {
+							ret.add__(&idx[idx1]);
+						}
+						return true
+					}
+					i2 = i.up_.clone();
+				}
+			}
+		} 
+	}
+	if name.starts_with(ATTR_) {
+		let mut name = name[ATTR_.len()..].to_string();
 		let mut i2 = i;
 		while let Some(i) = &*i2 {
 			let a = &i.a_;
