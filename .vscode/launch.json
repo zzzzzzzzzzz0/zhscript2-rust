@@ -1,0 +1,201 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'zhscript2'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'zhscript2'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'zhscript2'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "-zhscript-src-is-code",
+                //"-zhscript-d-arg",
+                //"-zhscript-d-lc",
+                //"-zhscript-d-tree",
+                //"-zhscript-jhdh",
+                //"-zhscript-d-bp-arg-arg2-",
+                "-zhscript-d-s-expl-",
+                //"解释下代码显示‘参数’换行上代码、解释“分叉1先1：1。了。分叉1先1：1。了。如果1那么1。。。。。、“1”。‘窗口’。、、1。1”"
+                //"解释下代码这断点上代码、‘参数1’、"
+                //"定义啊【倒挂】以下代码解释下代码显示‘参数’换行上代码、‘参数0’、‘参数1’这断点、‘参数栈【2】’上代码。啊1、2。3啊1、2。"
+                //"定义啊以下代码解释下代码显示‘参数’换行上代码、‘参数0’、‘参数1’、‘参数栈【2】’上代码。啊1、2。3啊1、2。"
+                "算术（1+2-）3*4/5（%6^(7)"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "help",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "-zhscript-help",
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "src-",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "-zhscript-src-is-code", "-zhscript-d-tree",
+                "循环【4】【甲】先显示‘甲’甲换行。了。圈子【乙】先显示乙‘乙’换行。如果‘乙’大于3否则重来。了。"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "hw2", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "src2/hw2.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "print2", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "src2/print2.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "test def-sparg", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/def-sparg.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "test set-up",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/set-up.zs"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "test arg02",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=zhscript2",
+                    "--package=zhscript2"
+                ],
+                "filter": {
+                    "name": "zhscript2",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/arg02.zs", "1", "2", "3", "4"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "test text-2", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/text-2.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "test _1_", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/_1_.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+    ]
+}
