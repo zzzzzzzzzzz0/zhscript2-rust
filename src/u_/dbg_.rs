@@ -54,26 +54,66 @@ macro_rules! lc_kw__ {
 #[macro_export] macro_rules! lc5__ {($($arg:tt)*) => (lc_kw__!(&keyword_::Id_::U5, $($arg)*);)}
 #[macro_export] macro_rules! lc6__ {($($arg:tt)*) => (lc_kw__!(&keyword_::Id_::U7, $($arg)*);)}
 
+#[macro_export]
+macro_rules! dbp2__ {
+	($s:tt, $env:tt) => (
+		as_mut_ref__!($env.w).dbg_.bp2__($s) 
+	)
+}
+#[macro_export]
+macro_rules! dbp_c__ {
+	($s:tt, $env:tt) => (
+		as_ref__!($env.w).dbg_.bp_.contains($s)
+	)
+}
+#[macro_export]
+macro_rules! db_c__ {
+	($s:tt, $env:tt) => (
+		as_ref__!($env.w).dbg_.s_.contains($s)
+	)
+}
+
 #[derive(Default, Clone, Debug)]
 pub struct Dbg_ {
 	pub tree_:bool,
 	pub arg_:bool,
 	pub path_:bool,
 	pub lc_:bool,
+	pub lch_:bool,
 	pub par_lc_:bool,
 	pub parbp_:String,
 	pub bp_:String,
-	pub expl_:bool,
-	pub if_:bool,
+	pub bp2_:String,
+	pub s_:String,
 }
 
 impl Dbg_ {
-	pub fn tree__(&self, l:&code_::List_, w:&World_) {
+	pub fn bp2__(&mut self, s:&str) -> bool {
+		let b = self.bp2_.contains(s);
+		if b {
+			self.bp2_ = str::replace(&self.bp2_, s, "");
+		}
+		b
+	}
+	
+	pub fn tree__(&self, l:&code_::A_, to:usize, w:&World_) {
+		self.tree5__(l, 0, to, w)
+	}
+	pub fn tree4__(&self, l:&code_::A_, from:usize, w:&World_) {
+		self.tree5__(l, from, usize::MAX, w)
+	}
+	pub fn tree6__(&self, l:&code_::A_, w:&World_) {
+		self.tree5__(l, 0, usize::MAX, w)
+	}
+	pub fn tree5__(&self, l:&code_::A_, from:usize, to:usize, w:&World_) {
 		println!();
 		let mut wei:[char;64] = ['*';64];
-		self.tree2__(l, 0, &mut wei, false, w)
+		self.tree2__(l, from, to, 0, &mut wei, false, w)
 	}
-	fn tree2__(&self, l:&code_::List_, suojin:usize, wei:&mut [char], is_end2:bool, w:&World_) {
+	fn tree3__(&self, l:&code_::A_, suojin:usize, wei:&mut [char], is_end2:bool, w:&World_) {
+		self.tree2__(l, 0, usize::MAX, suojin, wei, is_end2, w)
+	}
+	fn tree2__(&self, l:&code_::A_, from:usize, to:usize, suojin:usize, wei:&mut [char], is_end2:bool, w:&World_) {
 		let len = l.len();
 		let mut i2 = 0;
 		let end__ = |kw:keyword_::ORI_, i2| {
@@ -83,12 +123,14 @@ impl Dbg_ {
 			if suojin == 0 {i2 == len && is_end} else {is_end2}
 		};
 		for i in l.iter() {
+			if i2 > to {break}
 			i2 += 1;
+			if i2 < from {continue}
 			let is_end = end__(as_ref__!(i).kw2__(), i2);
 			let is_end2 = end2__(is_end, i2);
 			self.tree2_i__(i, suojin, wei, is_end, i2 == 1, is_end2, w);
 			if let Some(a) = as_ref__!(i).a__() {
-				self.tree2__(a, suojin + 1, wei, is_end2, w)
+				self.tree3__(a, suojin + 1, wei, is_end2, w)
 			}
 
 			let is_end = end__(as_ref__!(i).kw3__(), i2);
@@ -97,14 +139,14 @@ impl Dbg_ {
 				self.tree_line__(" ", &kw.s_, suojin, wei, is_end, false, is_end2)
 			}
 			if let Some(a) = as_ref__!(i).a2__() {
-				self.tree2__(a, suojin + 1, wei, is_end2, w)
+				self.tree3__(a, suojin + 1, wei, is_end2, w)
 			}
 
 			if let Some(kw) = as_ref__!(i).kw3__() {
 				self.tree_line__(" ", &kw.s_, suojin, wei, i2 == len, false, is_end2)
 			}
 			if let Some(a) = as_ref__!(i).a3__() {
-				self.tree2__(a, suojin + 1, wei, is_end2, w)
+				self.tree3__(a, suojin + 1, wei, is_end2, w)
 			}
 		}
 	}
@@ -203,9 +245,19 @@ impl Dbg_ {
 	pub fn def__(&self, i:&def_::I_) {
 		self.begin_ansi_kw__(&keyword_::Id_::U10);
 		let i = as_ref__!(i);
-		let name = i.arg0__();
-		let argc = i.argc__();
-		p__!("{}({})", name, if argc > 99 {99} else {argc});
+		p__!("{}", i.name__());
+		if i.argc__() <= 99 || i.backarg_ > 0 {
+			p__!("(");
+		}
+		if i.argc__() <= 99 {
+			p__!("{}", i.argc__());
+		}
+		if i.backarg_ > 0 {
+			p__!(",{}", i.backarg_);
+		}
+		if i.argc__() <= 99 || i.backarg_ > 0 {
+			p__!(")");
+		}
 		end_ansi__();
 	}
 	
