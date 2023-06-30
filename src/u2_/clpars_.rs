@@ -1,10 +1,14 @@
 #![allow(dead_code)]
 
 use super::str_;
-use std::fmt::Write;
+use std::fmt::{self, Write};
 
-pub trait Typ2_ : core::fmt::Debug {
-	fn with__(&self, tag:&str, argv:&mut Vec<String>, item:&Item_) -> bool;
+pub trait Typ2_ : fmt::Debug {
+	fn s__(&self) -> &'static str;
+	fn c__(&self) -> char;
+	fn can_split__(&self) -> bool {true}
+	fn with__(&self, tag:&str, i:&str, argv:&mut Vec<String>) -> bool;
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {f.pad(self.s__())}
 }
 
 #[derive(Debug)]
@@ -26,7 +30,7 @@ pub enum Cb_ {
 
 pub struct Item_ {
 	pub tag_:String,
-	tagv_:Vec<String>,
+	pub tagv_:Vec<String>,
 	pub argc_:usize,
 	pub typ_:Typ_,
 	pub cb_:Cb_,
@@ -37,6 +41,10 @@ unsafe impl Send for Item_ {}
 unsafe impl Sync for Item_ {}
 
 pub const ARGC_Z_:usize = 1_000_000_000;
+
+pub const ARG_NE_:i32 = 250;
+pub const   HELP_:i32 = 251;
+pub const TAG_NO_:i32 = 252;
 
 impl Item_ {
 	//命名：tag、rem省，arg(c)、(t)yp、c(b)
@@ -102,27 +110,31 @@ impl Item_ {
 	}
 	pub fn new__(tag:&str, argc_:usize, typ_:Typ_, cb_:Cb_, rem:&str) -> Self {
 		Self {tag_:tag.to_string(),
-			tagv_:str_::split2__(tag, "|", false, true, true),
+			tagv_:if match &typ_ {
+				Typ_::X(x) => x.can_split__(),
+				_ => true,
+			} {str_::split2__(tag, "|", false, true, true)} else {vec![tag.to_string()]},
 			argc_, typ_, cb_, rem_:rem.to_string()}
 	}
 	pub fn tag__(&self, tag:&str, argv:&mut Vec<String>) -> i32 {
-		let v = &self.tagv_;
 		let mut i2 = -1;
-		for i in v.iter() {
+		for i in self.tagv_.iter() {
 			i2 += 1;
+			if i.is_empty() {continue}
 			if match &self.typ_ {
-				Typ_::Full => if i.is_empty() {false} else {tag == i},
-				Typ_::Starts => tag.starts_with(i),
+				Typ_::Full => tag == i,
+				Typ_::Starts => tag.starts_with(i), //与下皆不能像c版那样传截，影响及他
 				Typ_::Ends   => tag.  ends_with(i),
 				Typ_::Has    => tag.   contains(i),
-				Typ_::X(x) => {
-					x.with__(tag, argv, self)
-				}
+				Typ_::X(x) => x.with__(tag, i, argv),
 			} {
 				return i2;
 			}
 		}
 		-1
+	}
+	pub fn tag1__(&self) -> &str {
+		if self.tagv_.is_empty() {""} else {&self.tagv_[0]}
 	}
 }
 
@@ -132,6 +144,7 @@ pub struct List_ {
 }
 
 pub type A_ = dyn Iterator<Item = String>;
+pub type Result_ = std::result::Result<(), (i32, String)>;
 
 impl List_ {
 	pub fn new() -> Self {
@@ -163,74 +176,77 @@ impl List_ {
 		i2.tag_.is_empty() && i2.argc_ > 0 && i2.argc_ < ARGC_Z_
 	}
 
-	fn i5__(&self, i5:i32) {
-		if i5 == 251 {
-			print!("{}", self.help__());
-		}
-	}
-
-	pub fn for__(&self, a:&mut A_,
-			mut cb__:impl FnMut(&str, &Vec<String>, &Item_, u32) -> i32,
-			mut cb2__:impl FnMut(&str) -> i32) -> i32 {
+	/*pub fn for__(&self, a:&mut A_,
+			cb:impl FnMut(&str, &Vec<String>, &Item_, u32, u32) -> i32,
+			cb2:impl FnMut(&str) -> i32) -> i32 {
+		if let Err((i, _)) = self.for3__(a, cb, cb2) {i} else {0}
+	}*/
+	pub fn for3__(&self, a:&mut A_,
+			mut cb__:impl FnMut(&str, &Vec<String>, usize, &Item_, u32, u32) -> i32,
+			mut cb2__:impl FnMut(&str) -> i32) -> Result_ {
 		let mut argv = vec![];
+		let mut no0 = 0;
 		while let Some(i) = a.next() {
 			let mut i3 = 0;
 			argv.clear();
-			let mut cbx__ = |i2, i3:&mut u32, argv:&mut Vec<String>| -> i32 {
+			let mut cbx__ = |i2, i3:&mut u32, no0, argv:&mut Vec<String>| -> i32 {
+				let argc0 = argv.len();
 				*i3 += 1;
 				if *i3 == 1 {
 					self.add__(i2, a, argv);
 					loop {
-						let mut argc = i2.argc_;
-						if i2.argc_ >= ARGC_Z_ {
-							argc = i2.argc_ - ARGC_Z_;
-							if argc == 0 {
-								break;
-							}
+						let mut argc = if i2.argc_ >= ARGC_Z_ {i2.argc_ - ARGC_Z_} else {i2.argc_}  + argc0;
+						if argc == 0 {
+							break;
 						}
 						if self.can_1__(i2) {
 							argc -= 1
 						}
 						if argv.len() < argc {
-							return 250;
+							return ARG_NE_;
 						}
 						if true {
 							break;
 						}
 					}
 				}
-				let i5 = cb__(&i, &argv, i2, *i3);
-				self.i5__(i5);
-				i5
+				cb__(&i, &argv, argc0, i2, *i3, no0)
 			};
 			for i2 in self.a_.iter() {
 				let i4 = i2.tag__(&i, &mut argv);
 				if i4 >= 0 {
-					let i5 = cbx__(i2, &mut i3, &mut argv);
+					let i5 = cbx__(i2, &mut i3, 0, &mut argv);
 					if i5 != 0 {
-						return i5;
+						return self.err__(i5, i);
 					}
 				}
 			}
 			if i3 == 0 {
+				no0 += 1;
 				for i2 in self.a_.iter() {
 					if i2.tag_.is_empty() {
-						let i5 = cbx__(i2, &mut i3, &mut argv);
+						let i5 = cbx__(i2, &mut i3, no0, &mut argv);
 						if i5 != 0 {
-							return i5;
+							return self.err__(i5, i);
 						}
 					}
 				}
 				if i3 == 0 {
 					let i5 = cb2__(&i);
-					self.i5__(i5);
 					if i5 != 0 {
-						return i5;
+						return self.err__(i5, i);
 					}
 				}
 			}
 		}
-		0
+		Ok(())
+	}
+
+	fn err__(&self, i5:i32, i:String) -> Result_ {
+		Err((i5, match i5 {
+			HELP_ => self.help__(),
+			_ => i
+		}))
 	}
 
 	pub fn for2__(&self, a:&mut A_) {
