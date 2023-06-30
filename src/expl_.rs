@@ -1,4 +1,6 @@
 use super::u_::*;
+#[cfg(debug_assertions)]
+use super::db_c__;
 
 pub struct Item_ {
 	super_:code_::Item1_,
@@ -42,10 +44,10 @@ impl code_::Item_ for Item_ {
 		}
 
 		let src = &v[0];
-		let mut w = as_mut_ref__!(env.w);
-		let w2 = w.clone();
+		let w2 = as_ref__!(env.w).clone();
+		/*let mut w = as_mut_ref__!(env.w);
 		let mut codes = w.codes_cache2_.get__(src);
-		if codes.is_none() {
+		if codes.is_none() {*///
 			let mut v2 = vec![];
 			let mut buf = String::new();
 			for i in src.chars() {
@@ -63,22 +65,28 @@ impl code_::Item_ for Item_ {
 				}
 			}
 			self.add_n__(&mut buf, &mut v2)?;
-			
-			if w2.dbg_.expl_ {
+
+			#[cfg(debug_assertions)]
+			if db_c__!("-expl-", env) {
 				for i in &v2 {
 					lc3__!("\n{:?}", i);
 				}
 			}
-			w.codes_cache2_.set__(src, expl_::List_ {a_:v2});
-			codes = w.codes_cache2_.get__(src);
-		}
+			/*w.codes_cache2_.set__(src, expl_::List_ {a_:v2});
+			codes = w.codes_cache2_.get__(src);*/
+			let codes = expl_::List_ {a_:v2};//
+		//}
 		let mut i = 0;
-		let ret2 = codes.unwrap().z2__(&mut i);
-		if w2.dbg_.expl_ {
+		let ret2 = codes/*.unwrap()*/.z2__(&mut i);
+		#[cfg(debug_assertions)]
+		if db_c__!("-expl-", env) {
 			lc3__!("\n{:?}\n", ret2);
 		}
 		match ret2 {
 			Ok((n, _)) => {
+				if n.is_infinite() {
+					return result2_::err2__("溢出");
+				}
 				if v.len() > 1 {
 					let s2 = &v[1];
 					if let Some(i) = t_::s2n__(s2) {
