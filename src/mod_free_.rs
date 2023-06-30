@@ -25,15 +25,24 @@ impl code_::Item_ for Item_ {
 		for name in v {
 			let mut q2 = None;
 			let mut i2 = None;
+			let mut is_data = false;
 			{
-				if let Some(i) = as_ref__!(env.w).mods_.iter().position(|q| {
-					let is1 = as_ref__!(q).name_.contains(&name);
-					if is1 {
-						q2 = Some(q.clone());
+				let mut f__ = |mods:&Vec<qv_::T_>| {
+					if let Some(i) = mods.iter().position(|q| {
+						let is1 = as_ref__!(q).name_.contains(&name);
+						if is1 {
+							q2 = Some(q.clone());
+						}
+						is1
+					}) {
+						i2 = Some(i);
+						return true
 					}
-					is1
-				}) {
-					i2 = Some(i)
+					false
+				};
+				if !f__(&as_ref__!(env.w).mods_) {
+					is_data = true;
+					f__(&as_ref__!(env.w).datas_);
 				}
 			}
 			if let Some(i) = i2 {
@@ -42,7 +51,11 @@ impl code_::Item_ for Item_ {
 				if !on_free.is_empty() {
 					eval_::hello__(on_free, &code_::Env_::new2(q2.clone(), env))?;
 				}
-				as_mut_ref__!(env.w).mods_.remove(i);
+				if is_data {
+					as_mut_ref__!(env.w).datas_.remove(i);
+				} else {
+					as_mut_ref__!(env.w).mods_.remove(i);
+				}
 			}
 		}
 		ok__()
