@@ -1,66 +1,54 @@
-use super::{*, super::{as_mut_ref__}};
+use super::{*, equ_name_::equ_name__, super::{as_mut_ref__}};
 
-const ARG_:&str = "参数";
+pub const ARG_:&str = "参数";
+pub const ARGS_:&str = "参数栈";
+pub const ARGC_:&str = "参数数目";
 
-pub struct Arg_ {
-	super_:Item1_,
-}
-impl Arg_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>) -> Self {
-		Self {super_:Item1_::new(&kws, rems)}
-	}
-	pub fn with__(name:&str) -> bool {name == ARG_}
-
-	pub fn hello__(is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
-		if is_has {
-			ret.add__("1")
-		} else {
-			ret.add__(as_mut_ref__!(q).args_1__())
-		}
-		ok__()
-	}
-}
-impl code_::Item_ for Arg_ {
-	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
-	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARG_, ret, w)}
-	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
-			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
-			Err(e) =>
-				e,
-		}
-	}
-}
+pub const TOP_:&str = "顶";
+pub const UP_:&str = "上";
 
 pub struct Argi_ {
 	super_:Item1_,
-	i_:usize,
+	i_:i32,
 }
 impl Argi_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>, i_:usize) -> Self {
+	pub fn new(kws:&keyword_::List_, rems:Vec<String>, i_:i32) -> Self {
 		Self {super_:Item1_::new(&kws, rems), i_}
 	}
-	pub fn with__(name:&str) -> Option<usize> {
+	pub fn with__(name:&str) -> Option<i32> {
 		if name.starts_with(ARG_) {
-			if let Ok(i) = name[ARG_.len()..].parse::<usize>() {
+			if let Ok(i) = name[ARG_.len()..].parse::<i32>() {
 				return Some(i)
 			}
 		}
 		None
 	}
 
-	pub fn hello__(i:usize, is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
+	pub fn hello__(i:i32, is_has:bool, equ_name:bool, name:&str, q:qv_::T_, ret:&mut result_::List_) {
 		let q = as_ref__!(q);
 		let a = &as_ref__!(q.args_);
+		let i = t_::i2u__(i, a.len__());
 		if i <= a.len__() {
-			if is_has {
-				ret.add__("1")
-			} else {
-				a.ret__(i - 1, ret);
+			#[allow(clippy::never_loop)]
+			loop {
+				if is_has {
+					ret.add__("1");
+					break;
+				}
+				let i = i - 1;
+				if equ_name {
+					if let Some(s) = a.s3__(i) {
+						if equ_name__(&s, name, ret) {
+							break;
+						}
+						ret.add__(s);
+						break;
+					}
+				}
+				a.ret__(i, ret);
+				break;
 			}
 		}
-		ok__()
 	}
 }
 impl code_::Item_ for Argi_ {
@@ -69,9 +57,11 @@ impl code_::Item_ for Argi_ {
 		self.super_.s__(&format!("{}{}", ARG_, self.i_), ret, w)
 	}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
-			Ok(q2) =>
-				Self::hello__(self.i_, false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
+		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+			Ok(q2) => {
+				Self::hello__(self.i_, false, false, "", q2.unwrap(), &mut as_mut_ref__!(env.ret));
+				ok__()
+			}
 			Err(e) =>
 				e,
 		}
@@ -80,27 +70,46 @@ impl code_::Item_ for Argi_ {
 
 pub struct Arg0_ {
 	super_:Item1_,
+	zero_:String,
 }
 impl Arg0_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>) -> Self {
-		Self {super_:Item1_::new(&kws, rems)}
+	pub fn new(kws:&keyword_::List_, rems:Vec<String>, zero:&str) -> Self {
+		Self {super_:Item1_::new(&kws, rems), zero_:zero.to_string()}
 	}
-	pub fn hello__(is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
+	pub fn hello__(zero:&str, is_has:bool, q:qv_::T_, ret:&mut result_::List_) -> Result2_ {
 		if is_has {
 			ret.add__("1")
 		} else {
-			ret.add__(&as_ref__!(q).src_)
+			match zero {
+				"0" | "00" => {
+					let q = as_ref__!(q);
+					if !q.arg0_.is_empty() {
+						ret.add__(&q.arg0_);
+					} else if zero == "0" || q.src_is_file_ {
+						ret.add__(&q.src_);
+					}
+				}
+				"000" => {
+					for i in &as_ref__!(q).name_ {
+						if !ret.is_empty() {
+							ret.add__('+');
+						}
+						ret.add__(i);
+					}
+				}
+				_ => {}
+			}
 		}
 		ok__()
 	}
 }
 impl code_::Item_ for Arg0_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
-	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(&[ARG_, "0"].concat(), ret, w)}
+	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(&[ARG_, &self.zero_].concat(), ret, w)}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
+				Self::hello__(&self.zero_, false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
 			Err(e) =>
 				e,
 		}
