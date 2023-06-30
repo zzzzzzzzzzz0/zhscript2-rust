@@ -51,7 +51,7 @@ impl Item_ {
 				clpars_::Item_::new("-h|--help"),
 				clpars_::Item_::new0(),
 			]);
-			match cp.for__(&mut v2.into_iter(), |tag, argv, _item, _i3| {
+			world_::clpars_ret__(cp.for3__(&mut v2.into_iter(), |tag, argv, _, _, _, _| {
 				match tag {
 					"-cd" => {cmd2.current_dir(&argv[0]);}
 					"-env" => {cmd2.env(&argv[0], &argv[1]);}
@@ -67,18 +67,11 @@ impl Item_ {
 							slave_mode2 = true;
 						}
 					}
-					"-h" | "--help" => return 251,
-					_ => {
-						err_src = [&as_ref__!(env.w).text__(tag), "无效选项"].concat();
-						return 1
-					}
+					"-h" | "--help" => return clpars_::HELP_,
+					_ => return clpars_::TAG_NO_
 				};
 				0
-			}, |_| 0) {
-				0 => {}
-				250 => return self.super_.err__("参数不足"),
-				_ => return self.super_.err__(&err_src),
-			}
+			}, |_| 0), ok__(), env.w.clone())?;
 		}
 
 		fn f3__(src:&str, args:Option<Vec<String>>, env:&code_::Env_) -> Result2_ {
@@ -93,6 +86,13 @@ impl Item_ {
 			}
 			eval_::hello__(src, &code_::Env_::new2(t__(q2), env))
 		}
+		let err__ = |e| {
+			let mut ret = as_mut_ref__!(env.ret);
+			ret.add__(255);
+			as_ref__!(env.w).dunhao__(&mut ret);
+			ret.add__(e);
+		};
+
 
 		if mode.is_empty() && (!out_src.is_empty() || !err_src.is_empty()) {
 			mode = "r"
@@ -105,6 +105,7 @@ impl Item_ {
 						.stderr(Stdio::piped())
 						.spawn() {
 					Ok(mut child) => {
+						let pid = child.id();
 						let stdin = child.stdin.as_mut().expect("! stdin");
 						let mut f2__ = |src, args| {
 							let ret3 = t__(result_::List_::new());
@@ -118,7 +119,7 @@ impl Item_ {
 							}
 							ok__()
 						};
-						f2__(&slave_init_src, None)?;
+						f2__(&slave_init_src, Some(vec![pid.to_string()]))?;
 						if slave_mode2 {
 							let mut obj:Obj_ = Default::default();
 							obj.i_ = child.stdin;
@@ -157,8 +158,7 @@ impl Item_ {
 						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
-						as_mut_ref__!(env.ret).add__(e);
+						err__(e);
 					}
 				},
 			"r" =>
@@ -171,7 +171,7 @@ impl Item_ {
 									Ok(s) => as_mut_ref__!(env.ret).add__(s),
 									Err(e) => eprintln!("{}", e),
 								}
-							} else if src == "0" {} else {
+							} else {
 								let br = BufReader::new(v);
 								for line in br.lines() {
 									match line {
@@ -187,16 +187,17 @@ impl Item_ {
 						};
 						if out_src == "0" {
 							io::stdout().write_all(&output.stdout).unwrap();
+						} else {
+							f__(&out_src, &output.stdout)?;
 						}
-						f__(&out_src, &output.stdout)?;
 						if err_src == "0" {
 							io::stderr().write_all(&output.stderr).unwrap();
+						} else {
+							f__(&err_src, &output.stderr)?;
 						}
-						f__(&err_src, &output.stderr)?;
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
-						as_mut_ref__!(env.ret).add__(e);
+						err__(e);
 					}
 				},
 			_ =>
@@ -205,8 +206,7 @@ impl Item_ {
 						self.exitcode__(st.code(), &as_ref__!(env.w), &mut as_mut_ref__!(env.ret));
 					}
 					Err(e) => {
-						as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
-						as_mut_ref__!(env.ret).add__(e);
+						err__(e);
 					}
 				}
 		}
@@ -253,16 +253,19 @@ impl code_::Item_ for Item_ {
 
 		let ret2 = as_ref__!(ret2);
 		if let Some(ret3) = self.obj__(&ret2, core::usize::MAX, |obj, ret2, end| {
+			let err__ = |e| {
+				let mut ret = as_mut_ref__!(env.ret); /*鼓励清晰？分开写大小小*/
+				ret.add__(e);
+			};
 			if let Some(stdin) = obj.i_.as_mut() {
 				let v = ret2.to_vec3__(end);
 				for i in &v {
 					if let Err(e) = stdin.write_all(i.as_bytes()) {
-						eprintln!("{}", e);
-						//break
+						err__(e.to_string());
 					}
 				}
 			} else {
-				eprintln!("! stdin")
+				err__("! stdin".to_string())
 			}
 			ok__()
 		}) {
