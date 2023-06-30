@@ -29,12 +29,31 @@ impl code_::Item_ for Item_ {
 			let s = &v[0];
 			let mut pf = false;
 			let mut ep = false;
+			let mut can_redir = true;
 			for i in v.iter().skip(1) {
 				let i:&str = i;
 				match i {
 					"" => pf = true,
 					"错" => ep = true,
+					"原" => can_redir = false,
 					_ => return self.super_.err__(&[&as_ref__!(env.w).text__(i), "无效选项"].concat())
+				}
+			}
+			if can_redir {
+				let mut ret = result_::List_::new();
+				let mut q = Some(env.q.clone());
+				loop {
+					if q.is_none() {break;}
+					let q2 = q.unwrap();
+					let q2 = as_ref__!(q2);
+					if q2.defs_.get__(&self.kw__().s_, false, &mut ret) {
+						if let result_::Val_::S(src) = &*as_ref__!(as_ref__!(ret.a_[0]).val_) {
+							let q = Qv_::new2(Some(env.q.clone()));
+							as_mut_ref__!(q.args_).add__(s);
+							return eval_::hello__(&src, &code_::Env_::new2(t__(q), env));
+						}
+					}
+					q = q2.up_.clone();
 				}
 			}
 			if ep {
@@ -45,8 +64,12 @@ impl code_::Item_ for Item_ {
 			if pf {
 				t_::pf__();
 			}
-			if env.gd.guandao_jie_ {
-				as_mut_ref__!(env.ret).add__(s);
+			for c in env.gd.guandao_jie_.chars() {
+				match c {
+					'1' =>
+						as_mut_ref__!(env.ret).add__(s),
+					_ => return as_ref__!(env.w).no_guandaojie__(c)
+				}
 			}
 		}
 		ok__()
