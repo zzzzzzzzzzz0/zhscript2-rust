@@ -1,23 +1,24 @@
 use super::{*, super::{as_ref__}};
 
-const ARGS_:&str = "参数栈";
-
 pub struct Args_ {
 	super_:Item1_,
 	begin_:i32,
 	end_:i32,
+	line_:bool,
 }
 
 impl Args_ {
-	pub fn new(kws:&keyword_::List_, rems:Vec<String>, begin_:i32, end_:i32) -> Self {
-		Self {super_:Item1_::new(&kws, rems), begin_, end_}
+	pub fn new(kws:&keyword_::List_, rems:Vec<String>, begin_:i32, end_:i32, line_:bool) -> Self {
+		Self {super_:Item1_::new(&kws, rems), begin_, end_, line_}
 	}
-	pub fn with__(name:&str, rems:&mut Vec<String>) -> Option<(i32, i32)> {
+	pub fn with__(name:&str, rems:&mut Vec<String>) -> Option<(i32, i32, bool)> {
 		let mut begin = 1;
 		let mut end = core::i32::MAX;
 		let mut begin2 = core::usize::MAX;
 		let mut end2 = core::usize::MAX;
-		if name == ARGS_ {
+		let b1 = name == ARGS_;
+		let b2 = name == ARG_;
+		if b1 || b2 {
 			for (idx, i) in rems.iter().enumerate() {
 				if let Some(i) = t_::s2n__(&i) {
 					if begin2 == core::usize::MAX {
@@ -37,13 +38,13 @@ impl Args_ {
 			if begin2 != core::usize::MAX {
 				rems.remove(begin2);
 			}
-			Some((begin, end))
+			Some((begin, end, b2))
 		} else {
 			None
 		}
 	}
 	pub fn with2__(name:&str, rems:&Vec<String>) -> bool {
-		if name == ARGS_ {
+		if name == ARGS_ || name == ARG_ {
 			let mut i2 = 0;
 			for i in rems.iter() {
 				if t_::s2n__::<i32>(&i).is_some() {
@@ -57,42 +58,82 @@ impl Args_ {
 		} else {false}
 	}
 
-	pub fn hello__(is_has:bool, q:qv_::T_, begin:i32, end:i32, ret:&mut result_::List_) -> Result2_ {
-		let q = as_ref__!(q);
-		let ls = &as_ref__!(q.args_);
-		let a = &ls.a_;
-		if !a.is_empty() {
-			let len = ls.len__() + 2;
-			let begin2 = t_::i2u__(begin, len);
-			let end2 = t_::i2u__(end, len);
-			if end2 >= begin2 {
-				if is_has {
-					ret.add__("1")
-				} else {
-					let mut i2 = 1;
-					let mut len2 = 0;
-					for i in a {
-						if as_ref__!(i).dunhao__() {
-							i2 += 1;
-							if i2 == begin2 {
+	pub fn hello__(is_has:bool, q:qv_::T_, begin:i32, end:i32, line:bool, ret:&mut result_::List_) -> Result2_ {
+		{
+			let q = as_ref__!(q);
+			let ls = &as_ref__!(q.args_);
+			let a = &ls.a_;
+			if !a.is_empty() {
+				let begin2 = t_::i2u__(begin, ls.len__());
+				let end2 = t_::i2u__(end, ls.len__());
+				if end2 >= begin2 {
+					if is_has {
+						ret.add__("1");
+						return ok__()
+					}
+					if line {
+						if begin2 == 1 && end2 >= a.len() {
+						} else {
+							let mut s = String::new();
+							let mut s2 = String::new();
+							let mut i2 = 1;
+							let mut b = false;
+							let s2s = |s2:&mut String, b:&mut bool, s:&mut String| {
+								if *b {
+									result_::List_::s2s__(s2, b'1', s);
+									*b = false;
+								}
+							};
+							for i in a {
+								let i = as_ref__!(i);
+								if i.dunhao__() {
+									i2 += 1;
+									s2s(&mut s2, &mut b, &mut s);
+									continue
+								}
+								if i2 < begin2 {
+									continue
+								}
+								if i2 > end2 {
+									break
+								}
+								i.s__(&mut s2);
+								b = true;
+							}
+							s2s(&mut s2, &mut b, &mut s);
+							ret.add__(s);
+							return ok__()
+						}
+					} else {
+						let mut i2 = 1;
+						let mut len2 = 0;
+						for i in a {
+							if as_ref__!(i).dunhao__() {
+								i2 += 1;
+								if i2 == begin2 {
+									continue
+								}
+							}
+							if i2 < begin2 {
 								continue
 							}
+							if i2 > end2 {
+								break
+							}
+							ret.add4__(i.clone());
+							len2 += 1;
 						}
-						if i2 < begin2 {
-							continue
+						if len2 == 0 {
+							ret.pop_end__();
 						}
-						if i2 > end2 {
-							break
-						}
-						ret.add4__(i.clone());
-						len2 += 1;
-					}
-					if len2 == 0 {
-						ret.pop_end__();
+						return ok__()
 					}
 				}
-				return ok__()
 			}
+		}
+		if line {
+			ret.add__(as_mut_ref__!(q).args_1__());
+			return ok__()
 		}
 		ret.pop_end__();
 		ok__()
@@ -113,9 +154,9 @@ impl code_::Item_ for Args_ {
 		self.super_.s__(&s, ret, w)
 	}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, &mut as_mut_ref__!(env.ret)),
+				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, self.line_, &mut as_mut_ref__!(env.ret)),
 			Err(e) =>
 				e,
 		}
