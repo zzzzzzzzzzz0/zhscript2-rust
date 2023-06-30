@@ -1,5 +1,8 @@
 use super::{u_::*, *};
 
+pub const NO_ARG_:&str = "无参";
+pub const BACK_ARG_:&str = "倒挂";
+
 pub struct Item_ {
 	super_:set_::Item_,
 	sp_:usize,
@@ -7,7 +10,7 @@ pub struct Item_ {
 
 impl Item_ {
 	pub fn new(kws:&keyword_::List_) -> Self {
-		Self {super_:set_::Item_::new2(&kws.def_, &kws.equ_), sp_:code_::Item1_::split2_0__()}
+		Self {super_:set_::Item_::new2(&kws.def_, &kws.equ_), sp_:code_::split2_0__()}
 	}
 }
 
@@ -17,7 +20,7 @@ impl code_::Item_ for Item_ {
 
 	fn add__(&mut self, a:code_::List_) -> Result2_ {
 		self.super_.super_.chk_empty__(&a, "名缺")?;
-		code_::Item1_::split2_1__(&a, &mut self.sp_);
+		code_::split2_1__(&a, &mut self.sp_);
 		self.super_.add__(a)
 	}
 	fn add2__(&mut self, a:code_::List_) -> Result2_ {self.super_.add2__(a)}
@@ -27,14 +30,25 @@ impl code_::Item_ for Item_ {
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let mut name = String::new();
 		let mut argc = core::usize::MAX;
+		let mut backarg = 0;
 		let ret2 = t__(result_::List_::new());
 		let mut q2 = Some(env.q.clone());
-		code_::Item1_::split2_2__(self.a__(), self.sp_, &mut name, |rem| {
+		code_::split2_2__(self.a__(), self.sp_, &mut name, |rem| {
 			match rem {
-				"无参" => argc = 0,
+				NO_ARG_ => argc = 0,
 				_ => {
-					match self.super_.super_.qv4rem_1__(rem, |_| {
-						true
+					if rem.starts_with(BACK_ARG_) {
+						let s = &rem[BACK_ARG_.len()..];
+						backarg = if s.is_empty() {1} else {
+							match s.parse::<usize>() {
+								Ok(i) => i,
+								Err(e) => return result2_::err__(e.to_string())
+							}
+						};
+						return ok__()
+					}
+					match code_::qv4rem_1__(rem, |_| {
+						false
 					}, q2.clone().unwrap(), env.w.clone()) {
 						Ok(q3) => q2 = q3,
 						Err(e) => return e,
@@ -65,6 +79,6 @@ impl code_::Item_ for Item_ {
 		if !ret2.is_empty() {
 			argc = ret2.len__()
 		}
-		qv_::def__(&name, &ret3.s__(), argc, Some(&ret2), q2.unwrap(), env.w.clone())
+		qv_::def__(&name, &ret3.s__(), argc, backarg, Some(&ret2), q2.unwrap(), env.w.clone())
 	}
 }
