@@ -1,80 +1,12 @@
-use super::{*, super::{/*lc3__, lc5__, lc_kw__, p__,*/ as_ref__, as_mut_ref__}};
-use std::ops::Deref;
+use super::{*, super::{as_ref__, as_mut_ref__}};
+
+pub mod argname_;
+use argname_::*;
+pub mod backarg_;
 
 pub type ORL_<'a> = Option<&'a result_::List_>;
 pub type OW_ = Option<world_::T_>;
 pub type ORAN_ = Option<Rc_<ArgNames_>>;
-
-#[derive(Debug)]
-pub struct ArgName_ {
-	pub s_:String,
-	pub i_:usize,
-	pub is_ge_:bool,
-}
-
-#[derive(Debug)]
-pub struct ArgNames_ {
-	a_:Vec<ArgName_>,
-	pub has_ge_:bool,
-}
-
-impl Deref for ArgNames_ {
-	type Target = Vec<ArgName_>;
-	fn deref(&self) -> &Self::Target {&self.a_}
-}
-
-impl ArgNames_ {
-	pub fn new(a:ORL_, w:OW_) -> Result<Self, Result2_> {
-		let mut a_ = vec![];
-		let mut has_ge_ = false;
-		if let Some(a3) = a {
-			let mut s = String::new();
-			let mut is_ge = false;
-			let mut cnt = 0;
-			let mut empty = true;
-			let w = w.unwrap();
-			let w = as_ref__!(w);
-			let mut add__ = |s:&mut String, cnt:&mut usize, is_ge:&mut bool, empty:&mut bool| {
-				if !*empty {
-					let i = if *is_ge {0} else {
-						*cnt += 1;
-						*cnt - 1
-					};
-					/*if lc_ {
-						if *is_ge {
-							lc5__!("\n{}", s);
-						} else {
-							lc3__!("\n{},{}", s, i);
-						}
-					}*/
-					a_.push(ArgName_ {s_:s.to_string(), i_:i, is_ge_:*is_ge});
-					s.clear();
-					*is_ge = false;
-					*empty = true;
-				}
-			};
-			for i in a3.iter() {
-				let i = as_ref__!(i);
-				if i.dunhao__() {
-					add__(&mut s, &mut cnt, &mut is_ge, &mut empty);
-					continue
-				}
-				empty = false;
-				i.s__(&mut s);
-				for rem in &i.rem_ {
-					if rem == "隔" {
-						is_ge = true;
-						has_ge_ = true;
-						continue
-					}
-					return Err(w.no_rem2__(rem))
-				}
-			}
-			add__(&mut s, &mut cnt, &mut is_ge, &mut empty);
-		}
-		Ok(Self {a_, has_ge_})
-	}
-}
 
 #[allow(dead_code)]
 pub enum Val_ {
@@ -87,45 +19,46 @@ pub type I_ = Rc_<RefCell_<Item_>>;
 
 pub struct Item_ {
 	name_:String,
+	name0_:String,
 	names_:ORAN_,
 	pub val_:Val_,
 	argc_:usize,
-	arg0_:String,
+	pub backarg_:usize,
 	pub objs_:qv_::BJS_,
 }
 
 impl Item_ {
-	pub fn new(name:&str, val_:Val_, argc_:usize, names_:ORAN_) -> Self {
-		let mut arg0_ = name.to_string();
-		if let Some(names) = &names_ {
-			if names.has_ge_ {
-				for i in names.iter() {
-					arg0_ += if i.is_ge_ {
-						&i.s_
-					} else {
-						"."
-					};
-				}
+	#[allow(dead_code)]
+	pub fn new(name:&str, val:Val_, argc:usize, backarg:usize, names:ORAN_) -> Self {
+		Self::new2(Self::mk_arg0__(name, &names), name.to_string(), val, argc, backarg, names)
+	}
+	fn new2(name_:String, name0_:String, val_:Val_, argc_:usize, backarg_:usize, names_:ORAN_) -> Self {
+		Self {name_, val_, names_, argc_, backarg_, name0_, objs_:Rc_::new(RefCell_::new(vec![]))}
+	}
+	fn mk_arg0__(name:&str, names:&ORAN_) -> String {
+		if let Some(names) = &names {
+			if let Some(arg0) = Self::ch_arg0__(name, &names) {arg0} else {name.to_string()}
+		} else {name.to_string()}
+	}
+	fn ch_arg0__(name:&str, names:&ArgNames_) -> Option<String> {
+		if names.has_ge_ {
+			let mut arg0 = name.to_string();
+			for i in names.iter() {
+				arg0 += if i.is_ge_ {
+					&i.s_
+				} else {
+					"."
+				};
 			}
+			return Some(arg0);
 		}
-		Self {name_:name.to_string(), val_, names_, argc_, arg0_, objs_:Rc_::new(RefCell_::new(vec![]))}
+		None
 	}
 
 	pub fn name__(&self) -> &str {&self.name_}
 	pub fn names__(&self) -> ORAN_ {
 		self.names_.clone()
 	}
-	fn names2__(&mut self, a:ORL_, w:OW_) -> Result2_ {
-		match ArgNames_::new(a, w) {
-			Ok(names) => {
-				self.names_ = Some(Rc_::new(names));
-				ok__()
-			}
-			Err(e) =>
-				e,
-		}
-	}
-	pub fn arg0__(&self) -> &str {&self.arg0_}
 	pub fn argc__(&self) -> usize {self.argc_}
 
 	#[allow(dead_code)]	
@@ -145,23 +78,25 @@ impl List_ {
 		self.a_.push(Rc_::new(RefCell_::new(i)));
 	}
 	
-	pub fn val__(&mut self, name:&str, val:&str, argc:usize, names:def_::ORL_, w:def_::OW_) -> Result2_ {
-		self.val2__(name, def_::Val_::S(val.to_string()), argc, names, w)
+	pub fn val__(&mut self, name:&str, val:&str, argc:usize, backarg:usize, names:def_::ORL_, w:def_::OW_) -> Result2_ {
+		self.val2__(name, def_::Val_::S(val.to_string()), argc, backarg, names, w)
 	}
-	pub fn val2__(&mut self, name:&str, val:def_::Val_, argc:usize, names:def_::ORL_, w:def_::OW_) -> Result2_ {
-		if let Some(i) = self.a_.iter().find(|i| {as_ref__!(i).name__() == name}) {
+	pub fn val2__(&mut self, name:&str, val:def_::Val_, argc:usize, backarg:usize, names:def_::ORL_, w:def_::OW_) -> Result2_ {
+		let names = match ArgNames_::new(names, w) {
+			Ok(names) => Some(Rc_::new(names)),
+			Err(e) => {
+				return e
+			}
+		};
+		let name1 = Item_::mk_arg0__(name, &names);
+		if let Some(i) = self.a_.iter().find(|i| {as_ref__!(i).name_ == name1}) {
 			let mut di = as_mut_ref__!(i);
 			di.val_ = val;
-			di.names2__(names, w)?;
+			di.names_ = names;
 			di.argc_ = argc;
+			di.backarg_ = backarg;
 		} else {
-			let names = match ArgNames_::new(names, w) {
-				Ok(names) => Some(Rc_::new(names)),
-				Err(e) => {
-					return e
-				}
-			};
-			self.add__(Item_::new(name, val, argc, names));
+			self.add__(Item_::new2(name1, name.to_string(), val, argc, backarg, names));
 		}
 		ok__()
 	}
@@ -173,8 +108,8 @@ impl List_ {
 			} else {
 				let i = as_ref__!(i);
 				ret.add__(match &i.val_ {
-					Val_::S(s) => &s,
-					Val_::Si(s) => &s,
+					Val_::S(s) => s,
+					Val_::Si(s) => s,
 					Val_::F(_) => "",
 				})
 			}
@@ -184,14 +119,14 @@ impl List_ {
 		}
 	}
 	
-	pub fn find__(&self, cs:&[char], from:usize, can_eq:bool, _no_self:bool, paichu:&[String]) -> Option<(usize, usize, I_)> {
+	pub fn find__(&self, cs:&[char], from:usize, can_eq:bool, _:bool, paichu:&[String]) -> Option<(usize, usize, I_)> {
 		let mut len = 0;
 		if let Some(i) = self.a_.iter().find(|i| {
 			let i = as_ref__!(i);
-			if paichu.iter().any(|i2| i2 == i.arg0__()) {
+			if paichu.iter().any(|i2| *i2 == i.name_) {
 				return false
 			}
-			if let Some((idx2, eq)) = t_::with__(cs, i.name__(), from) {
+			if let Some((idx2, eq)) = t_::with__(cs, &i.name0_, from) {
 				if can_eq || !eq {
 					len = idx2;
 					return true
