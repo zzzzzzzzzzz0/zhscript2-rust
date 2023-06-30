@@ -20,10 +20,12 @@ impl<'a> Layer_ {
 		Layer_ {i_, kw_, ret_0_, up_}
 	}
 
-	pub fn i1__(&self, kw:keyword_::RI_, mut2:&mut Mut2_, kws:&keywords_::A_, dbg:&Dbg_) -> bool {
-		mut2.dbg_parbp__(dbg, "-l1-", true);
+	pub fn i1__(&self, kw:keyword_::RI_, kws:&keywords_::A_, mut2:&mut Mut2_, w:&World_) -> bool {
+		#[cfg(debug_assertions)]
+		mut2.bp__("-l1-", true, w);
 		let mut ret = self.i_;
-		if dbg.par_lc_ || mut2.dbg_parbp_ {
+		#[cfg(debug_assertions)]
+		if mut2.lc__(w) {
 			lc__!("({}{}{}/", kw.s_, ret, self.line__());
 		}
 		let mut must = false;
@@ -32,7 +34,8 @@ impl<'a> Layer_ {
 			keyword_::Id_::Douhao => {
 				self.for__(|c| {
 					if let Some(kw) = &c.kw_ {
-						if dbg.par_lc_ || mut2.dbg_parbp_ {
+						#[cfg(debug_assertions)]
+						if mut2.lc__(w) {
 							lc__!("{:?} ", kw.id_);
 						}
 						match kw.id_ {
@@ -72,7 +75,9 @@ impl<'a> Layer_ {
 									}
 								}
 								keyword_::Id_::Switch |
-								keyword_::Id_::For => {
+								keyword_::Id_::Switch2 |
+								keyword_::Id_::For |
+								keyword_::Id_::Range => {
 									ret = c.i_ - 1;
 								}
 								_ => {}
@@ -90,6 +95,26 @@ impl<'a> Layer_ {
 					false
 				});
 			}
+			keyword_::Id_::BeginBlock => {
+				let mut b = false;
+				self.for__(|c| {
+					if let Some(kw2) = &c.kw_ {
+						match kw2.id_ {
+							keyword_::Id_::Switch |
+							keyword_::Id_::Switch2 => if b {
+								must = true;
+								mut2.u_ = kw.s_.len();
+								return true
+							}
+							keyword_::Id_::BeginBlock => {
+								return true
+							}
+							_ => b = true,
+						}
+					}
+					false
+				});
+			}
 			keyword_::Id_::Equ => {
 				self.for__(|c| {
 					if let Some(kw) = &c.kw_ {
@@ -103,13 +128,18 @@ impl<'a> Layer_ {
 			}
 			_ => {
 				if kw.g_.if_ || kws.if_.contains(&kw) {
+					let mut ret2 = -1;
 					self.for__(|c| {
 						if let Some(kw) = &c.kw_ {
 							match kw.id_ {
-								keyword_::Id_::If |
+								keyword_::Id_::If => {
+									if ret_0__(&c.ret_0_) == 1 {
+										ret = if ret2 != -1 {ret2} else {c.i_};
+										return true
+									}
+								}
 								keyword_::Id_::BeginBlock => {
-									ret = c.i_;
-									return true
+									ret2 = c.i_;
 								}
 								_ => {}
 							}
@@ -130,7 +160,8 @@ impl<'a> Layer_ {
 				}
 			}
 		}
-		if dbg.par_lc_ || mut2.dbg_parbp_ {
+		#[cfg(debug_assertions)]
+		if mut2.lc__(w) {
 			lc__!("{}{})\n", ret, t_::b__(must));
 		}
 		if ret < self.i_ {
@@ -145,6 +176,7 @@ impl<'a> Layer_ {
 		false
 	}
 
+	#[cfg(debug_assertions)]
 	fn line__(&self) -> String {
 		let mut ret = String::new();
 		self.for__(|c| {
