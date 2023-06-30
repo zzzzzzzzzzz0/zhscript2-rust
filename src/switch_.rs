@@ -1,4 +1,6 @@
 use super::u_::*;
+#[cfg(debug_assertions)]
+use super::db_c__;
 
 pub struct Item_ {
 	pub super_:code_::Item1_,
@@ -6,11 +8,13 @@ pub struct Item_ {
 	pub case_:code_::OL_,
 	from_:Vec<(usize, usize)>,
 	default_:Option<usize>,
+	one_:bool,
 }
 
 impl Item_ {
-	pub fn new(kws:&keyword_::List_) -> Self {
-		Self {super_:code_::Item1_::new(&kws.switch_), a_:None, case_:None, from_:vec![], default_:None}
+	pub fn new(kws:&keyword_::List_, one_:bool) -> Self {
+		Self {super_:code_::Item1_::new(if one_ {&kws.switch2_} else {&kws.switch_}),
+			a_:None, case_:None, from_:vec![], default_:None, one_}
 	}
 }
 
@@ -34,29 +38,25 @@ impl code_::Item_ for Item_ {
 			let mut i3 = 0;
 			let r_a2 = as_ref__!(a2);
 			let a3 = r_a2.a__().unwrap();
-			/*if a3.len() < 4 {
-				return result2_::err2__("无体")
-			}*/
-			let mut default__ = |idx| {
+			let mut defaultf = |idx| {
 				if default != core::usize::MAX {
 					return result2_::err2__("只能有一个其他")
 				}
 				default = idx - 1;
-				//lc3__!("{:?}",default);
 				ok__()
 			};
+			let mut add = |i3, idx| {
+				let item = (i3, idx - 1);
+				self.from_.push(item);
+			};
 			for (idx, i) in a3.iter().enumerate() {
-				//lc3__!("\n{} {}{}",idx,i.s2__(),i.kw__().s_);
-				match as_ref__!(i).kw__().id_ {
-					keyword_::Id_::Jvhao => {
+				let i = as_ref__!(i);
+				match i.kw__().id_ {
+					keyword_::Id_::Jvhao /*| keyword_::Id_::Douhao*/ => {
 						match i2 {
 							0 => {}
-							1 => {default__(idx)?;}
-							_ => {
-								let item = (i3, idx - 1);
-								//lc5__!("{:?}",item);
-								self.from_.push(item);
-							}
+							1 => {defaultf(idx)?;}
+							_ => add(i3, idx)
 						}
 						i2 = 0;
 						i3 = idx + 1;
@@ -68,8 +68,8 @@ impl code_::Item_ for Item_ {
 			}
 			if i3 < a3.len() {
 				match i2 {
-					1 => {default__(i3 + 1)?;}
-					_ => self.from_.push((i3, a3.len()))
+					1 => {defaultf(i3 + 1)?;}
+					_ => add(i3, a3.len())
 				}
 			}
 		}
@@ -89,40 +89,66 @@ impl code_::Item_ for Item_ {
 		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
 		let v = as_ref__!(ret2).to_vec__();
 		let s = if v.is_empty() {""} else {&v[0]};
-		let case0 = as_ref__!(t_::o__(&self.case_)[0]);
-		let case = case0.a__().unwrap();
-		//w.dbg_.tree__(case, w);
+		let case = as_ref__!(t_::o__(&self.case_)[0]);
+		let case = case.a__().unwrap();
 
-		let gd2 = code_::Opt_ {jvhao_:true, dunhao_:true, ..env.gd};
 		let gd3 = code_::Opt_ {jvhao_:true, dunhao_:false, ..env.gd};
 
-		let mut need_default = true;
+		let mut case2 = vec![];
 		let mut idx = 0;
 		while idx < self.from_.len() {
 			let (mut from, to) = self.from_[idx];
-			//lc3__!("\n({}-{})",from,to);
-			while from < to {
-				let ret3 = t__(result_::List_::new());
-				case.hello2__(&mut from, to, &code_::Env_::new7(gd2, ret3.clone(), env))?;
-				let mut s2 = String::new();
-				for i in as_ref__!(ret3).iter() {
-					as_ref__!(i).s_inc_some_kw__(&mut s2)
-				}
-				if as_ref__!(env.w).dbg_.lc_ {
-					lc3__!("\n({}={})", s, s2);
-				}
+
+			let ret3 = t__(result_::List_::new());
+			case.hello2__(&mut from, to, &code_::Env_::new7(gd3, ret3.clone(), env))?;
+			let mut s2 = String::new();
+			let casehe = |s2:&mut String, case2:&mut Vec<(usize, usize)>| {
 				if s2 == s {
-					let mut from2 = to;
-					//lc3__!("({})",from2);
-					need_default = false;
-					case.hello2__(&mut from2, core::usize::MAX, &code_::Env_::new3(gd3, env))?;
+					let i = (to, if idx + 1 == self.from_.len() {
+						core::usize::MAX
+					} else {
+						self.from_[idx + 1].0
+					});
+					#[cfg(debug_assertions)]
+					if db_c__!("-if-", env) {
+						lc3__!("{:?}", i);
+					}
+					case2.push(i);
 				}
+				s2.clear();
+			};
+			let end = as_ref__!(ret3).len();
+			if end > 0 {
+				let end = end - 1;
+				for (idx3, i) in as_ref__!(ret3).iter().enumerate() {
+					let dunhao = as_ref__!(i).dunhao__();
+					if !dunhao {
+						as_ref__!(i).s_inc_some_kw__(&mut s2);
+					}
+					if dunhao || idx3 == end {
+						#[cfg(debug_assertions)]
+						if db_c__!("-if-", env) {
+							lc3__!("\n({} {}={})", idx, s, s2);
+						}
+						casehe(&mut s2, &mut case2);
+					}
+				}
+			} else {
+				casehe(&mut s2, &mut case2);
 			}
+
 			idx += 1;
 		}
-		if need_default {
+		if case2.is_empty() {
 			if let Some(mut i) = self.default_ {
 				case.hello2__(&mut i, core::usize::MAX, &code_::Env_::new3(gd3, env))?;
+			}
+		} else {
+			if self.one_ && case2.len() > 1 {
+				return result2_::err2__("非唯一");
+			}
+			for (mut from2, to2) in case2 {
+				case.hello2__(&mut from2, to2, &code_::Env_::new3(gd3, env))?;
 			}
 		}
 		ok__()
