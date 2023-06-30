@@ -3,16 +3,22 @@ use super::u_::*;
 pub struct Item_ {
 	kw_:keyword_::RI_,
 	a_:code_::OL_,
+	i_:i32,
 }
 
 impl Item_ {
-	pub fn new(kws:&keyword_::List_) -> Self {
-		Self {kw_:kws.continue_.clone(), a_:None}
+	pub fn new(kws:&keyword_::List_, i_:i32) -> Self {
+		Self {kw_:match i_ {
+			jump_::CONTINUE_  => kws.continue_.clone(),
+			jump_::CONTINUE2_ => kws.continue2_.clone(),
+			_ => panic!()
+		}, a_:None, i_}
 	}
 }
 
 impl jump_::Item_ for Item_ {
-	fn i__(&self) -> i32 {jump_::CONTINUE_}
+	fn i__(&self) -> i32 {self.i_}
+	fn b__(&self) -> bool {false}
 }
 
 impl code_::Item_ for Item_ {
