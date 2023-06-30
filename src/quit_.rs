@@ -13,6 +13,7 @@ impl Item_ {
 
 impl jump_::Item_ for Item_ {
 	fn i__(&self) -> i32 {jump_::QUIT_}
+	fn b__(&self) -> bool {true}
 }
 
 impl code_::Item_ for Item_ {

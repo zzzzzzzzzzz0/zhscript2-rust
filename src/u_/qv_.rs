@@ -1,35 +1,36 @@
-use super::{*, super::{as_ref__, as_mut_ref__}};
+use super::{*, equ_name_::EquName_, super::{var_::arg_::Argi_, as_ref__, as_mut_ref__}};
 
 pub type T_ = super::T_<Qv_>;
 
 pub fn val__(name:&str, val:&str, q:T_, w:world_::T_) {
-	val2__(name, result_::si__(val), false, false, q, w)
+	val2__(name, result_::si__(val), false, false, false, q, w)
 }
-pub fn val2__(name:&str, val_:result_::I_, is_alias:bool, is_priv:bool, q:T_, w:world_::T_) {
+pub fn val2__(name:&str, val_:result_::I_, is_alias:bool, is_priv:bool, gang_equ_name:bool, q:T_, w:world_::T_) {
 	for__(q, w, |q, _, _| {
-		as_mut_ref__!(q).vars_.val2__(name, val_.clone(), if is_alias {VarTyp_::Alias} else {VarTyp_::Val}, is_priv);
+		as_mut_ref__!(q).vars_.val2__(name, val_.clone(), if is_alias {VarTyp_::Alias} else {VarTyp_::Val},
+			is_priv, gang_equ_name);
 		Some(())
 	});
 }
 
-pub fn def__(name:&str, val:&str, argc:usize, names:def_::ORL_, q:T_, w:world_::T_) -> Result2_ {
+pub fn def__(name:&str, val:&str, argc:usize, backarg:usize, names:def_::ORL_, q:T_, w:world_::T_) -> Result2_ {
 	for__(q, w, |q, w, _| {
-		Some(as_mut_ref__!(q).defs_.val__(name, val, argc, names, Some(w)))
+		Some(as_mut_ref__!(q).defs_.val__(name, val, argc, backarg, names, Some(w)))
 	}).unwrap()
 }
 
-pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, env:&code_::Env_,
-		ret_alias:&mut result_::List_, q_get:&mut T_) -> Option<bool> {
+pub fn get__(name:&str, is_has:bool, equ_name:&EquName_, can_up:bool, no_self:bool, env:&code_::Env_,
+		ret_alias:&mut result_::List_, ret_equ_name:&mut EquName_, q_get:&mut T_) -> bool {
 	let ret2 = for2__(env.q.clone(), env.w.clone(), |q, _, no_self| {
 		let q2 = as_ref__!(q);
 		let mut ret = as_mut_ref__!(env.ret);
-		if q2.vars_.get__(name, is_has, no_self, &mut ret, ret_alias) {
+		if q2.vars_.get2__(name, is_has, equ_name, no_self, &mut ret, ret_alias, ret_equ_name) {
 			*q_get = q.clone();
-			return Some(true)
+			return Some(())
 		}
 		if q2.defs_.get__(name, is_has, &mut ret) {
 			*q_get = q.clone();
-			return Some(true)
+			return Some(())
 		}
 		if let Some(argnames) = &q2.argnames_ {
 			for i in argnames.iter() {
@@ -37,26 +38,15 @@ pub fn get__(name:&str, is_has:bool, can_up:bool, no_self:bool, env:&code_::Env_
 					continue
 				}
 				if name == i.s_ {
-					let args = as_ref__!(q2.args_);
-					if i.i_ < args.len__() {
-						if is_has {
-							ret.add__("1")
-						} else {
-							args.ret__(i.i_, &mut ret);
-						}
-					}
+					Argi_::hello__(i.i_, is_has, i.equ_name_, name, q.clone(), &mut ret);
 					*q_get = q.clone();
-					return Some(true)
+					return Some(())
 				}
 			}
 		}
 		None
 	}, !is_has && can_up, no_self);
-	if ret2.is_none() && is_has {
-		Some(false)
-	} else {
-		ret2
-	}
+	ret2.is_some()
 }
 
 pub fn find_def__(cs:&[char], from:usize, end:usize, paichu:&[String], q:T_, w:world_::T_) -> Option<(usize, usize, def_::I_)> {
@@ -72,7 +62,10 @@ pub fn find_def__(cs:&[char], from:usize, end:usize, paichu:&[String], q:T_, w:w
 pub fn for__<T>(q:T_, w:world_::T_, f:impl FnMut(T_, world_::T_, bool) -> Option<T>) -> Option<T> {
 	for2__(q, w, f, true, false)
 }
-pub fn for2__<T>(q:T_, w:world_::T_, mut f:impl FnMut(T_, world_::T_, bool) -> Option<T>, next:bool, no_self:bool) -> Option<T> {
+pub fn for2__<T>(q:T_, w:world_::T_, f:impl FnMut(T_, world_::T_, bool) -> Option<T>, next:bool, no_self:bool) -> Option<T> {
+	for3__(q, w, f, next, no_self, true)
+}
+pub fn for3__<T>(q:T_, w:world_::T_, mut f:impl FnMut(T_, world_::T_, bool) -> Option<T>, next:bool, no_self:bool, inc_mod:bool) -> Option<T> {
 	let mut i2 = 0;
 	let mut q2 = Some(q);
 	while let Some(q3) = &q2 {
@@ -91,9 +84,11 @@ pub fn for2__<T>(q:T_, w:world_::T_, mut f:impl FnMut(T_, world_::T_, bool) -> O
 			};
 		q2 = q5;
 	}
-	for q3 in &as_ref__!(w).mods_ {
-		let ret = f(q3.clone(), w.clone(), true);
-		if ret.is_some() { return ret }
+	if inc_mod {
+		for q3 in &as_ref__!(w).mods_ {
+			let ret = f(q3.clone(), w.clone(), true);
+			if ret.is_some() { return ret }
+		}
 	}
 	None
 }
@@ -132,6 +127,7 @@ pub struct Qv_ {
 	pub up_:Option<T_>,
 	pub on_free_:String,
 	
+	pub arg0_:String,
 	pub args_:super::T_<result_::List_>,
 	pub argnames_:OArgNames_,
 	args_to1_:bool,
@@ -149,23 +145,23 @@ impl Qv_ {
 		Self::new4("", up)
 	}
 	pub fn new3(name:&str, up:Option<T_>) -> Self {
-		Self::new6(vec![name.to_string()], "", None, up)
+		Self::new6(vec![name.to_string()], "", "", None, up)
 	}
 	pub fn new4(src:&str, up:Option<T_>) -> Self {
-		Self::new5(src, None, up)
+		Self::new6(vec![], src, "", None, up)
 	}
-	pub fn new5(src:&str, argnames:OArgNames_, up:Option<T_>) -> Self {
-		Self::new6(vec![], src, argnames, up)
+	pub fn new5(arg0:&str, argnames:OArgNames_, up:Option<T_>) -> Self {
+		Self::new6(vec![], "", arg0, argnames, up)
 	}
-	pub fn new6(name_:Vec<String>, src:&str, argnames_:OArgNames_, up_:Option<T_>) -> Self {
+	pub fn new6(name_:Vec<String>, src:&str, arg0:&str, argnames_:OArgNames_, up_:Option<T_>) -> Self {
 		Self {up_, on_free_:String::new(), vars_:var_::List_::new(), defs_:def_::List_::new(),
-			name_, src_:src.to_string(), src_is_file_:false,
+			name_, src_:src.to_string(), src_is_file_:false, arg0_:arg0.to_string(),
 			args_:t__(result_::List_::new()), argnames_, args_to1_:false, args_1_:String::new(),
 			objs_:None, objs_mut_:vec![],}
 	}
 	
 	pub fn simp_def__(&mut self, name:&str, val:&str) -> Result2_ {
-		self.defs_.val2__(name, def_::Val_::Si(val.to_string()), 0, None, None)
+		self.defs_.val2__(name, def_::Val_::Si(val.to_string()), 0, 0, None, None)
 	}
 	pub fn val__(&mut self, name:&str, val:&str) {
 		self.vars_.val__(name, val)
@@ -177,6 +173,10 @@ impl Qv_ {
 			as_mut_ref__!(self.args_).to1__(&mut self.args_1_)
 		}
 		&self.args_1_
+	}
+	pub fn args_1clear__(&mut self) {
+		self.args_to1_ = false;
+		self.args_1_.clear();
 	}
 	
 	#[allow(dead_code)]

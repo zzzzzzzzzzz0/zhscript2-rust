@@ -1,6 +1,9 @@
 use super::u_::*;
+#[cfg(debug_assertions)]
+use super::db_c__;
 
 pub const OK_:i32 = 3000;
+pub const CT_:i32 = 3001;
 
 pub struct Item_ {
 	pub super_:code_::Item1_,
@@ -87,25 +90,24 @@ impl Item_ {
 		}
 		0
 	}
-	fn cmp__(&self, cmp:&mut Cmp_, b:&mut bool, dbg:&Dbg_) {
+	fn cmp__(&self, cmp:&mut Cmp_, b:&mut bool, env:&code_::Env_) {
 		let mut i = 0;
 		let mut i2 = 0;
-		let no = core::usize::MAX;
-		let end = if cmp.left_val_.is_empty() {no} else {cmp.left_val_.len() - 1};
-		let end2 = if cmp.val_.is_empty() {no} else {cmp.val_.len() - 1};
+		const NO:usize = core::usize::MAX;
+		let end = if cmp.left_val_.is_empty() {NO} else {cmp.left_val_.len() - 1};
+		let end2 = if cmp.val_.is_empty() {NO} else {cmp.val_.len() - 1};
 		loop {
-			let rv = if end2 == no {""} else {&cmp.val_[i2]};
+			let rv = if end2 == NO {""} else {&cmp.val_[i2]};
 			if cmp.op_.id_ == self.undef_.id_ {
-				if dbg.if_ {
+				#[cfg(debug_assertions)]
+				if db_c__!("-if-", env) {
 					lc3__!("\n({}({})", t_::b__(*b), rv);
 				}
-				*b = match rv {
-					"" | "0" | "false" | "NULL" => false,
-					_ => true,
-				}
+				*b = t_::true__(rv)
 			} else {
-				let lv = if end == no {""} else {&cmp.left_val_[i]};
-				if dbg.if_ {
+				let lv = if end == NO {""} else {&cmp.left_val_[i]};
+				#[cfg(debug_assertions)]
+				if db_c__!("-if-", env) {
 					lc3__!("\n({}{}/{}-{}/{}", t_::b__(*b), i, end, i2, end2);
 					lc3__!("({}", lv);
 					lc5__!("{}", &cmp.op_.s_);
@@ -129,13 +131,14 @@ impl Item_ {
 			if cmp.not_ {
 				*b = !*b
 			}
-			if dbg.if_ {
+			#[cfg(debug_assertions)]
+			if db_c__!("-if-", env) {
 				lc3__!("{}{})", t_::b__(*b), t_::b__(cmp.not_));
 			}
 			if *b {
-				return
+				break
 			}
-			if (end == no || i == end) && (end2 == no || i2 == end2) {
+			if (end == NO || i == end) && (end2 == NO || i2 == end2) {
 				break
 			}
 			if i < end {
@@ -145,6 +148,8 @@ impl Item_ {
 				i2 += 1
 			}
 		}
+		cmp.not_ = false;
+		cmp.op_ = self.undef_.clone();
 	}
 	
 	fn b__(&self, b:&mut bool, env:&code_::Env_) -> Result2_ {
@@ -154,44 +159,64 @@ impl Item_ {
 		let mut idx = 0;
 		let mut cmp = Cmp_{left_val_:vec![], val_:vec![], op_:self.undef_.clone(),
 			not_:false, from_:0};
-		let env2 = &code_::Env_::new6(t__(result_::List_::new()), env);
+		let env2 = code_::Env_::new6(t__(result_::List_::new()), env);
+		let mut kuo = false;
+		let fcmp = |idx, cmp:&mut Cmp_, b:&mut bool, kuo:&mut bool| {
+			if *kuo {
+				*kuo = false;
+			} else {
+				cmp.mv__(true, codes, idx, &env2)?;
+				self.cmp__(cmp, b, env);
+			}
+			ok__()
+		};
 		while idx < codes.len() {
 			let i = &codes[idx];
 			let r_i = as_ref__!(i);
 			let kw = &r_i.kw__();
 			let id = &kw.id_;
 			if *id == keyword_::Id_::BeginBlock {
-				self.b2__(as_ref__!(i).a__().unwrap(), b, env)?;
+				kuo = true;
+				let ret = self.b2__(as_ref__!(i).a__().unwrap(), b, &env2);
+				if let Err((i, _, _, _)) = ret {
+					if i == CT_ {} else {return ret}
+				}
+				cmp.from_ += 1;
 			} else if let Some(kw2) = self.kws_.iter().find(|kw2| kw2.id_ == *id) {
 				if *id == self.or_.id_ || *id == self.and_.id_ {
-					cmp.mv__(codes, idx, &env2)?;
-					self.cmp__(&mut cmp, b, &as_ref__!(env.w).dbg_);
-					if as_ref__!(env.w).dbg_.if_ {
+					fcmp(idx, &mut cmp, b, &mut kuo)?;
+					#[cfg(debug_assertions)]
+					if db_c__!("-if-", env) {
 						lc3__!("\n({}", t_::b__(*b));
 						lc5__!("{}", kw.s_);
 						lc3__!(")");
 					}
-					if *id == self.or_.id_ {
-						if *b {
-							return result2_::n__(OK_)
+					if *id == self.or_.id_ && *b {
+						return result2_::n__(OK_)
+					}
+					if *id == self.and_.id_ && !*b {
+						loop {
+							idx += 1;
+							if idx >= codes.len() {break}
+							if as_ref__!(codes[idx]).kw__().id_ == keyword_::Id_::Or {break}
 						}
-					} else if !*b {
-							return result2_::n__(OK_)
+						cmp.from_ = idx;
+						kuo = true;
+						continue
 					}
 				} else if *id == self.not_.id_ {
 					cmp.not_ = !cmp.not_;
 				} else {
 					cmp.op_ = kw2.clone();
-					cmp.mv__(codes, idx, &env2)?;
+					cmp.mv__(false, codes, idx, &env2)?;
 					idx = cmp.from_;
 					continue
 				}
 			}
 			idx += 1;
 		}
-		cmp.mv__(codes, idx, &env2)?;
-		self.cmp__(&mut cmp, b, &as_ref__!(env.w).dbg_);
-		result2_::n__(OK_)
+		fcmp(idx, &mut cmp, b, &mut kuo)?;
+		result2_::n__(CT_)
 	}
 }
 
@@ -204,12 +229,13 @@ struct Cmp_ {
 }
 
 impl Cmp_ {
-	fn mv__(&mut self, codes:&code_::List_, idx:usize, env:&code_::Env_) -> Result2_ {
-		codes.hello2__(&mut self.from_, idx, &code_::Env_::new3(Default::default(), env))?;
+	fn mv__(&mut self, can:bool, codes:&code_::List_, end:usize, env:&code_::Env_) -> Result2_ {
+		codes.hello2__(&mut self.from_, end, &code_::Env_::new3(Default::default(), env))?;
 		
-		//self.left_val_ = self.val_;
-		self.left_val_.clear();
-		self.left_val_.append(&mut self.val_);
+		if can && !self.val_.is_empty() {
+			self.left_val_.clear();
+			self.left_val_.append(&mut self.val_);
+		}
 
 		self.val_ = as_mut_ref__!(env.ret).to_vec2__(false);
 		as_mut_ref__!(env.ret).clear();
@@ -235,25 +261,34 @@ impl code_::Item_ for Item_ {
 		self.else_ = Some(a);
 		ok__()
 	}
-	fn a__(&self) -> code_::ORL_ {t_::some__(&&self.a_)}
-	fn a2__(&self) -> code_::ORL_ {t_::some__(&&self.then_)}
+	fn a__(&self) -> code_::ORL_ {t_::some__(&self.a_)}
+	fn a2__(&self) -> code_::ORL_ {t_::some__(&self.then_)}
 	fn a3__(&self) -> code_::ORL_ {t_::some__(&self.else_)}
 
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let mut b = false;
 		result2_::item__(self.b__(&mut b, env), |i| {
-			if let Err((OK_, _, _)) = i {
-				ok__()
-			} else {
-				i
+			if let Err((i, _, _, _)) = i {
+				if i == OK_ || i == CT_ {
+					return ok__()
+				}
 			}
+			i
 		})?;
+		#[cfg(debug_assertions)]
+		if db_c__!("-if-", env) {
+			lc3__!("(");
+			lc5__!("{}", t_::b__(b));
+			lc3__!(")");
+		}
 		if b {
+			#[cfg(debug_assertions)]
 			if as_ref__!(env.w).dbg_.lc_ {
 				as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 			}
 			t_::o__(&self.then_).hello__(env)
 		} else {
+			#[cfg(debug_assertions)]
 			if as_ref__!(env.w).dbg_.lc_ {
 				as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw3__()));
 			}

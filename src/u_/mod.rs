@@ -14,7 +14,9 @@ mod var_;
 pub mod def_;
 pub mod eval_;
 pub mod expl_;
+pub mod equ_name_;
 
+//#[cfg(debug_assertions)]
 #[macro_use]
 pub mod dbg_;
 pub mod t_;
@@ -22,6 +24,7 @@ pub mod t_;
 use super::cfg_if;
 
 type Cfg_ = cfg_::Cfg_;
+//#[cfg(debug_assertions)]
 pub type Dbg_ = dbg_::Dbg_;
 pub type World_ = world_::World_;
 pub type Qv_ = qv_::Qv_;
@@ -35,15 +38,11 @@ pub fn ok__() -> Result2_ {Ok(())}
 
 cfg_if! {
 	if #[cfg(feature = "thread")] {
-
-pub type Rc_<T> = std::sync::Arc<T>;
-pub type RefCell_<T> = std::sync::RwLock<T>;
-
+		pub type Rc_<T> = std::sync::Arc<T>;
+		pub type RefCell_<T> = std::sync::RwLock<T>;
 	} else {
-
-pub type Rc_<T> = std::rc::Rc<T>;
-pub type RefCell_<T> = std::cell::RefCell<T>;
-
+		pub type Rc_<T> = std::rc::Rc<T>;
+		pub type RefCell_<T> = std::cell::RefCell<T>;
 	}
 }
 

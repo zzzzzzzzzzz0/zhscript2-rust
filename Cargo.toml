@@ -1,8 +1,12 @@
 [package]
 name = "zhscript2"
-version = "0.9.0"
+version = "3.6.30"
 authors = ["zzzzzzzzzzz <zzzzzzzzzzzgg@gmail.com>"]
 edition = "2018"
 
 [features]
 thread = []
+no_std = []
+
+[profile.release]
+strip = true

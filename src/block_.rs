@@ -22,6 +22,7 @@ impl code_::Item_ for Item_ {
 
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		t_::o__(&self.a_).hello__(&code_::Env_::new3(code_::Opt_ {jvhao_:false, ..env.gd}, env))?;
+		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {
 			as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.kw2__()));
 		}

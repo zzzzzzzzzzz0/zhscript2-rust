@@ -6,14 +6,14 @@ pub struct Item_ {
 }
 
 impl Item_ {
-	pub fn new(kws:&keyword_::List_, s:&str) -> Self {
-		Self {super_:code_::Item1_::new(&kws.undef_), s_:s.to_string()}
+	pub fn new(kws:&keyword_::List_, s_:String) -> Self {
+		Self {super_:code_::Item1_::new(&kws.undef_), s_}
 	}
 }
 
 impl code_::Item_ for Item_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
-	fn s__(&self, ret:&mut String, _w:&World_) {
+	fn s__(&self, ret:&mut String, _:&World_) {
 		ret.push_str(&self.s_);
 	}
 	fn s2__(&self) -> &str {&self.s_}

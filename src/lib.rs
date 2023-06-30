@@ -1,3 +1,4 @@
+#![cfg_attr(feature = "no_std", no_std)]
 pub mod u2_;
 #[macro_use]
 pub mod u_;
@@ -14,15 +15,13 @@ pub mod block_;
 pub mod for_;
 pub mod break_;
 pub mod continue_;
-pub mod range_;
-pub mod break2_;
-pub mod continue2_;
 pub mod return_;
 pub mod quit_;
 pub mod if_;
 pub mod load_;
 pub mod guandaodu_;
 pub mod guandaojie_;
+pub mod guandaojie2_;
 pub mod name_;
 pub mod mod_;
 pub mod switch_;

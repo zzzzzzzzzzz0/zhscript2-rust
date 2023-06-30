@@ -21,9 +21,9 @@ pub fn s2n__<T:std::str::FromStr>(s:&str) -> Option<T> {
 
 pub fn i2u__(i:i32, max:usize) -> usize {
 	if i >= 0 {i as usize} else {
-		let i = -i as usize;
-		if max >= i {
-			max - i
+		let i1 = -i as usize;
+		if max >= i1 {
+			max - i1 + 1
 		} else {
 			0
 		}
@@ -38,8 +38,16 @@ pub fn b__<'a>(b:bool) -> &'a str {
 	if b {"y"} else {"n"}
 }
 
+pub fn true__(s:&str) -> bool {
+	match s {
+		"" | "0" | "false" | "NULL" => false,
+		_ => true,
+	}
+}
+
 pub fn with__(cs:&[char], s2:&str, from:usize) -> Option<(usize, bool)> {
-	let cs2:Vec<char> = s2.chars().collect();
+	let cs2 = s2.chars();
+	let cs2:Vec<char> = cs2.collect();
 	let len2 = cs2.len();
 	let len = cs.len();
 	let mut idx2 = 0;

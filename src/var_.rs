@@ -1,10 +1,10 @@
-use super::{u_::*, rem2_, as_ref__};
+use super::{u_::{*, equ_name_::EquName_}, as_ref__};
 
 mod args_;
 use args_::*;
 mod argc_;
 use argc_::*;
-mod arg_;
+pub mod arg_;
 use arg_::*;
 pub mod simp_;
 
@@ -14,7 +14,7 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 	let mut rem = String::new();
 	let mut rems:Vec<String> = vec![];
 	for i in codes.iter() {
-		let (has, has2) = rem2_::text__(&i, &mut rem);
+		let (has, has2) = super::rem2_::text__(&i, &mut rem);
 		if has {
 			if has2 {
 				rems.push(rem.to_string());
@@ -35,18 +35,15 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 		}
 	}
 	if !bad {
-		if let Some((begin, end)) = Args_::with__(&name, &mut rems) {
-			return code_::oi__(Args_::new(kws, rems, begin, end))
+		if let Some((begin, end, line)) = Args_::with__(&name, &mut rems) {
+			return code_::oi__(Args_::new(kws, rems, begin, end, line))
 		}
 		if Argc_::with__(&name) {
 			return code_::oi__(Argc_::new(kws, rems))
 		}
-		if Arg_::with__(&name) {
-			return code_::oi__(Arg_::new(kws, rems))
-		}
 		if let Some(i) = Argi_::with__(&name) {
 			if i == 0 {
-				return code_::oi__(Arg0_::new(kws, rems))
+				return code_::oi__(Arg0_::new(kws, rems, &name[ARG_.len()..]))
 			} else {
 				return code_::oi__(Argi_::new(kws, rems, i))
 			}
@@ -81,19 +78,21 @@ impl Item1_ {
 		result2_::err__(["变量", &as_ref__!(w).text__(name), "不存在"].concat())
 	}
 	
-	
-	pub fn get__(&self, ret2:&result_::List_, is_has:bool, env:&code_::Env_) -> Result2_ {
+	pub fn get2__(&self, ret2:&result_::List_, is_has:bool, equ_name:&EquName_, env:&code_::Env_) -> Result2_ {
 		let mut name = String::new();
 		let mut rems:Vec<String> = vec![];
 		let mut q2 = Some(env.q.clone());
 		for i in ret2.iter() {
 			let i = as_ref__!(i);
 			i.s__(&mut name);
-			match self.super_.qv4rem__(&i.rem_, |i2| {
+			match code_::qv4rem_2__(&i.rem_, is_has, |i2| {
 				rems.push(i2.to_string());
 				true
 			}, q2.unwrap(), env.w.clone()) {
-				Ok(q3) => q2 = q3,
+				Ok(q3) => {
+					if q3.is_none() {return ok__()}
+					q2 = q3
+				}
 				Err(e) => return e,
 			}
 		}
@@ -110,11 +109,12 @@ impl Item1_ {
 
 		let get__ = |name, can_up| {
 			let mut ret_alias = result_::List_::new();
+			let mut equ_name2 = Default::default();
 			let env2 = code_::Env_::new2(q2.clone(), env);
 			let mut q2 = q2.clone();
-			if qv_::get__(name, is_has, can_up, can_up, &env2, &mut ret_alias, &mut q2).is_some() {
+			if qv_::get__(name, is_has, equ_name, can_up, can_up, &env2, &mut ret_alias, &mut equ_name2, &mut q2) {
 				if !ret_alias.is_empty() {
-					return Some(self.get__(&ret_alias, is_has, &code_::Env_::new2(q2, env)))
+					return Some(self.get2__(&ret_alias, is_has, &equ_name2, &code_::Env_::new2(q2, env)))
 				}
 				return Some(ok__())
 			}
@@ -130,20 +130,18 @@ impl Item1_ {
 				return ret3
 			}
 		} else {
-			if let Some((begin, end)) = Args_::with__(&name, &mut rems) {
-				return Args_::hello__(is_has, q2, begin, end, &mut as_mut_ref__!(env.ret))
+			if let Some((begin, end, line)) = Args_::with__(&name, &mut rems) {
+				return Args_::hello__(is_has, q2, begin, end, line, &mut as_mut_ref__!(env.ret))
 			}
 			if Argc_::with__(&name) {
 				return Argc_::hello__(is_has, q2, &mut as_mut_ref__!(env.ret))
 			}
-			if Arg_::with__(&name) {
-				return Arg_::hello__(is_has, q2, &mut as_mut_ref__!(env.ret))
-			}
 			if let Some(i) = Argi_::with__(&name) {
 				if i == 0 {
-					return Arg0_::hello__(is_has, q2, &mut as_mut_ref__!(env.ret))
+					return Arg0_::hello__(&name[ARG_.len()..], is_has, q2, &mut as_mut_ref__!(env.ret))
 				} else {
-					return Argi_::hello__(i, is_has, q2, &mut as_mut_ref__!(env.ret))
+					Argi_::hello__(i, is_has, equ_name.equ_, &equ_name.name_, q2, &mut as_mut_ref__!(env.ret));
+					return ok__()
 				}
 			}
 			if let Some(ret3) = get__(&name, true) {
@@ -151,7 +149,14 @@ impl Item1_ {
 			}
 		}
 		
-		self.not_exist__(&name, env.w.clone())
+		if is_has {
+			ok__()
+		} else {
+			self.not_exist__(&name, env.w.clone())
+		}
+	}
+	pub fn get__(&self, ret2:&result_::List_, is_has:bool, env:&code_::Env_) -> Result2_ {
+		self.get2__(ret2, is_has, &Default::default(), env)
 	}
 }
 
@@ -181,6 +186,7 @@ impl code_::Item_ for Item_ {
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let ret2 = t__(result_::List_::new());
 		t_::o__(&self.a_).hello__(&code_::Env_::new6(ret2.clone(), env))?;
+		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {
 			as_ref__!(env.w).dbg_.lc_kw__(t_::or__(&self.super_.super_.kw2__()));
 		}

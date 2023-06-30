@@ -1,7 +1,5 @@
 use super::{*, super::{as_ref__}};
 
-const ARGC_:&str = "参数数目";
-
 pub struct Argc_ {
 	super_:Item1_,
 }
@@ -26,7 +24,7 @@ impl code_::Item_ for Argc_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARGC_, ret, w)}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match self.super_.super_.qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
 			Err(e) =>

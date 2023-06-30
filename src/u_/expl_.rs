@@ -69,11 +69,14 @@ impl List_ {
 		let mut ret = self.z5__(idx)?;
 		while *idx < self.a_.len() {
 			let (_, c) = self.item__(*idx)?;
-			if c == '^' {
-				*idx += 1;
-				let ret2 = self.z4__(idx)?;
-				ret.0 = ret.0.powf(ret2.0);
-			} else {break}
+			match c {
+				'^' => {
+					*idx += 1;
+					let ret2 = self.z4__(idx)?;
+					ret.0 = ret.0.powf(ret2.0);
+				}
+				_ => break
+			}
 		}
 		Ok(ret)
 	}

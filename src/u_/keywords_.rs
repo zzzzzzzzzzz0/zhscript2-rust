@@ -38,7 +38,6 @@ impl A_ {
 					rem_.push(i.clone());
 					code_.push(i.clone());
 					data_.push(i.clone());
-					text2_.push(i.clone());
 				}
 				keyword_::Id_::BeginRem2 |
 				keyword_::Id_::EndRem2 => {
@@ -55,6 +54,7 @@ impl A_ {
 				keyword_::Id_::Brkpoint |
 				keyword_::Id_::ParBrkpoint => {
 					var_.push(i.clone());
+					rem2_.push(i.clone());
 				}
 				keyword_::Id_::BeginText |
 				keyword_::Id_::EndText => {
