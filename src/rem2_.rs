@@ -63,7 +63,7 @@ struct SimpItem_ {
 
 impl code_::Item_ for SimpItem_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.kw__()}
-	fn s__(&self, ret:&mut String, _w:&World_) {self.super_.s2__(&self.s_, ret)}
+	fn s__(&self, ret:&mut String, _:&World_) {self.super_.s2__(&self.s_, ret)}
 	fn s2__(&self) -> &str {&self.s_}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		Item1_::hello__(self, env)
@@ -83,21 +83,35 @@ trait Item1_ : code_::Item_ {
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		let ret2 = t__(result_::List_::new());
 		self.hello2__(&code_::Env_::new6(ret2.clone(), env))?;
+		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {
 			if let Some(kw) = self.kw2__() {
 				as_ref__!(env.w).dbg_.lc_kw__(&kw);
 			}
 		}
 		let ret2 = as_ref__!(ret2);
-		if let Some(i2) = as_mut_ref__!(env.ret).end__() {
-			for i in ret2.iter() {
-				let mut s = String::new();
-				as_ref__!(i).s__(&mut s);
-				as_mut_ref__!(i2).rem_.push(s.to_string())
+		let i2 = {
+			let mut ret = as_mut_ref__!(env.ret);
+			let a_empty = |ret:&mut result_::List_| {
+				let i2 = result_::si__("");
+				ret.add4__(i2.clone());
+				i2
+			};
+			if let Some(i2) = ret.end__() {
+				if as_ref__!(i2).dunhao__() || as_ref__!(i2).jvhao__() {
+					a_empty(&mut ret)
+				} else {
+					i2
+				}
+			} else {
+				a_empty(&mut ret)
 			}
-			ok__()
-		} else {
-			result2_::err2__("无法注解")
+		};
+		for i in ret2.iter() {
+			let mut s = String::new();
+			as_ref__!(i).s__(&mut s);
+			as_mut_ref__!(i2).rem_.push(s.to_string())
 		}
+		ok__()
 	}
 }
