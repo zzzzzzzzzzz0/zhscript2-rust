@@ -1,4 +1,4 @@
-// 67 14,8,13
+// 69 14,8,13
 
 #![allow(dead_code)]
 
@@ -28,14 +28,15 @@ pub enum Id_ {
 		And, Or,
 		Then, Else,
 	Switch,
-	Guandaodu, Guandaojie,
-	Mod, ModFree, Name,
+	Switch2,
 	Set, Alias, Def, Equ,
 	Has,
 	Eval, Load,
 	Expl,
 	Print,
 	Exec,
+	Mod, ModFree, Name,
+	Guandaodu, Guandaojie, Guandaojie2,
 	Brkpoint, ParBrkpoint,
 	U2, U3, U4, U5, U6, U7, U9, U10, U11,
 
@@ -116,11 +117,7 @@ pub struct List_ {
 	pub then_:RI_,
 	pub else_:RI_,
 	pub switch_:RI_,
-	pub guandaodu_:RI_,
-	pub guandaojie_:RI_,
-	pub mod_:RI_,
-	pub mod_free_:RI_,
-	pub name_:RI_,
+	pub switch2_:RI_,
 	pub set_:RI_,
 	pub alias_:RI_,
 	pub def_:RI_,
@@ -131,6 +128,12 @@ pub struct List_ {
 	pub expl_:RI_,
 	pub print_:RI_,
 	pub exec_:RI_,
+	pub mod_:RI_,
+	pub mod_free_:RI_,
+	pub name_:RI_,
+	pub guandaodu_:RI_,
+	pub guandaojie_:RI_,
+	pub guandaojie2_:RI_,
 
 	pub brkpoint_:RI_,
 	pub par_brkpoint_:RI_,
@@ -181,11 +184,7 @@ impl List_ {
 		let then           = Rc_::new(Item_::new    (Id_::Then,          "那么"));
 		let else1          = Rc_::new(Item_::new    (Id_::Else,          "否则"));
 		let switch1        = Rc_::new(Item_::new    (Id_::Switch,        "分叉"));
-		let guandaodu      = Rc_::new(Item_::new    (Id_::Guandaodu,     "管道堵"));
-		let guandaojie     = Rc_::new(Item_::new    (Id_::Guandaojie,    "管道接"));
-		let mod1           = Rc_::new(Item_::new    (Id_::Mod,           "模块"));
-		let mod_free       = Rc_::new(Item_::new    (Id_::ModFree,       "释放模块"));
-		let name           = Rc_::new(Item_::new    (Id_::Name,          "命名"));
+		let switch2        = Rc_::new(Item_::new    (Id_::Switch2,       "分支"));
 		let set            = Rc_::new(Item_::new    (Id_::Set,           "赋予"));
 		let alias          = Rc_::new(Item_::new    (Id_::Alias,         "别名"));
 		let def            = Rc_::new(Item_::new    (Id_::Def,           "定义"));
@@ -196,6 +195,12 @@ impl List_ {
 		let expl           = Rc_::new(Item_::new    (Id_::Expl,          "算术"));
 		let print          = Rc_::new(Item_::new    (Id_::Print,         "显示"));
 		let exec           = Rc_::new(Item_::new    (Id_::Exec,          "执行"));
+		let mod1           = Rc_::new(Item_::new    (Id_::Mod,           "模块"));
+		let mod_free       = Rc_::new(Item_::new    (Id_::ModFree,       "释放模块"));
+		let name           = Rc_::new(Item_::new    (Id_::Name,          "命名"));
+		let guandaodu      = Rc_::new(Item_::new    (Id_::Guandaodu,     "管道堵"));
+		let guandaojie     = Rc_::new(Item_::new    (Id_::Guandaojie,    "管道接"));
+		let guandaojie2    = Rc_::new(Item_::new    (Id_::Guandaojie2,   "管道节"));
 		let brkpoint       = Rc_::new(Item_::new    (Id_::Brkpoint,      "这断点"));
 		let par_brkpoint   = Rc_::new(Item_::new    (Id_::ParBrkpoint,   "这析断点"));
 
@@ -241,11 +246,7 @@ impl List_ {
 				then.clone(),
 				else1.clone(),
 				switch1.clone(),
-				guandaodu.clone(),
-				guandaojie.clone(),
-				mod1.clone(),
-				mod_free.clone(),
-				name.clone(),
+				switch2.clone(),
 				set.clone(),
 				alias.clone(),
 				def.clone(),
@@ -256,6 +257,12 @@ impl List_ {
 				expl.clone(),
 				print.clone(),
 				exec.clone(),
+				mod1.clone(),
+				mod_free.clone(),
+				name.clone(),
+				guandaodu.clone(),
+				guandaojie.clone(),
+				guandaojie2.clone(),
 				brkpoint.clone(),
 				par_brkpoint.clone(),
 
@@ -301,11 +308,7 @@ impl List_ {
 			then_:then,
 			else_:else1,
 			switch_:switch1,
-			guandaodu_:guandaodu,
-			guandaojie_:guandaojie,
-			mod_:mod1,
-			mod_free_:mod_free,
-			name_:name,
+			switch2_:switch2,
 			set_:set,
 			alias_:alias,
 			def_:def,
@@ -316,6 +319,12 @@ impl List_ {
 			expl_:expl,
 			print_:print,
 			exec_:exec,
+			mod_:mod1,
+			mod_free_:mod_free,
+			name_:name,
+			guandaodu_:guandaodu,
+			guandaojie_:guandaojie,
+			guandaojie2_:guandaojie2,
 			brkpoint_:brkpoint,
 			par_brkpoint_:par_brkpoint,
 
