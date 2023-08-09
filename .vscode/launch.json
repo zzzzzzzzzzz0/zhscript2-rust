@@ -120,7 +120,7 @@
             "name": "hw2", "type": "lldb", "request": "launch",
             "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
             "args": [
-                "src2/hw2.zs"
+                "src2/hw2.zhscript"
             ], "cwd": "${workspaceFolder}"
         }
         ,
@@ -128,7 +128,7 @@
             "name": "print2", "type": "lldb", "request": "launch",
             "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
             "args": [
-                "src2/print2.zs"
+                "src2/print2.zhscript"
             ], "cwd": "${workspaceFolder}"
         }
         ,
@@ -137,6 +137,14 @@
             "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
             "args": [
                 "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/def-sparg.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "test eval-jvhao", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/eval-jvhao.zs"
             ], "cwd": "${workspaceFolder}"
         }
         ,
@@ -195,6 +203,14 @@
             "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
             "args": [
                 "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/_1_.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
+        ,
+        {
+            "name": "test _1_b", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/_1_b.zs"
             ], "cwd": "${workspaceFolder}"
         }
     ]
