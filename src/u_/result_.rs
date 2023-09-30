@@ -88,7 +88,6 @@ impl Item_ {
 					match kw.id_ {
 						keyword_::Id_::Jvhao |
 						keyword_::Id_::Dunhao => return b',',
-						keyword_::Id_::Douhao => return b'.',
 						_ => if !kw5 {return 0}
 					}
 				}

@@ -28,8 +28,7 @@ pub fn backarg__(self4:&mut List_, n:usize, w:&World_, ret:&mut List_) -> Result
 			let idx = idx as usize;
 			if if let Val_::K(kw) = &*as_ref__!(as_ref__!(self4[idx]).val_) {
 				match kw.id_ {
-					keyword_::Id_::Jvhao |
-					keyword_::Id_::Douhao => true,
+					keyword_::Id_::Jvhao => true,
 					_ => false
 				}
 			} else {false} {

@@ -52,7 +52,7 @@ impl code_::Item_ for Item_ {
 			for (idx, i) in a3.iter().enumerate() {
 				let i = as_ref__!(i);
 				match i.kw__().id_ {
-					keyword_::Id_::Jvhao /*| keyword_::Id_::Douhao*/ => {
+					keyword_::Id_::Jvhao => {
 						match i2 {
 							0 => {}
 							1 => {defaultf(idx)?;}

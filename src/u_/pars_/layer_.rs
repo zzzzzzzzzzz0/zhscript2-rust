@@ -30,8 +30,7 @@ impl<'a> Layer_ {
 		}
 		let mut must = false;
 		match kw.id_ {
-			keyword_::Id_::Jvhao |
-			keyword_::Id_::Douhao => {
+			keyword_::Id_::Jvhao => {
 				self.for__(|c| {
 					if let Some(kw) = &c.kw_ {
 						#[cfg(debug_assertions)]

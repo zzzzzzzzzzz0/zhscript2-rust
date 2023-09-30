@@ -182,7 +182,7 @@ impl Pars_ {
 				}
 				if let keyword_::Id_::Maohao = kw.id_ {continue}
 				if match kw.id_ {
-					keyword_::Id_::Jvhao | keyword_::Id_::Douhao |
+					keyword_::Id_::Jvhao |
 					keyword_::Id_::EndBlock | keyword_::Id_::BeginBlock |
 					keyword_::Id_::Equ => true,
 					_ => false,
@@ -199,7 +199,7 @@ impl Pars_ {
 					_ => {}
 				}
 				if match kw.id_ {
-					keyword_::Id_::Jvhao | keyword_::Id_::Douhao |
+					keyword_::Id_::Jvhao |
 					keyword_::Id_::Dunhao |
 					keyword_::Id_::Brkpoint => true,
 					_ => false
@@ -298,7 +298,7 @@ impl Pars_ {
 				}
 				if let Some(kw) = &mut2.kw_ {
 					if match kw.id_ {
-						keyword_::Id_::Jvhao | keyword_::Id_::Douhao => true,
+						keyword_::Id_::Jvhao => true,
 						_ => false
 					} || kw.g_.if_ || kws.if_.contains(kw) {
 						add_kw__(&kw, ret, w)?;
