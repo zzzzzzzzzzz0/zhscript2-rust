@@ -81,7 +81,6 @@ impl World_ {
 	
 	pub fn pars__(&mut self, src:&str, fit:impl Fn(&mut IsText_), codes:&mut code_::List_) -> Result2_ {
 		self.pars_.hello__(src, fit, codes, self)?;
-		#[cfg(debug_assertions)]
 		if self.dbg_.tree_ {
 			self.dbg_.tree6__(&codes, self)
 		}
@@ -235,6 +234,7 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 			clpars_::Item_::new("-zhscript-src-is-code"),
 			clpars_::Item_::new3("-zhscript-path", 1, ""),
 			clpars_::Item_::new("-zhscript-jhdh"),
+			clpars_::Item_::new("-zhscript-d-tree"),
 			clpars_::Item_::new(HELP_),
 			clpars_::Item_::new3t("-zhscript-", clpars_::Typ_::Starts, "以此为头之其他将忽略"),
 		];
@@ -243,7 +243,6 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 			let rem1 = "断点附出，计：";
 			let mut idx = 2;
 			for i in vec![
-				clpars_::Item_::new("-zhscript-d-tree"),
 				clpars_::Item_::new("-zhscript-d-arg"),
 				clpars_::Item_::new("-zhscript-d-path"),
 				clpars_::Item_::new("-zhscript-d-lc"),
@@ -292,7 +291,6 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 		{
 			let mut b = true;
 			match tag {
-				"-zhscript-d-tree" => w3().dbg_.tree_ = true,
 				"-zhscript-d-arg" => w3().dbg_.arg_ = true,
 				"-zhscript-d-path" => w3().dbg_.path_ = true,
 				"-zhscript-d-lc" => w3().dbg_.lc_ = true,
@@ -306,6 +304,7 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 			"-zhscript-src-is-code" => w3().cfg_.src_is_file_ = false,
 			"-zhscript-path" => w3().path2__([argv[0].clone(), "/0".to_string()].concat()),
 			"-zhscript-jhdh" => w3().cfg_.jvhao_dunhao_ = true,
+			"-zhscript-d-tree" => w3().dbg_.tree_ = true,
 			HELP_ => return clpars_::HELP_,
 			_ => {
 				let mut add = |i:&str| {
