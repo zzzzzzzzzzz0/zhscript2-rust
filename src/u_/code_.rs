@@ -144,7 +144,7 @@ impl List_ {
 	pub fn hello2__(&self, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
 		let a = &self.a_;
 		let end = if end > a.len() {a.len()} else {end};
-		let mut ret2 = z2__(&self.a_, idx, end, None, env);
+		let mut ret2 = z2__(&self.a_, idx, end, env);
 		if let Err((_, _, _, s)) = &mut ret2 {
 			s.push('\n');
 			let kws = &as_ref__!(env.w).kws_;
@@ -156,6 +156,10 @@ impl List_ {
 			}
 			ms.lock().unwrap().push_str(&kws.end_text_.s_);
 		}
+		#[cfg(debug_assertions)]
+		if as_ref__!(env.w).dbg_.lc_ {
+			println!();
+		}
 		ret2
 	}
 }
@@ -163,7 +167,7 @@ impl List_ {
 fn cs__(i:&I_) -> Vec<char> {
 	as_ref__!(i).s2__().chars().collect()
 }
-fn z2__(a:&A_, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, usize)>>, env:&Env_) -> Result2_ {
+fn z2__(a:&A_, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
 	while *idx < end {
 		let i = &a[*idx];
 		#[cfg(debug_assertions)]
@@ -175,28 +179,6 @@ fn z2__(a:&A_, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, us
 				if !env.gd.undef_eq_text_ {
 					let cs = cs__(i);
 					let mut has = false;
-					if let Some(v_dunhao3) = &v_dunhao3 {
-						has = true;
-						let mut first = true;
-						let mut i2 = 0;
-						let mut idx5 = *idx;
-						for i in v_dunhao3 {
-							let mut has2 = false;
-							z5__(a, &cs, &mut has, idx, &mut idx5, end, i, &mut first, &mut has2,
-								env)?;
-							if has2 {
-								i2 += 1
-							}
-						}
-						if i2 > 0 {
-							if idx5 > *idx {
-								*idx = idx5;
-							} else {
-								*idx += 1
-							}
-							continue
-						}
-					}
 					z4__(a, &cs, &mut 0, cs.len(), &mut has, idx, end, env)?;
 					if has {
 						continue
@@ -251,25 +233,6 @@ fn z2__(a:&A_, idx:&mut usize, end:usize, v_dunhao3:Option<Vec<(usize, usize, us
 	}
 	ok__()
 }
-fn z5__(a:&A_, cs:&[char], has:&mut bool, idx:&usize, idx5:&mut usize, end:usize,
-		dunhao3:&(usize, usize, usize), first:&mut bool, has2:&mut bool,
-		env:&Env_) -> Result2_ {
-	let (idx4, from4, end4) = dunhao3;
-	if idx4 == idx {
-		let mut idx2 = *from4;
-		*idx5 = *idx;
-		if *first {
-			*first = false
-		} else {
-			as_ref__!(env.w).dunhao__(&mut as_mut_ref__!(env.ret));
-		}
-		z4__(a, cs, &mut idx2, *end4, has, idx5, end, env)?;
-		*has2 = true
-	} else {
-		*has2 = false
-	}
-	ok__()
-}
 #[allow(clippy::cognitive_complexity)]
 #[allow(clippy::too_many_arguments)]
 fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
@@ -288,23 +251,34 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 			let def = as_ref__!(def);
 			let mut idx2_save = *idx2;
 			*idx2 = idx3;
-			let mut v_dunhao3 = vec![];
+			let mut a2:A_ = vec![];
+			let mut end2a = 0;
 			if let Some(argnames) = def.names__() {
 				if argnames.has_ge_ {
+					#[cfg(debug_assertions)]
+					{
+						let w = as_ref__!(env.w);
+						if w.dbg_.tree_ || db_c__!("-sparg3-", env) {
+							w.dbg_.tree6__(&a, &w);
+						}
+					}
 					let mut i_argname = 0;
 					let f__ = |cs:&[char], from, i_argname:&mut usize, plus| -> Option<(usize, usize)> {
 						if *i_argname < argnames.len() {
 							let argname = &argnames[*i_argname];
 							#[cfg(debug_assertions)]
 							if db_c__!("-sparg-", env) {
-								lc2__!("({} {} {}{})", from, i_argname, argname.s_, argname.is_ge_);
+								if from < cs.len() {
+									lc2__!("({}{:?})", from, cs);
+								}
+								lc2__!("({} {}{} {})", from, argname.is_ge_, i_argname, argname.s_);
 							}
 							if argname.is_ge_ {
 								let mut idx = from;
 								while idx < end2 {
 									#[cfg(debug_assertions)]
 									if db_c__!("-sparg-", env) {
-										lc2__!("('{}')", cs[idx]);
+										lc2__!("{}", cs[idx]);
 									}
 									if let Some((len2, _)) = t_::with__(cs, &argname.s_, idx) {
 										#[cfg(debug_assertions)]
@@ -323,12 +297,24 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 						}
 						None
 					};
-					let mut dunhao3 = |idx, idx2, idx4| {
+					let dunhao3 = |idx2, idx4, len:usize, i:&I_, a2:&mut A_| {
 						#[cfg(debug_assertions)]
 						if db_c__!("-sparg-", env) {
-							lc3__!("([{}] {},{} {}/{})", idx, idx2, idx4, end2, end);
+							lc3__!("({},{}/{})", idx2, idx4, len);
 						}
-						v_dunhao3.push((idx, idx2, idx4));
+
+						let w = as_ref__!(env.w);
+						if idx4 > idx2 {
+							let s:String = cs__(i).get(idx2..idx4).unwrap().iter().collect();
+							#[cfg(debug_assertions)]
+							if db_c__!("-sparg-", env) {
+								lc3__!("(\"{}\")", s);
+							}
+							a2.push(i__(super::super::undef_::Item_::new(&w.kws_, s)));
+						}
+						if idx4 < len {
+							a2.push(i__(Item1_::new(&w.kws_.dunhao_)));
+						}
 					};
 					let mut paichu = |idx2:&mut usize| {
 						paichu_def.push(def.name__().to_string());
@@ -339,10 +325,13 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 						loop {
 							if let Some((idx4, len)) = f__(cs, idx2m, &mut i_argname, true) {
 								if len == 0 {
-									paichu(idx2);
-									continue 'l1;
+									#[cfg(debug_assertions)]
+									if db_c__!("-sparg-", env) {
+										lc6__!("(b1)");
+									}
+									break;
 								}
-								dunhao3(*idx, idx2m, idx4);
+								dunhao3(idx2m, idx4, cs.len(), &a[*idx], &mut a2);
 								idx2m = idx4 + len;
 							} else {
 								if i_argname <= def.backarg_ {
@@ -350,13 +339,18 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 									continue;
 								}
 								if idx2m < end2 {
-									dunhao3(*idx, idx2m, end2);
+									dunhao3(idx2m, end2, cs.len(), &a[*idx], &mut a2);
 								}
 								break;
 							}
 						}
 					}
 					let mut idx = *idx + 1;
+					#[cfg(debug_assertions)]
+					if db_c__!("-sparg2-", env) {
+						let w = as_ref__!(env.w);
+						w.dbg_.tree5__(&a, idx, end, &w);
+					}
 					while idx < end {
 						let i = &a[idx];
 						match as_ref__!(i).kw__().id_ {
@@ -364,11 +358,13 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 								let mut idx2 = 0;
 								let cs2 = cs__(i);
 								while let Some((idx4, len)) = f__(&cs2, idx2, &mut i_argname, false) {
-									dunhao3(idx, idx2, idx4);
+									dunhao3(idx2, idx4, cs2.len(), &i, &mut a2);
 									idx2 = idx4 + len;
 								}
 								if idx2 > 0 {
-									dunhao3(idx, idx2, cs2.len());
+									dunhao3(idx2, cs2.len(), cs2.len(), &i, &mut a2);
+								} else {
+									a2.push(i.clone());
 								}
 							}
 							keyword_::Id_::Dunhao => {
@@ -376,24 +372,32 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 									let argname = &argnames[i_argname];
 									if argname.is_ge_ {
 										paichu(idx2);
+										#[cfg(debug_assertions)]
+										if db_c__!("-sparg-", env) {
+											lc6__!("(b,)");
+										}
 										continue 'l1
 									}
 								} else {
 									break
 								}
 								i_argname += 1;
+								a2.push(i.clone());
 							}
-							keyword_::Id_::Jvhao => {
-								break
-							}
-							_ => {}
+							keyword_::Id_::Jvhao => break,
+							_ => a2.push(i.clone())
 						}
 						idx += 1
 					}
 					if i_argname < argnames.len() {
 						paichu(idx2);
+						#[cfg(debug_assertions)]
+						if db_c__!("-sparg-", env) {
+							lc6__!("(bl)");
+						}
 						continue 'l1
 					}
+					end2a = idx;
 				}
 			}
 			paichu_def.clear();
@@ -410,25 +414,19 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 					let q2 = t__(q2);
 					if def.argc__() > 0 {
 						let args = &as_mut_ref__!(q2).args_;
-						if v_dunhao3.is_empty() {
+						if end2a == 0 {
 							z4__(a, cs, idx2, end2, has, idx, end, &Env_::new6(args.clone(), env))?;
 						} else {
-							let mut first = true;
-							let mut idx5 = *idx + 1;
-							while !v_dunhao3.is_empty() {
-								let mut has2 = false;
-								z5__(a, cs, has, idx, &mut idx5, end, &v_dunhao3[0], &mut first, &mut has2,
-									&Env_::new6(args.clone(), env))?;
-								if has2 {
-									v_dunhao3.remove(0);
-								} else {
-									break
-								}
+							#[cfg(debug_assertions)]
+							if db_c__!("-sparg-", env) {
+								let w = as_ref__!(env.w);
+								w.dbg_.tree6__(&a2, &w);
 							}
+							z2__(&a2, &mut 0, a2.len(), &Env_::new6(args.clone(), env))?;
 							*idx2 = end2;
-							*idx = idx5;
+							*idx = end2a;
 						}
-						z2__(a, idx, end, Some(v_dunhao3),
+						z2__(a, idx, end,
 							&Env_::new7(Opt_ {jvhao_:true, ..env.gd}, args.clone(), env))?;
 						if *idx >= end {
 							*idx -= 1

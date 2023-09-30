@@ -36,6 +36,7 @@ pub fn add_kw__(kw:&keyword_::RI_, ret:&mut Ret_, w:&World_) -> Result2_ {
 	add_code__(code_::i__(code_::Item1_::new(
 		match kw.id_ {
 			keyword_::Id_::Jvhao => &w.kws_.jvhao_,
+			keyword_::Id_::Fenhao => &w.kws_.fenhao_,
 			keyword_::Id_::Douhao => &w.kws_.douhao_,
 			keyword_::Id_::Dunhao => &w.kws_.dunhao_,
 			keyword_::Id_::Brkpoint => &w.kws_.brkpoint_,
@@ -144,6 +145,7 @@ pub fn add_text__(text:&mut Vec<u8>, is:&mut IsText_, ret:&mut Ret_, w:&World_, 
 			Err(e) => result2_::err__(e.to_string())
 		}
 	} else {
+		is.clear__();
 		ok__()
 	}
 }

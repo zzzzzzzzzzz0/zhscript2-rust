@@ -4,10 +4,12 @@ pub struct IsText_ {
 	text2_:i32,
 	pub yuanyang_:i32,
 	code_:i32,
-	undef_:i32,
 	rem_:i32,
 	rem2_:i32,
 	var_:i32,
+
+	old_:bool,
+	now_:bool,
 
 	pub data_:bool,
 }
@@ -25,9 +27,7 @@ impl IsText_ {
 	pub fn      rem__(&self) -> bool {0 < self.rem_}
 	pub fn     rem2__(&self) -> bool {0 < self.rem2_}
 	pub fn      var__(&self) -> bool {0 < self.var_}
-	pub fn    undef__(&self) -> bool {
-		0 < self.undef_
-	}
+	pub fn    undef__(&self) -> bool {   !self.old_}
 	
 	pub fn add__(&self, c:u8) -> bool {
 		if self.rem_ > 0 {
@@ -89,17 +89,12 @@ impl IsText_ {
 	}
 	
 	pub fn need_clear__(&mut self) -> bool {
-		let text = if self.text__() || self.text2__() || self.as2__() || self.var__() || self.rem2__() {-1} else {1};
-		match self.undef_ {
-			0 => {
-				self.undef_ = text;
-				false
-			}
-			_ => self.undef_ != text,
-		}
+		self.now_ = self.text__() || self.text2__() || self.as2__() || self.var__() || self.rem2__();
+		self.old_ != self.now_
 	}
 	pub fn clear__(&mut self) {
-		self.undef_ = 0;
+		self.old_ = self.now_;
+		self.now_ = false;
 	}
 }
 
