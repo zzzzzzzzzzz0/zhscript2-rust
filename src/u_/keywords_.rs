@@ -82,7 +82,7 @@ impl A_ {
 					data_.push(i.clone());
 					text2_.push(i.clone());
 				}
-				keyword_::Id_::Dunhao | keyword_::Id_::Jvhao | keyword_::Id_::Douhao => {
+				keyword_::Id_::Dunhao | keyword_::Id_::Jvhao | keyword_::Id_::Fenhao | keyword_::Id_::Douhao => {
 					data_.push(i.clone());
 				}
 				_ => {}

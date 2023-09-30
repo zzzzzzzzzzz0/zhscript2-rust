@@ -1,4 +1,4 @@
-// 69 14,8,13
+// 70 14,8,13
 
 #![allow(dead_code)]
 
@@ -18,7 +18,7 @@ pub enum Id_ {
 	BeginCode, EndCode,
 	BeginText2, EndText2,
 	BeginBlock, EndBlock,
-	Jvhao, Douhao,
+	Jvhao, Fenhao, Douhao,
 	Maohao,
 	Dunhao,
 	For, Break, Continue,
@@ -94,6 +94,7 @@ pub struct List_ {
 	pub begin_block_:RI_,
 	pub   end_block_:RI_,
 	pub jvhao_:RI_,
+	pub fenhao_:RI_,
 	pub douhao_:RI_,
 	pub maohao_:RI_,
 	pub dunhao_:RI_,
@@ -161,6 +162,7 @@ impl List_ {
 		let begin_block    = Rc_::new(Item_::new    (Id_::BeginBlock,    "先"));
 		let   end_block    = Rc_::new(Item_::new    (Id_::EndBlock,      "了"));
 		let jvhao          = Rc_::new(Item_::new    (Id_::Jvhao,         "。"));
+		let fenhao         = Rc_::new(Item_::new    (Id_::Fenhao,        "；"));
 		let douhao         = Rc_::new(Item_::new    (Id_::Douhao,        "，"));
 		let maohao         = Rc_::new(Item_::new    (Id_::Maohao,        "："));
 		let dunhao         = Rc_::new(Item_::new    (Id_::Dunhao,        "、"));
@@ -223,6 +225,7 @@ impl List_ {
 				begin_block.clone(),
 				  end_block.clone(),
 				jvhao.clone(),
+				fenhao.clone(),
 				douhao.clone(),
 				maohao.clone(),
 				dunhao.clone(),
@@ -285,6 +288,7 @@ impl List_ {
 			begin_block_:begin_block,
 			  end_block_:  end_block,
 			jvhao_:jvhao,
+			fenhao_:fenhao,
 			douhao_:douhao,
 			maohao_:maohao,
 			dunhao_:dunhao,
