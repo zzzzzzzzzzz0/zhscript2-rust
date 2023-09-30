@@ -3,11 +3,12 @@ use super::u_::*;
 pub fn text__(i:&code_::I_, ret:&mut String) -> (bool, bool) {
 	if as_ref__!(i).kw__().id_ == keyword_::Id_::BeginRem2 {
 		ret.clear();
-		if let Some(a) = &as_ref__!(i).a__() {
+		if let Some(a) = as_ref__!(i).a__() {
 			for i2 in a.iter() {
-				match as_ref__!(i2).kw__().id_ {
+				let i2 = as_ref__!(i2);
+				match i2.kw__().id_ {
 					keyword_::Id_::BeginText => {
-						ret.push_str(as_ref__!(i2).s2__())
+						ret.push_str(i2.s2__())
 					}
 					_ => return (true, false),
 				}

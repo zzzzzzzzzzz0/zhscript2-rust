@@ -69,20 +69,28 @@ pub trait Item1_ : code_::Item_ {
 			let mut idx2 = vec![];
 			let mut idx = 0;
 			while idx < a.len() {
-				if as_ref__!(a[idx]).kw__().id_ == keyword_::Id_::BeginRem2 {
+				let i = &a[idx];
+				if as_ref__!(i).kw__().id_ == keyword_::Id_::BeginRem2 {
 					{
 						let mut ret = String::new();
-						let (b, b2) = rem2_::text__(&a[idx], &mut ret);
-						if b && b2 && ret == "在当前区" {
-							in_cur_qv = true;
-							idx2.push(idx);
-							idx += 1;
-							continue
+						let (b, b2) = rem2_::text__(i, &mut ret);
+						if b && b2 {
+							if
+								match ret.as_str() {
+									"在当前区" => {
+										in_cur_qv = true;
+										true
+									}
+									_ => {false}
+								}
+							{
+								idx2.push(idx);
+								idx += 1;
+								continue
+							}
 						}
 					}
-					if !in_cur_qv {
-						self.arg02__(a.remove(idx))?;
-					}
+					self.arg02__(a.remove(idx))?;
 					break
 				}
 				idx += 1

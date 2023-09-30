@@ -27,7 +27,7 @@ impl name_::Item1_ for Item_ {
 		let mut is_data = false;
 		for i in argv.iter().skip(2) {
 			match i.as_str() {
-				"数据" => is_data = true,
+				"数据" => is_data = true, //在于只能通过注解符存取
 				_ => return false
 			}
 		}

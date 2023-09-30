@@ -8,10 +8,11 @@ pub fn err__(s:String) -> Item_ {
 	err3__(ERR_, s)
 }
 pub fn err2__(s:&str) -> Item_ {err__(s.to_string())}
-pub fn err3__(i:i32, s:String) -> Item_ {err4__(i, 0, s, "".to_string())}
+pub fn err3__(i:i32, s:String) -> Item_ {err5__(i, 0, s)}
 pub fn err4__(i:i32, i2:i32, s:String, s2:String) -> Item_ {
 	Err((i, i2, s, s2))
 }
+pub fn err5__(i:i32, i2:i32, s:String) -> Item_ {err4__(i, i2, s, "".to_string())}
 pub fn qve__() -> Item_ {err2__("缺")}
 
 pub fn n__(i:i32) -> Item_ {n2__(i, 0)}
