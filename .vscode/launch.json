@@ -213,5 +213,13 @@
                 "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/_1_b.zs"
             ], "cwd": "${workspaceFolder}"
         }
+        ,
+        {
+            "name": "test mod-name", "type": "lldb", "request": "launch",
+            "cargo": { "args": [ "build", "--bin=zhscript2", "--package=zhscript2" ], "filter": { "name": "zhscript2", "kind": "bin" } },
+            "args": [
+                "/zzzzzzzzzzz4/home/zzzzzzzzzzz/test/rust-zs2/mod-name.zs"
+            ], "cwd": "${workspaceFolder}"
+        }
     ]
 }

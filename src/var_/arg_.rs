@@ -6,6 +6,7 @@ pub const ARGC_:&str = "参数数目";
 
 pub const TOP_:&str = "顶";
 pub const UP_:&str = "上";
+pub const IN_:&str = "所";
 
 pub struct Argi_ {
 	super_:Item1_,
@@ -57,7 +58,7 @@ impl code_::Item_ for Argi_ {
 		self.super_.s__(&format!("{}{}", ARG_, self.i_), ret, w)
 	}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+		match code_::qv4rem_5__(&self.super_.rems_, |_| {false}, env.in_q_.clone(), env.q.clone(), env.w.clone()) {
 			Ok(q2) => {
 				Self::hello__(self.i_, false, false, "", q2.unwrap(), &mut as_mut_ref__!(env.ret));
 				ok__()
@@ -107,7 +108,7 @@ impl code_::Item_ for Arg0_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(&[ARG_, &self.zero_].concat(), ret, w)}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match code_::qv4rem__(&self.super_.rems_, |_| {false}, env.q.clone(), env.w.clone()) {
+		match code_::qv4rem_5__(&self.super_.rems_, |_| {false}, env.in_q_.clone(), env.q.clone(), env.w.clone()) {
 			Ok(q2) =>
 				Self::hello__(&self.zero_, false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
 			Err(e) =>

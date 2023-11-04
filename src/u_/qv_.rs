@@ -49,10 +49,12 @@ pub fn get__(name:&str, is_has:bool, equ_name:&EquName_, can_up:bool, no_self:bo
 	ret2.is_some()
 }
 
-pub fn find_def__(cs:&[char], from:usize, end:usize, paichu:&[String], q:T_, w:world_::T_) -> Option<(usize, usize, def_::I_)> {
+pub fn find_def__(cs:&[char], from:usize, end:usize, paichu:&[String], q:T_, w:world_::T_) -> Option<(usize, usize, def_::I_, T_)> {
 	for idx in from..end {
 		let ret = for__(q.clone(), w.clone(), |q, _, _|
-			as_ref__!(q).defs_.find__(cs, idx, true, true, paichu)
+			if let Some((idx3, len, def)) = as_ref__!(q).defs_.find__(cs, idx, true, true, paichu) {
+				Some((idx3, len, def, q.clone()))
+			} else {None}
 		);
 		if ret.is_some() { return ret }
 	}

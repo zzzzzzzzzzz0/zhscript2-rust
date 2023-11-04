@@ -44,7 +44,7 @@ pub fn rems__(rems:&code_::List_, mut frem:impl FnMut(&str, usize, &mut bool) ->
 	ok__()
 }
 
-fn qv4rem_3__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
+fn qv4rem_z__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
 	let mut q2 = Some(q);
 	match rem {
@@ -60,6 +60,12 @@ fn qv4rem_3__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, q:qv_::T
 				}
 			}
 		}
+		var_::arg_::IN_ =>
+			if let Some(q3) = in_q {
+				q2 = Some(q3.clone())
+			} else {
+				return Err(as_ref__!(w).no_rem2__(rem))
+			}
 		_ => {
 			let ret2 = qv_::for__(q2.clone().unwrap(), w.clone(), |q3, _, _| {
 				if as_ref__!(q3).name_.contains(&rem.to_string()) {
@@ -81,11 +87,19 @@ fn qv4rem_3__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, q:qv_::T
 	}
 	Ok(q2)
 }
-pub fn qv4rem_2__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
+pub fn qv4rem_2__(rems:&[String], is_has:bool, shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
-	let mut q2 = Some(q);
+	qv4rem_4__(rems, is_has, shou, None, q, w)
+}
+pub fn qv4rem_5__(rems:&[String], shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
+		-> Result<Option<qv_::T_>, Result2_> {
+	qv4rem_4__(rems, false, shou, in_q, q, w)
+}
+pub fn qv4rem_4__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
+		-> Result<Option<qv_::T_>, Result2_> {
+			let mut q2 = Some(q);
 	for rem in rems {
-		match qv4rem_3__(rem.as_str(), is_has, &mut shou, q2.clone().unwrap(), w.clone()) {
+		match qv4rem_z__(rem.as_str(), is_has, &mut shou, in_q.clone(), q2.clone().unwrap(), w.clone()) {
 			Ok(q3) => q2 = q3,
 			e => return e
 		}
@@ -94,8 +108,9 @@ pub fn qv4rem_2__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool
 }
 pub fn qv4rem_1__(rem:&str, shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
-	qv4rem_3__(rem, false, shou, q, w)
+	qv4rem_z__(rem, false, shou, None, q, w)
 }
+#[allow(dead_code)]
 pub fn qv4rem__(rems:&[String], shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
 	qv4rem_2__(rems, false, shou, q, w)

@@ -243,7 +243,7 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 	let mut paichu_def = vec![];
 	let mut buf = String::new();
 	'l1: while *idx2 < end2 {
-		if let Some((idx3, len, def)) = qv_::find_def__(&cs, *idx2, end2, &paichu_def, env.q.clone(), env.w.clone()) {
+		if let Some((idx3, len, def, def_q)) = qv_::find_def__(&cs, *idx2, end2, &paichu_def, env.q.clone(), env.w.clone()) {
 			#[cfg(debug_assertions)]
 			if as_ref__!(env.w).dbg_.lc_ {
 				as_ref__!(env.w).dbg_.def__(&def)
@@ -442,7 +442,7 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 								def_::backarg_::backarg__(&mut as_mut_ref__!(env.ret), def.backarg_, &as_ref__!(env.w),
 									&mut as_mut_ref__!(q2.args_.clone()))?;
 							}
-							let env2 = Env_::new5(Opt_ {jvhao_:false, ..env.gd}, q2, env);
+							let env2 = Env_::new11(Opt_ {jvhao_:false, ..env.gd}, Some(def_q), q2, env);
 							eval_::return__(hello__(&codes.unwrap(), &env2), &env2)?;
 						}
 						def_::Val_::F(f) => {

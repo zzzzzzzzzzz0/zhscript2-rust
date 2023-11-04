@@ -58,7 +58,7 @@ impl Item_ {
 					break
 				}
 				i.s_inc_some_kw__(&mut name);
-				match code_::qv4rem__(&i.rem_, |rem| {
+				match code_::qv4rem_5__(&i.rem_, |rem| {
 					match rem {
 						PRIV_ => {
 							is_priv = true;
@@ -70,7 +70,7 @@ impl Item_ {
 						}
 						_ => false
 					}
-				}, q2.unwrap(), env.w.clone()) {
+				}, env.in_q_.clone(), q2.unwrap(), env.w.clone()) {
 					Ok(q3) => q2 = q3,
 					Err(e) => return e,
 				}
