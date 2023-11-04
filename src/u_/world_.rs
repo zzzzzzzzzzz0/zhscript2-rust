@@ -35,8 +35,7 @@ impl World_ {
 	pub fn new() -> Self {
 		let kws_ = keyword_::List_::new();
 		
-		use super::super::var_::*;
-		let mut q = Qv_::new(arg_::TOP_);
+		let mut q = Qv_::new(qv_::TOP_);
 		q.simp_def__(LF_, "\n").unwrap();
 		q.simp_def__(CR_, "\r").unwrap();
 		q.simp_def__(TAB_, "\t").unwrap();

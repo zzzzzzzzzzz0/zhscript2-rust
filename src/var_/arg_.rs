@@ -1,12 +1,8 @@
-use super::{*, equ_name_::equ_name__, super::{as_mut_ref__}};
+use super::{*, equ_name_::equ_name__, super::as_mut_ref__};
 
 pub const ARG_:&str = "参数";
 pub const ARGS_:&str = "参数栈";
 pub const ARGC_:&str = "参数数目";
-
-pub const TOP_:&str = "顶";
-pub const UP_:&str = "上";
-pub const IN_:&str = "所";
 
 pub struct Argi_ {
 	super_:Item1_,

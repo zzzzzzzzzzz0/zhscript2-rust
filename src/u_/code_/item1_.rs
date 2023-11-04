@@ -1,4 +1,4 @@
-use super::{*, super::super::{var_}};
+use super::{*};
 #[cfg(debug_assertions)]
 use super::super::super::{lc3__, lc_kw__, p__, dbp_c__};
 
@@ -48,9 +48,9 @@ fn qv4rem_z__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Opt
 		-> Result<Option<qv_::T_>, Result2_> {
 	let mut q2 = Some(q);
 	match rem {
-		var_::arg_::TOP_ =>
+		qv_::TOP_ =>
 			q2 = Some(as_ref__!(w).top_q_.clone()),
-		var_::arg_::UP_ => {
+		qv_::UP_ => {
 			q2 = match &as_ref__!(q2.unwrap()).up_ {
 				Some(q3) => Some(q3.clone()),
 				None => {
@@ -60,7 +60,7 @@ fn qv4rem_z__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Opt
 				}
 			}
 		}
-		var_::arg_::IN_ =>
+		qv_::IN_ =>
 			if let Some(q3) = in_q {
 				q2 = Some(q3.clone())
 			} else {

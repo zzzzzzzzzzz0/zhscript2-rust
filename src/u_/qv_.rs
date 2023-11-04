@@ -1,5 +1,9 @@
 use super::{*, equ_name_::EquName_, super::{var_::arg_::Argi_, as_ref__, as_mut_ref__}};
 
+pub const TOP_:&str = "顶";
+pub const UP_:&str = "上";
+pub const IN_:&str = "所";
+
 pub type T_ = super::T_<Qv_>;
 
 pub fn val__(name:&str, val:&str, q:T_, w:world_::T_) {
