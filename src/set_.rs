@@ -58,7 +58,7 @@ impl Item_ {
 					break
 				}
 				i.s_inc_some_kw__(&mut name);
-				match code_::qv4rem_5__(&i.rem_, |rem| {
+				match qv_::rem4_::hello__(&i.rem_, |rem| {
 					match rem {
 						PRIV_ => {
 							is_priv = true;
