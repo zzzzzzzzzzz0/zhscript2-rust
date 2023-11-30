@@ -144,7 +144,7 @@ impl List_ {
 	pub fn hello2__(&self, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
 		let a = &self.a_;
 		let end = if end > a.len() {a.len()} else {end};
-		let mut ret2 = z2__(&self.a_, idx, end, env);
+		let mut ret2 = z2__(a, idx, end, env);
 		if let Err((_, _, _, s)) = &mut ret2 {
 			s.push('\n');
 			let kws = &as_ref__!(env.w).kws_;

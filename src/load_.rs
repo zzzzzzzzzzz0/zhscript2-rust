@@ -1,4 +1,4 @@
-use super::{u_::*, eval_::*};
+use super::{u_::{*, eval_ as u_}, eval_::*};
 
 pub struct Item_ {
 	super_:ItemA_,
@@ -23,11 +23,11 @@ impl Item1_ for Item_ {
 	fn super__(&self) -> &ItemA_ {&self.super_}
 	fn super_mut__(&mut self) -> &mut ItemA_ {&mut self.super_}
 	fn src__(&self, s:String, src2:&mut String, once:&mut bool, q:qv_::T_, w:world_::T_) -> Result2_ {
-		super::u_::eval_::ok_src__(&s, q.clone(), w.clone());
+		u_::ok_src2__(&s, !self.super_.in_cur_qv_, q.clone(), w.clone());
 		*once = as_ref__!(w).mods_.iter().any(|q2| as_ref__!(q2).src_ == as_ref__!(q).src_);
 		if *once {
 			return ok__()
 		}
-		super::u_::eval_::src__(src2, q, w)
+		u_::src2__(&s, src2, q, w)
 	}
 }

@@ -4,7 +4,7 @@ pub struct ItemA_ {
 	pub super_:code_::Item1_,
 	pub a_:code_::OL_,
 	sp_:usize, sp_in_end_:bool,
-	in_cur_qv_:bool,
+	pub in_cur_qv_:bool,
 }
 
 impl ItemA_ {
