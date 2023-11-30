@@ -1,5 +1,7 @@
 use super::{u_::*, rem2_};
 
+const IN_CUR_QV_:&str = "在当前区";
+
 pub struct ItemA_ {
 	pub super_:code_::Item1_,
 	pub a_:code_::OL_,
@@ -10,6 +12,11 @@ pub struct ItemA_ {
 impl ItemA_ {
 	pub fn new(kw: &keyword_::RI_) -> Self {
 		Self {super_:code_::Item1_::new(kw), a_:None, sp_:code_::split2_0__(), sp_in_end_:false, in_cur_qv_:false}
+	}
+	pub fn s__(&self, ret:&mut String, w:&World_) {
+		if self.in_cur_qv_ {
+			w.rem__(IN_CUR_QV_, ret);
+		}
 	}
 }
 
@@ -77,7 +84,7 @@ pub trait Item1_ : code_::Item_ {
 						if b && b2 {
 							if
 								match ret.as_str() {
-									"在当前区" => {
+									IN_CUR_QV_ => {
 										in_cur_qv = true;
 										true
 									}
@@ -112,7 +119,8 @@ pub trait Item1_ : code_::Item_ {
 	}
 
 	fn s__(&self, ret:&mut String, w:&World_) {
-		ret.push_str(&self.kw__().s_);
+		self.s_kw__(ret);
+		self.super__().s__(ret, w);
 		if let Some(i) = self.i_arg0__() {
 			let ms = code_::MS_::new(ret);
 			code_::List_::s3_i__(&i, &ms, w);

@@ -14,6 +14,10 @@ impl code_::Item_ for Item_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn add__(&mut self, a:code_::List_) -> Result2_ {Item1_::add__(self, a)}
 	fn a__(&self) -> code_::ORL_ {t_::some__(&self.super_.a_)}
+	fn s__(&self, ret:&mut String, w:&World_) {
+		self.s_kw__(ret);
+		self.super_.s__(ret, w);
+	}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
 		Item1_::hello__(self, env)
 	}

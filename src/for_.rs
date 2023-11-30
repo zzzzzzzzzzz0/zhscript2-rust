@@ -162,7 +162,7 @@ pub trait Item1_ : code_::Item_ {
 	fn a__(&self) -> code_::ORL_ {Some(self.rems__())}
 	fn a2__(&self) -> code_::ORL_ {t_::some__(self.codes__())}
 	fn s__(&self, ret:&mut String, w:&World_) {
-		ret.push_str(&self.kw__().s_);
+		self.s_kw__(ret);
 		if let Some(i) = self.cnt__().max_ {
 			w.rem__(&i.to_string(), ret);
 		}

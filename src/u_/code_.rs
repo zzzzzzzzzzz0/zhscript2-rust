@@ -86,11 +86,14 @@ pub trait Item_ {
 	fn kw2__(&self) -> keyword_::ORI_ {None}
 	fn kw3__(&self) -> keyword_::ORI_ {None}
 	fn s__(&self, ret:&mut String, _:&World_) {
-		ret.push_str(&self.kw__().s_);
+		self.s_kw__(ret);
 	}
 	fn s2__(&self) -> &str {""}
 	fn s3__(&self, ret:SR3_, w:&World_) {
 		self.s__(&mut ret.lock().unwrap(), w);
+	}
+	fn s_kw__(&self, ret:&mut String) {
+		ret.push_str(&self.kw__().s_);
 	}
 	fn add__(&mut self, _:List_) -> Result2_ {ok__()}
 	fn add2__(&mut self, _:List_) -> Result2_ {ok__()}
