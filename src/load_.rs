@@ -28,6 +28,10 @@ impl Item1_ for Item_ {
 		if *once {
 			return ok__()
 		}
-		u_::src2__(&s, src2, q, w)
+		if self.super_.in_cur_qv_ {
+			u_::src2__(&s, src2, q, w)
+		} else {
+			u_::src__(src2, q, w)
+		}
 	}
 }
