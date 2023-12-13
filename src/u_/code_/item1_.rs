@@ -47,7 +47,7 @@ pub fn rems__(rems:&code_::List_, mut frem:impl FnMut(&str, usize, &mut bool) ->
 #[allow(dead_code)]
 pub fn qv4rem__(rems:&[String], shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
-	qv_::rem4_::hello2__(rems, false, shou, q, w)
+	qv_::rem4_::hello2__(rems, false, shou, None, q, w)
 }
 
 pub struct Item1_ {

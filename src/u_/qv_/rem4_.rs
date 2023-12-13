@@ -47,9 +47,9 @@ fn z__(rem:&str, is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Option<qv_
 	}
 	Ok(q2)
 }
-fn z2__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
+pub fn hello2__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
-			let mut q2 = Some(q);
+	let mut q2 = Some(q);
 	for rem in rems {
 		match z__(rem.as_str(), is_has, &mut shou, in_q.clone(), q2.clone().unwrap(), w.clone()) {
 			Ok(q3) => q2 = q3,
@@ -58,15 +58,11 @@ fn z2__(rems:&[String], is_has:bool, mut shou:impl FnMut(&str) -> bool, in_q:Opt
 	}
 	Ok(q2)
 }
-pub fn hello2__(rems:&[String], is_has:bool, shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
-		-> Result<Option<qv_::T_>, Result2_> {
-	z2__(rems, is_has, shou, None, q, w)
-}
 pub fn hello1__(rem:&str, shou:impl FnMut(&str) -> bool, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
 	z__(rem, false, shou, None, q, w)
 }
 pub fn hello__(rems:&[String], shou:impl FnMut(&str) -> bool, in_q:Option<qv_::T_>, q:qv_::T_, w:world_::T_)
 		-> Result<Option<qv_::T_>, Result2_> {
-	z2__(rems, false, shou, in_q, q, w)
+	hello2__(rems, false, shou, in_q, q, w)
 }
