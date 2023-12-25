@@ -87,8 +87,11 @@ impl Arg0_ {
 					}
 				}
 				"000" => {
+					let mut b = true;
 					for i in &as_ref__!(q).name_ {
-						if !ret.is_empty() {
+						if b {
+							b = false;
+						} else {
 							ret.add__('+');
 						}
 						ret.add__(i);
