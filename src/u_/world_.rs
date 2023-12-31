@@ -20,6 +20,7 @@ pub struct World_ {
 	//#[cfg(debug_assertions)]
 	pub dbg_:Dbg_,
 	pub pars_:Pars_,
+	pub shebang_flag_:String,
 	
 	pub top_q_:qv_::T_,
 	pub kws_:keyword_::List_,
@@ -34,6 +35,7 @@ pub struct World_ {
 impl World_ {
 	pub fn new() -> Self {
 		let kws_ = keyword_::List_::new();
+		let shebang_flag_ = ["--", &kws_.jvhao_.s_].concat();
 		
 		let mut q = Qv_::new(qv_::rem4_::TOP_);
 		q.simp_def__(LF_, "\n").unwrap();
@@ -42,7 +44,7 @@ impl World_ {
 		q.simp_def__(ESC_, "\x1b").unwrap();
 		
 		Self {pars_:Default::default(), top_q_:t__(q), kws_, mods_:vec![], datas_:vec![], path_:vec![],
-			cfg_:Default::default(),
+			shebang_flag_, cfg_:Default::default(),
 			//#[cfg(debug_assertions)]
 			dbg_:Default::default(),
 			codes_cache_:Default::default(), codes_cache2_:Default::default()}
@@ -191,18 +193,17 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 	let mut has_src = has_src;
 	let mut a2 = vec![];
 	{
-		let shebang_flag = ["--", &w1().kws_.jvhao_.s_].concat();
 		let mut is1 = false;
 		for s in a {
 			let add = |a2:&mut Vec<String>| {
 				if !plus {return}
-				if s.len() <= shebang_flag.len() {return}
-				let s3 = &s[0..s.len() - 1 - shebang_flag.len()];
+				if s.len() <= w1().shebang_flag_.len() {return}
+				let s3 = &s[0..s.len() - 1 - w1().shebang_flag_.len()];
 				for s2 in str_::split__(s3) {
 					a2.push(s2)
 				}
 			};
-			let is2 = s.ends_with(&shebang_flag);
+			let is2 = s.ends_with(&w1().shebang_flag_);
 			if has_src {
 				if is2 {
 					is1 = true;

@@ -1,6 +1,6 @@
 [package]
 name = "zhscript2"
-version = "3.11.4"
+version = "3.12.31"
 authors = ["zzzzzzzzzzz <zzzzzzzzzzzgg@gmail.com>"]
 edition = "2018"
 
