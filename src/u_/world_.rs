@@ -194,16 +194,17 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 	let mut a2 = vec![];
 	{
 		let mut is1 = false;
+		let shebang_flag = &w1().shebang_flag_;
 		for s in a {
 			let add = |a2:&mut Vec<String>| {
 				if !plus {return}
-				if s.len() <= w1().shebang_flag_.len() {return}
-				let s3 = &s[0..s.len() - 1 - w1().shebang_flag_.len()];
+				if s.len() <= shebang_flag.len() {return}
+				let s3 = &s[0..s.len() - 1 - shebang_flag.len()];
 				for s2 in str_::split__(s3) {
 					a2.push(s2)
 				}
 			};
-			let is2 = s.ends_with(&w1().shebang_flag_);
+			let is2 = s.ends_with(shebang_flag);
 			if has_src {
 				if is2 {
 					is1 = true;
