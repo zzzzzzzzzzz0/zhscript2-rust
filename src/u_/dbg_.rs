@@ -125,7 +125,7 @@ impl Dbg_ {
 		for i in l.iter() {
 			if i2 > to {break}
 			i2 += 1;
-			if i2 < from {continue}
+			if i2 <= from {continue}
 			let is_end = end__(as_ref__!(i).kw2__(), i2);
 			let is_end2 = end2__(is_end, i2);
 			self.tree2_i__(i, suojin, wei, is_end, i2 == 1, is_end2, w);
