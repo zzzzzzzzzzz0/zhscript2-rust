@@ -32,25 +32,27 @@ pub fn add_kw2__(kw:&keyword_::Item_, text:&mut Vec<u8>) {
 	}
 }
 
-pub fn add_kw__(kw:&keyword_::RI_, ret:&mut Ret_, w:&World_) -> Result2_ {
-	add_code__(code_::i__(code_::Item1_::new(
+pub fn add_kw__(kw:&keyword_::RI_, ret:&mut Ret_) -> Result2_ {
+	add_code__(
 		match kw.id_ {
-			keyword_::Id_::Jvhao => &w.kws_.jvhao_,
-			keyword_::Id_::Fenhao => &w.kws_.fenhao_,
-			keyword_::Id_::Douhao => &w.kws_.douhao_,
-			keyword_::Id_::Dunhao => &w.kws_.dunhao_,
-			keyword_::Id_::Brkpoint => &w.kws_.brkpoint_,
-			keyword_::Id_::Dengyu => &w.kws_.dengyu_,
-			keyword_::Id_::Xiaoyudengyu => &w.kws_.xiaoyudengyu_,
-			keyword_::Id_::Xiaoyu => &w.kws_.xiaoyu_,
-			keyword_::Id_::Dayudengyu => &w.kws_.dayudengyu_,
-			keyword_::Id_::Dayu => &w.kws_.dayu_,
-			keyword_::Id_::Not => &w.kws_.not_,
-			keyword_::Id_::And => &w.kws_.and_,
-			keyword_::Id_::Or => &w.kws_.or_,
+			keyword_::Id_::Dengyu |
+			keyword_::Id_::Xiaoyudengyu |
+			keyword_::Id_::Xiaoyu |
+			keyword_::Id_::Dayudengyu |
+			keyword_::Id_::Dayu |
+			keyword_::Id_::Not |
+			keyword_::Id_::And |
+			keyword_::Id_::Or
+				=> code_::i__(code_::Item2_::new(kw)),
+			keyword_::Id_::Jvhao |
+			keyword_::Id_::Fenhao |
+			keyword_::Id_::Douhao |
+			keyword_::Id_::Dunhao |
+			keyword_::Id_::Brkpoint
+				=> code_::i__(code_::Item1_::new(kw)),
 			_ => panic!("{} {:?}", kw.s_, kw.id_),
 		}
-	)), ret)
+	, ret)
 }
 
 pub fn code2__(kw:keyword_::RI_, codes:&code_::List_, self1:&Pars_, w:&World_) -> code_::OI_ {

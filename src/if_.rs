@@ -158,14 +158,14 @@ impl Item_ {
 	fn b2__(&self, codes:&code_::List_, b:&mut bool, env:&code_::Env_) -> Result2_ {
 		let mut idx = 0;
 		let mut cmp = Cmp_{left_val_:vec![], val_:vec![], op_:self.undef_.clone(),
-			not_:false, from_:0};
+			not_:false, from_:0, end_:0};
 		let env2 = code_::Env_::new6(t__(result_::List_::new()), env);
 		let mut kuo = false;
-		let fcmp = |idx, cmp:&mut Cmp_, b:&mut bool, kuo:&mut bool| {
+		let fcmp = |cmp:&mut Cmp_, b:&mut bool, kuo:&mut bool| {
 			if *kuo {
 				*kuo = false;
 			} else {
-				cmp.mv__(true, codes, idx, &env2)?;
+				cmp.mv__(true, codes, &env2)?;
 				self.cmp__(cmp, b, env);
 			}
 			ok__()
@@ -184,7 +184,8 @@ impl Item_ {
 				cmp.from_ += 1;
 			} else if let Some(kw2) = self.kws_.iter().find(|kw2| kw2.id_ == *id) {
 				if *id == self.or_.id_ || *id == self.and_.id_ {
-					fcmp(idx, &mut cmp, b, &mut kuo)?;
+					cmp.end_ = idx;
+					fcmp(&mut cmp, b, &mut kuo)?;
 					#[cfg(debug_assertions)]
 					if db_c__!("-if-", env) {
 						lc3__!("\n({}", t_::b__(*b));
@@ -194,6 +195,7 @@ impl Item_ {
 					if *id == self.or_.id_ && *b {
 						return result2_::n__(OK_)
 					}
+					cmp.end_ = 0;
 					if *id == self.and_.id_ && !*b {
 						loop {
 							idx += 1;
@@ -204,18 +206,29 @@ impl Item_ {
 						kuo = true;
 						continue
 					}
+					cmp.from_ = idx + 1;
 				} else if *id == self.not_.id_ {
 					cmp.not_ = !cmp.not_;
+					if cmp.end_ == 0 {
+						cmp.from_ = idx + 1;
+					}
+					else if cmp.end_ == usize::MAX {
+						cmp.end_ = idx;
+					}
 				} else {
 					cmp.op_ = kw2.clone();
-					cmp.mv__(false, codes, idx, &env2)?;
-					idx = cmp.from_;
-					continue
+					if cmp.end_ == usize::MAX {
+						cmp.end_ = idx;
+					}
+					cmp.mv__(false, codes, &env2)?;
+					cmp.from_ = idx + 1;
 				}
+			} else {
+				cmp.end_ = usize::MAX;
 			}
 			idx += 1;
 		}
-		fcmp(idx, &mut cmp, b, &mut kuo)?;
+		fcmp(&mut cmp, b, &mut kuo)?;
 		result2_::n__(CT_)
 	}
 }
@@ -226,11 +239,17 @@ struct Cmp_ {
 	op_:keyword_::RI_,
 	val_:Vec<String>,
 	from_:usize,
+	end_:usize,
 }
 
 impl Cmp_ {
-	fn mv__(&mut self, can:bool, codes:&code_::List_, end:usize, env:&code_::Env_) -> Result2_ {
-		codes.hello2__(&mut self.from_, end, &code_::Env_::new3(Default::default(), env))?;
+	fn mv__(&mut self, can:bool, codes:&code_::List_, env:&code_::Env_) -> Result2_ {
+		#[cfg(debug_assertions)]
+		if db_c__!("-if-", env) {
+			let w = as_ref__!(env.w);
+			w.dbg_.tree5__(&codes.a_, self.from_, self.end_, &w);
+		}
+		codes.hello2__(&mut self.from_, self.end_, &code_::Env_::new3(Default::default(), env))?;
 		
 		if can && !self.val_.is_empty() {
 			self.left_val_.clear();
@@ -239,7 +258,6 @@ impl Cmp_ {
 
 		self.val_ = as_mut_ref__!(env.ret).to_vec2__(false);
 		as_mut_ref__!(env.ret).clear();
-		self.from_ += 1;
 		ok__()
 	}
 }

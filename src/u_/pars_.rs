@@ -204,7 +204,7 @@ impl Pars_ {
 					keyword_::Id_::Brkpoint => true,
 					_ => false
 				} || kw.g_.if_ || kws.if_.contains(kw) {
-					add_kw__(kw, ret, w)?;
+					add_kw__(kw, ret)?;
 					continue
 				}
 				match kw.id_ {
@@ -301,7 +301,7 @@ impl Pars_ {
 						keyword_::Id_::Jvhao => true,
 						_ => false
 					} || kw.g_.if_ || kws.if_.contains(kw) {
-						add_kw__(&kw, ret, w)?;
+						add_kw__(&kw, ret)?;
 					} else {
 						match kw.id_ {
 							keyword_::Id_::Then => ret_02__(&ret.0, 2),

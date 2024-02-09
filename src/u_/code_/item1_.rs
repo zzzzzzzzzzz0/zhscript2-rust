@@ -126,13 +126,28 @@ impl Item_ for Item1_ {
 						as_mut_ref__!(env.w).dbg_.bp2_.push_str(i);
 					}
 				}
-				#[allow(non_snake_case)]
-				#[allow(unused_variables)]
-				let o_X_o = true;
+				lc3__!("{:?}", self.kw_.id_);
 			}
 		} else {
 			as_mut_ref__!(env.ret).add2__(self.kw_.clone());
 		}
+		ok__()
+	}
+}
+
+pub struct Item2_ {
+	kw_:keyword_::RI_,
+}
+
+impl Item2_ {
+	pub fn new(kw:&keyword_::RI_) -> Self {
+		Self {kw_:kw.clone()}
+	}
+}
+impl Item_ for Item2_ {
+	fn kw__(&self) -> &keyword_::Item_ {&self.kw_}
+	fn hello__(&self, env:&Env_) -> Result2_ {
+		as_mut_ref__!(env.ret).add__(self.kw_.s_.clone());
 		ok__()
 	}
 }
