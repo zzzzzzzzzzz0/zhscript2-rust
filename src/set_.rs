@@ -18,7 +18,7 @@ impl Item_ {
 	}
 	
 	pub fn hello2_1__(&self, names:T_<result_::List_>, vals:T_<result_::List_>, env:&code_::Env_) -> Result2_ {
-		t_::o__(&self.names_).hello__(&code_::Env_::new6(names, env))?;
+		t_::o__(&self.names_).hello__(&code_::Env_::new7(code_::Opt_ {names_:true, ..env.gd}, names, env))?;
 		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {
 			use super::u_::code_::Item_;
@@ -122,13 +122,6 @@ impl Item_ {
 			if i_name >= names.len() {
 				break
 			}
-		}
-		//用后清除……如何个导致被存？
-		if let Some(i2) = names.end__() {
-			as_mut_ref__!(i2).rem_.clear();
-		}
-		if let Some(i2) = vals.end__() {
-			as_mut_ref__!(i2).rem_.clear();
 		}
 		ok__()
 	}

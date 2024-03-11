@@ -20,6 +20,7 @@ pub struct Opt_ {
 	pub guandao_jie_:&'static str,
 	pub undef_eq_text_:bool,
 	pub vals_:bool,
+	pub names_:bool,
 }
 
 pub fn hello__(codes:&List_, env:&Env_) -> Result2_ {

@@ -98,14 +98,18 @@ trait Item1_ : code_::Item_ {
 				ret.add4__(i2.clone());
 				i2
 			};
-			if let Some(i2) = ret.end__() {
-				if as_ref__!(i2).dunhao__() || as_ref__!(i2).jvhao__() {
-					a_empty(&mut ret)
-				} else {
-					i2
-				}
-			} else {
+			if env.gd.names_ {
 				a_empty(&mut ret)
+			} else {
+				if let Some(i2) = ret.end__() {
+					if as_ref__!(i2).dunhao__() || as_ref__!(i2).jvhao__() {
+						a_empty(&mut ret)
+					} else {
+						i2
+					}
+				} else {
+					a_empty(&mut ret)
+				}
 			}
 		};
 		for i in ret2.iter() {
