@@ -98,7 +98,7 @@ trait Item1_ : code_::Item_ {
 				ret.add4__(i2.clone());
 				i2
 			};
-			if env.gd.names_ {
+			if env.gd.names_ || env.gd.vals_ {
 				a_empty(&mut ret)
 			} else {
 				if let Some(i2) = ret.end__() {
