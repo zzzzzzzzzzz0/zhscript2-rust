@@ -79,9 +79,6 @@ pub type OL_ = Option<List_>;
 pub type ORL_<'a> = Option<&'a List_>;
 pub type A_ = Vec<I_>;
 
-pub type MS_<'a> = Mutex<&'a mut String>;
-type SR3_<'a> = &'a MS_<'a>;
-
 pub trait Item_ {
 	fn kw__(&self) -> &keyword_::Item_;
 	fn kw2__(&self) -> keyword_::ORI_ {None}
@@ -90,9 +87,6 @@ pub trait Item_ {
 		self.s_kw__(ret);
 	}
 	fn s2__(&self) -> &str {""}
-	fn s3__(&self, ret:SR3_, w:&World_) {
-		self.s__(&mut ret.lock().unwrap(), w);
-	}
 	fn s_kw__(&self, ret:&mut String) {
 		ret.push_str(&self.kw__().s_);
 	}
@@ -132,13 +126,16 @@ impl List_ {
 			}
 		}
 	}
-	pub fn s3_i__(i:&I_, ret:SR3_, w:&World_) {
-		as_ref__!(i).s3__(ret, w);
-		for_i__(i, false, |kw| ret.lock().unwrap().push_str(&kw.s_), |a| a.s3__(&ret, w));
+	pub fn s_i__(i:&I_, ret:&mut String, w:&World_) {
+		as_ref__!(i).s__(ret, w);
+		let ret = Mutex::new(ret);
+		for_i__(i, false,
+			|kw| ret.lock().unwrap().push_str(&kw.s_),
+			|a| a.s__(&mut ret.lock().unwrap(), w));
 	}
-	fn s3__(&self, ret:SR3_, w:&World_) {
+	fn s__(&self, ret:&mut String, w:&World_) {
 		for i in &self.a_ {
-			Self::s3_i__(i, ret, w);
+			Self::s_i__(i, ret, w);
 		}
 	}
 	
@@ -153,12 +150,11 @@ impl List_ {
 			s.push('\n');
 			let kws = &as_ref__!(env.w).kws_;
 			s.push_str(&kws.begin_text_.s_);
-			let ms = MS_::new(s);
 			for idx in 0..=*idx {
 				if idx >= a.len() {break}
-				Self::s3_i__(&a[idx], &ms, &as_ref__!(env.w))
+				Self::s_i__(&a[idx], s, &as_ref__!(env.w))
 			}
-			ms.lock().unwrap().push_str(&kws.end_text_.s_);
+			s.push_str(&kws.end_text_.s_);
 		}
 		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {

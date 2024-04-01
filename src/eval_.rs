@@ -122,8 +122,7 @@ pub trait Item1_ : code_::Item_ {
 		self.s_kw__(ret);
 		self.super__().s__(ret, w);
 		if let Some(i) = self.i_arg0__() {
-			let ms = code_::MS_::new(ret);
-			code_::List_::s3_i__(&i, &ms, w);
+			code_::List_::s_i__(&i, ret, w);
 		}
 	}
 

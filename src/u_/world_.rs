@@ -180,6 +180,10 @@ pub fn hello__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, q:&
 	eval_::hello__(&src, &code_::Env_::new(q2, w.clone(), ret))
 }
 
+pub fn issue__() -> &'static str {
+	concat!(env!("CARGO_PKG_NAME"), " ", env!("CARGO_PKG_VERSION"), "\n")
+}
+
 pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, plus:bool, q:&mut Qv_, w:T_) -> Result2_ {
 	let w1 = || as_ref__!(w);
 	let w3 = || as_mut_ref__!(w);
@@ -260,8 +264,8 @@ pub fn clpars__(a:&mut clpars_::A_, has_shl:bool, has_src:bool, other_z:bool, pl
 				idx += 1;
 			}
 		}
-		clpars = clpars_::List_::new3(v,  concat!(env!("CARGO_PKG_NAME"), " ", env!("CARGO_PKG_VERSION"), "\n"));
-}
+		clpars = clpars_::List_::new3(v, issue__());
+	}
 	if other_z {
 		clpars.a_.push(clpars_::Item_::new0z());
 	} else {
