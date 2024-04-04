@@ -49,7 +49,7 @@ impl code_::Item_ for Item_ {
 				let q2 = q2.unwrap();
 				let on_free = &as_ref__!(q2).on_free_;
 				if !on_free.is_empty() {
-					eval_::hello__(on_free, &code_::Env_::new2(q2.clone(), env))?;
+					eval_::hello__(on_free, &code_::Env_::new12(Some(q2.clone()), q2.clone(), env))?;
 				}
 				if is_data {
 					as_mut_ref__!(env.w).datas_.remove(i);

@@ -11,14 +11,17 @@ impl<'a> Env_ {
 		Self {fa:attr_::i__(None), gd:Default::default(), q, w, ret, in_q_:None}
 	}
 	pub fn new2(q:qv_::T_, env:&'a Self) -> Self {
-		Self {fa:env.fa.clone(), q, w:env.w.clone(), ret:env.ret.clone(), in_q_:env.in_q_.clone(), ..*env}
+		Self::new12(env.in_q_.clone(), q, env)
+	}
+	pub fn new12(in_q_:Option<qv_::T_>, q:qv_::T_, env:&'a Self) -> Self {
+		Self {fa:env.fa.clone(), q, w:env.w.clone(), ret:env.ret.clone(), in_q_, ..*env}
 	}
 	#[allow(dead_code)]
 	pub fn new9(q:qv_::T_, ret:T_<result_::List_>, env:&'a Self) -> Self {
 		Self {fa:env.fa.clone(), q, w:env.w.clone(), ret, in_q_:env.in_q_.clone(), ..*env}
 	}
 	pub fn new3(gd:Opt_, env:&'a Self) -> Self {
-		Self {fa:env.fa.clone(), gd, q:env.q.clone(), w:env.w.clone(), ret:env.ret.clone(), in_q_:env.in_q_.clone()}
+		Self::new7(gd, env.ret.clone(), env)
 	}
 	pub fn new7(gd:Opt_, ret:T_<result_::List_>, env:&'a Self) -> Self {
 		Self {fa:env.fa.clone(), gd, q:env.q.clone(), w:env.w.clone(), ret, in_q_:env.in_q_.clone()}
@@ -28,7 +31,7 @@ impl<'a> Env_ {
 		Self {fa, q, w:env.w.clone(), ret:env.ret.clone(), in_q_:env.in_q_.clone(), ..*env}
 	}
 	pub fn new5(gd:Opt_, q:qv_::T_, env:&'a Self) -> Self {
-		Self {fa:env.fa.clone(), gd, q, w:env.w.clone(), ret:env.ret.clone(), in_q_:env.in_q_.clone()}
+		Self::new11(gd, env.in_q_.clone(), q, env)
 	}
 	pub fn new11(gd:Opt_, in_q_:Option<qv_::T_>, q:qv_::T_, env:&'a Self) -> Self {
 		Self {fa:env.fa.clone(), gd, q, w:env.w.clone(), ret:env.ret.clone(), in_q_}
