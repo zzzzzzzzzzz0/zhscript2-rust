@@ -48,6 +48,7 @@ impl Item_ {
 				clpars_::Item_::new("-重定向"),
 				clpars_::Item_::new3("-被动者", 1, "后为初始化代码"),
 				clpars_::Item_::new2c("-被动者2", 1),
+				clpars_::Item_::new("-并"),
 				clpars_::Item_::new("-h|--help"),
 				clpars_::Item_::new0(),
 			]);
@@ -67,6 +68,7 @@ impl Item_ {
 							slave_mode2 = true;
 						}
 					}
+					"-并" => mode = "p",
 					"-h" | "--help" => return clpars_::HELP_,
 					_ => return clpars_::TAG_NO_
 				};
@@ -199,6 +201,15 @@ impl Item_ {
 					Err(e) => {
 						err__(e);
 					}
+				},
+			"p" =>
+				match cmd2.spawn() {
+					Ok(c) => {
+						let mut ret = as_mut_ref__!(env.ret);
+						as_ref__!(env.w).dunhao__(&mut ret);
+						ret.add__(c.id());
+					}
+					Err(e) => err__(e)
 				},
 			_ =>
 				match cmd2.status() {
