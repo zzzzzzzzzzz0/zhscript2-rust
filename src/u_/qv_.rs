@@ -129,6 +129,7 @@ pub struct Qv_ {
 	pub vars_:var_::List_,
 	pub defs_:def_::List_,
 	pub up_:Option<T_>,
+	pub i_:i32,
 	pub on_free_:String,
 	
 	pub arg0_:String,
@@ -158,7 +159,11 @@ impl Qv_ {
 		Self::new6(vec![], "", arg0, argnames, up)
 	}
 	pub fn new6(name_:Vec<String>, src:&str, arg0:&str, argnames_:OArgNames_, up_:Option<T_>) -> Self {
-		Self {up_, on_free_:String::new(), vars_:var_::List_::new(), defs_:def_::List_::new(),
+		let i_ = if let Some(up) = &up_ {
+			let up = as_ref__!(up);
+			up.i_ + 1
+		} else {0};
+		Self {up_, i_, on_free_:String::new(), vars_:var_::List_::new(), defs_:def_::List_::new(),
 			name_, src_:src.to_string(), src_is_file_:false, arg0_:arg0.to_string(),
 			args_:t__(result_::List_::new()), argnames_, args_to1_:false, args_1_:String::new(),
 			objs_:None, objs_mut_:vec![],}
