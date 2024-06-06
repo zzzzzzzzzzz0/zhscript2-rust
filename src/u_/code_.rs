@@ -146,15 +146,20 @@ impl List_ {
 		let a = &self.a_;
 		let end = if end > a.len() {a.len()} else {end};
 		let mut ret2 = z2__(a, idx, end, env);
-		if let Err((_, _, _, s)) = &mut ret2 {
-			s.push('\n');
-			let kws = &as_ref__!(env.w).kws_;
-			s.push_str(&kws.begin_text_.s_);
-			for idx in 0..=*idx {
-				if idx >= a.len() {break}
-				Self::s_i__(&a[idx], s, &as_ref__!(env.w))
+		if let Err((i, _, _, s)) = &mut ret2 {
+			match *i {
+				jump_::QUIT_ | jump_::RETURN_ | jump_::BREAK_ | jump_::BREAK2_ | jump_::CONTINUE_ | jump_::CONTINUE2_ => {}
+				_ => {
+					s.push('\n');
+					let kws = &as_ref__!(env.w).kws_;
+					s.push_str(&kws.begin_text_.s_);
+					for idx in 0..=*idx {
+						if idx >= a.len() {break}
+						Self::s_i__(&a[idx], s, &as_ref__!(env.w))
+					}
+					s.push_str(&kws.end_text_.s_);
+				}
 			}
-			s.push_str(&kws.end_text_.s_);
 		}
 		#[cfg(debug_assertions)]
 		if as_ref__!(env.w).dbg_.lc_ {
@@ -443,7 +448,7 @@ fn z4__(a:&A_, cs:&[char], idx2:&mut usize, end2:usize, has:&mut bool, idx:&mut 
 									&mut as_mut_ref__!(q2.args_.clone()))?;
 							}
 							let env2 = Env_::new11(Opt_ {jvhao_:false, ..env.gd}, Some(def_q), q2, env);
-							eval_::return__(hello__(&codes.unwrap(), &env2), &env2)?;
+							jump_::return__(hello__(&codes.unwrap(), &env2), &env2)?;
 						}
 						def_::Val_::F(f) => {
 							as_mut_ref__!(q2).objs_ = Some(def.objs_.clone());
