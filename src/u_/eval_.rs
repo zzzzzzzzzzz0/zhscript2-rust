@@ -1,6 +1,4 @@
 use super::{*, super::{u2_::*, {as_ref__, as_mut_ref__}}};
-#[cfg(debug_assertions)]
-use super::super::{lc3__, lc_kw__, p__};
 use std::{fs::File, io::{Read, Error as ioError}, path::{PathBuf}};
 
 pub fn ok_src2__(src:&str, src2:bool, q:qv_::T_, w:world_::T_) -> bool {
@@ -81,19 +79,6 @@ pub fn src__(src2:&mut String, q:qv_::T_, w:world_::T_) -> Result2_ {
 	src2__(&src, src2, q, w)
 }
 
-pub fn return__(ret:Result2_, env:&code_::Env_) -> Result2_ {
-	if let Err((jump_::RETURN_, _, s, _)) = &ret {
-		#[cfg(debug_assertions)]
-		if as_ref__!(env.w).dbg_.lc_ {
-			lc3__!("({}={:?})", s, as_ref__!(env.q).name_);
-		}
-		if s.is_empty() || as_ref__!(env.q).name_.contains(s) {
-			return ok__()
-		}
-	}
-	ret
-}
-
 pub fn codes__(src:&str, fit:impl Fn(&mut IsText_), cache:bool, env:&code_::Env_) -> Result<Option<Rc_<code_::List_>>, Result2_> {
 	let mut codes = None;
 	if cache {
@@ -129,6 +114,6 @@ pub fn hello4__(codes:Rc_<code_::List_>, env:&code_::Env_) -> Result2_ {
 	result2_::item__(code_::hello__(&codes, &code_::Env_::new3(
 		code_::Opt_ {guandao_du_:env.gd.guandao_du_, guandao_jie_:env.gd.guandao_jie_, ..Default::default()},
 		env)), |ret| {
-		return__(ret, env)
+		jump_::return__(ret, env)
 	})
 }

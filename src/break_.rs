@@ -18,7 +18,6 @@ impl Item_ {
 
 impl jump_::Item_ for Item_ {
 	fn i__(&self) -> i32 {self.i_}
-	fn b__(&self) -> bool {false}
 }
 
 impl code_::Item_ for Item_ {
