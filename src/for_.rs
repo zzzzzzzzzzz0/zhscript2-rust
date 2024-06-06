@@ -182,6 +182,8 @@ pub trait Item1_ : code_::Item_ {
 			None => (core::usize::MAX - 1, cnt.name_.is_some())
 		};
 		let mut i = 0;
+		let mut has_name = false;
+		let mut ret = ok__();
 		loop {
 			if use_i {
 				i += 1;
@@ -200,6 +202,10 @@ pub trait Item1_ : code_::Item_ {
 					i.to_string()
 				};
 				qv_::val__(name, &i, env.q.clone(), env.w.clone());
+				if !has_name {
+					has_name = true;
+					as_mut_ref__!(env.jump_).a_.push(name.clone());
+				}
 			}
 			if let Some(codes) = self.codes__() {
 				let mut act = 0;
@@ -211,7 +217,7 @@ pub trait Item1_ : code_::Item_ {
 					};
 					ok__()
 				};
-				result2_::item__(codes.hello__(env), |ret| {
+				ret = result2_::item__(codes.hello__(env), |ret| {
 					if let Err((i, _, s, _)) = &ret {
 						if *i == self.break__() || *i == self.continue__() {
 							if s.is_empty() {
@@ -229,7 +235,7 @@ pub trait Item1_ : code_::Item_ {
 						}
 					}
 					ret
-				})?;
+				});
 				if act == jump_::BREAK_ {
 					break
 				}
@@ -237,12 +243,18 @@ pub trait Item1_ : code_::Item_ {
 				if act == jump_::CONTINUE_ {
 					continue
 				}
+				if ret.is_err() {
+					break
+				}
 			}
 			if !self.loop__() {
 				break
 			}
 		}
-		ok__()
+		if has_name {
+			as_mut_ref__!(env.jump_).a_.pop();
+		}
+		ret
 	}
 	
 	fn break__(&self) -> i32;
