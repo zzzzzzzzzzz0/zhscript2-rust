@@ -120,7 +120,7 @@ pub trait Item_ : code_::Item_ {
 			}
 		}
 		match self.i__() {
-			RETURN_ => if q_i >= 0 { i = q_i + 1 - up; }
+			RETURN_ => if q_i >= up { i = q_i + 1 - up; }
 			_ => {}
 		}
 		result2_::err5__(if i == NO_ {result2_::ERR_} else {self.i__()}, i, s)
