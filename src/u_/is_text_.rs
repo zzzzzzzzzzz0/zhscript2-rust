@@ -8,6 +8,7 @@ pub struct IsText_ {
 	rem2_:i32,
 	var_:i32,
 
+	first_:bool,
 	old_:bool,
 	now_:bool,
 
@@ -90,11 +91,16 @@ impl IsText_ {
 	
 	pub fn need_clear__(&mut self) -> bool {
 		self.now_ = self.text__() || self.text2__() || self.as2__() || self.var__() || self.rem2__();
+		if !self.first_ {
+			self.first_ = true;
+			self.old_ = self.now_;
+		}
 		self.old_ != self.now_
 	}
 	pub fn clear__(&mut self) {
 		self.old_ = self.now_;
 		self.now_ = false;
+		self.first_ = false;
 	}
 }
 

@@ -1,31 +1,5 @@
 use super::{*, super::super::{var_, def_, eval_, expl_}};
 
-pub fn add_text_kw__(kw:&keyword_::Item_, is:&mut IsText_, text:&mut Vec<u8>, mut2:&mut Mut2_, w:&World_) -> bool {
-	if let add@1..=2 = match kw.id_ {
-		keyword_::Id_::BeginRem			=> is.add3__('r', '+'),
-		keyword_::Id_::EndRem			=> is.add3__('r', '-'),
-		keyword_::Id_::BeginText		=> is.add2__('t', '+'),
-		keyword_::Id_::EndText			=> is.add2__('t', '-'),
-		keyword_::Id_::BeginYuanyang	=> is.add2__('y', '+'),
-		keyword_::Id_::EndYuanyang		=> is.add2__('y', '-'),
-		keyword_::Id_::BeginCode		=> is.add2__('c', '+'),
-		keyword_::Id_::EndCode			=> is.add2__('c', '-'),
-		keyword_::Id_::BeginText2		=> is.add2__('e', '+'),
-		keyword_::Id_::EndText2			=> is.add2__('e', '-'),
-		_ => 0,
-	} {
-		if add == 2 {
-			add_kw2__(kw, text);
-		}
-		#[cfg(debug_assertions)]
-		if mut2.lc__(w) {
-			w.dbg_.lc2__(kw, &kw.s_);
-		}
-		true
-	} else {
-		false
-	}
-}
 pub fn add_kw2__(kw:&keyword_::Item_, text:&mut Vec<u8>) {
 	for &i in kw.s_.as_bytes() {
 		text.push(i);

@@ -156,7 +156,29 @@ impl Pars_ {
 			}
 			#[allow(clippy::never_loop)]
 			for kw in &kw2 {
-				if add_text_kw__(kw, is, &mut text, mut2, w) {
+				if let add@1..=2 = match kw.id_ {
+					keyword_::Id_::BeginRem			=> is.add3__('r', '+'),
+					keyword_::Id_::EndRem			=> is.add3__('r', '-'),
+					keyword_::Id_::BeginText		=> is.add2__('t', '+'),
+					keyword_::Id_::EndText			=> is.add2__('t', '-'),
+					keyword_::Id_::BeginYuanyang	=> is.add2__('y', '+'),
+					keyword_::Id_::EndYuanyang		=> is.add2__('y', '-'),
+					keyword_::Id_::BeginCode		=> is.add2__('c', '+'),
+					keyword_::Id_::EndCode			=> is.add2__('c', '-'),
+					keyword_::Id_::BeginText2		=> is.add2__('e', '+'),
+					keyword_::Id_::EndText2			=> is.add2__('e', '-'),
+					_ => 0,
+				} {
+					if add == 2 {
+						if is.undef__() {
+							add_text__(&mut text, is, ret, w, mut2)?;
+						};
+						add_kw2__(kw, &mut text);
+					}
+					#[cfg(debug_assertions)]
+					if mut2.lc__(w) {
+						w.dbg_.lc2__(kw, &kw.s_);
+					}
 					continue
 				}
 				match kw.id_ {
