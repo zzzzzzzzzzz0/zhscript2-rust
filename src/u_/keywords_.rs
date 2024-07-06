@@ -50,6 +50,7 @@ impl A_ {
 					var_.push(i.clone());
 					text_.push(i.clone());
 					text2_.push(i.clone());
+					code_.push(i.clone());
 				}
 				keyword_::Id_::Brkpoint |
 				keyword_::Id_::ParBrkpoint => {

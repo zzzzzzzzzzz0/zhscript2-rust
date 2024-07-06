@@ -186,6 +186,12 @@ impl Pars_ {
 					keyword_::Id_::EndRem2 |
 					keyword_::Id_::BeginVar |
 					keyword_::Id_::EndVar => {
+						match kw.id_ {
+							keyword_::Id_::BeginVar => is.var2__(),
+							keyword_::Id_::EndVar => is.var3__(),
+							keyword_::Id_::BeginRem2 => is.rem22__(),
+							_ => is.rem23__(),
+						}
 						if is.as2__() {
 							#[cfg(debug_assertions)]
 							if mut2.lc__(w) {
@@ -235,16 +241,8 @@ impl Pars_ {
 					keyword_::Id_::Then |
 					keyword_::Id_::Else =>
 						continue,
-					keyword_::Id_::BeginRem2 =>
-						is.rem22__(),
-					keyword_::Id_::EndRem2 => {
-						is.rem23__();
-						break 'l1
-					}
-					keyword_::Id_::BeginVar =>
-						is.var2__(),
+					keyword_::Id_::EndRem2 |
 					keyword_::Id_::EndVar => {
-						is.var3__();
 						break 'l1
 					}
 					keyword_::Id_::ParBrkpoint => {
