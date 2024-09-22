@@ -195,7 +195,7 @@ fn z2__(a:&A_, idx:&mut usize, end:usize, env:&Env_) -> Result2_ {
 				if env.gd.jvhao_ {
 					break
 				}
-				if as_ref__!(env.w).cfg_.jvhao_dunhao_ {
+				if !as_ref__!(env.w).cfg_.jvhao_dunhao_ {
 					let b2 = if *idx > 0 {
 						match &as_ref__!(a[*idx - 1]).kw__().id_ {
 							keyword_::Id_::Dunhao |

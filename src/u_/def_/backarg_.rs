@@ -32,7 +32,7 @@ pub fn backarg__(self4:&mut List_, n:usize, w:&World_, ret:&mut List_) -> Result
 					_ => false
 				}
 			} else {false} {
-				self4.rm__(idx);
+				//self4.rm__(idx);
 				break
 			}
 			ret.ins__(self4.rm__(idx).clone());
