@@ -29,7 +29,7 @@ pub struct World_ {
 	path_:Vec<String>,
 
 	codes_cache_:codes_cache_::List_<code_::List_>,
-	pub codes_cache2_:codes_cache_::List_<expl_::List_>,
+	//pub codes_cache2_:codes_cache_::List_<expl_::List_>,
 }
 
 impl World_ {
@@ -47,7 +47,7 @@ impl World_ {
 			shebang_flag_, cfg_:Default::default(),
 			//#[cfg(debug_assertions)]
 			dbg_:Default::default(),
-			codes_cache_:Default::default(), codes_cache2_:Default::default()}
+			codes_cache_:Default::default(), /*codes_cache2_:Default::default()*/}
 	}
 
 	pub fn codes_cache__(&mut self, src:&str, fit:impl Fn(&mut IsText_),
@@ -90,6 +90,10 @@ impl World_ {
 	
 	pub fn text__(&self, s:&str) -> String {
 		[&self.kws_.begin_text_.s_, s, &self.kws_.end_text_.s_].concat()
+	}
+	pub fn rem1__(&self, ret:&mut String) {
+		ret.insert_str(0, &self.kws_.begin_rem_.s_);
+		ret.push_str(&self.kws_.end_rem_.s_);
 	}
 	pub fn rem__(&self, s:&str, ret:&mut String) {
 		ret.push_str(&self.kws_.begin_rem2_.s_);
@@ -148,6 +152,13 @@ impl World_ {
 	pub fn hello__(self, a:&mut clpars_::A_) -> i32 {
 		let mut q = Qv_::new2(Some(self.clone().top_q_));
 		let ret = self.clone().hello2__(a, true, true, true, &mut q);
+		self.ret__(ret)
+	}
+	#[allow(dead_code)]
+	pub fn hello4__(&mut self, a:&mut clpars_::A_, ret:super::T_<result_::List_>) -> i32 {
+		self.cfg_.src_is_file_ = false;
+		let mut q = Qv_::new2(Some(self.top_q_.clone()));
+		let ret = hello__(a, true, true, true, &mut q, t__(self.clone()), ret);
 		self.ret__(ret)
 	}
 }
