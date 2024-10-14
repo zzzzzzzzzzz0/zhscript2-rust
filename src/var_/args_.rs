@@ -143,22 +143,25 @@ impl Args_ {
 impl code_::Item_ for Args_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
 	fn s__(&self, ret:&mut String, w:&World_) {
+		self.super_.s__(self.name__(w), ret, w)
+	}
+	fn hello__(&self, env:&code_::Env_) -> Result2_ {
+		self.super_.hello__(|q2| {
+			Self::hello__(false, q2.unwrap(), self.begin_, self.end_, self.line_, &mut as_mut_ref__!(env.ret))
+		}, self, env)
+	}
+}
+
+impl Name_ for Args_ {
+	fn name__(&self, w:&World_) -> String {
 		let mut s = String::new();
-		s.push_str(ARGS_);
+		s.push_str(if self.line_ {ARG_} else {ARGS_});
 		if self.begin_ != 1 {
 			w.rem__(&self.begin_.to_string(), &mut s);
 		}
 		if self.end_ != core::i32::MAX {
 			w.rem__(&self.end_.to_string(), &mut s);
 		}
-		self.super_.s__(&s, ret, w)
-	}
-	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match qv_::rem4_::hello__(&self.super_.rems_, |_| {false}, env.in_q_.clone(), env.q.clone(), env.w.clone()) {
-			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), self.begin_, self.end_, self.line_, &mut as_mut_ref__!(env.ret)),
-			Err(e) =>
-				e,
-		}
+		s
 	}
 }

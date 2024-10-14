@@ -8,6 +8,8 @@ pub mod arg_;
 use arg_::*;
 pub mod simp_;
 
+pub const WITH_NAME_:&str = "与名";
+
 pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 	let mut bad = false;
 	let mut name = String::new();
@@ -53,6 +55,10 @@ pub fn new(kws:&keyword_::List_, codes:&code_::List_) -> code_::OI_ {
 	code_::oi__(Item_::new(kws, rems))
 }
 
+pub trait Name_ {
+	fn name__(&self, _:&World_) -> String;
+}
+
 pub struct Item1_ {
 	pub super_:code_::Item1_,
 	rems_:Vec<String>,
@@ -65,9 +71,7 @@ impl Item1_ {
 		Self {super_, rems_}
 	}
 
-	fn s__(&self, s:&str, ret:&mut String, w:&World_) {
-		let mut s2 = String::new();
-		s2.push_str(s);
+	fn s__(&self, mut s2:String, ret:&mut String, w:&World_) {
 		for i in &self.rems_ {
 			w.rem__(i, &mut s2);
 		}
@@ -81,12 +85,16 @@ impl Item1_ {
 	pub fn get2__(&self, ret2:&result_::List_, is_has:bool, equ_name:&EquName_, env:&code_::Env_) -> Result2_ {
 		let mut name = String::new();
 		let mut rems:Vec<String> = vec![];
+		let mut with_name = false;
 		let mut q2 = Some(env.q.clone());
 		for i in ret2.iter() {
 			let i = as_ref__!(i);
 			i.s__(&mut name);
 			match qv_::rem4_::hello2__(&i.rem_, is_has, |i2| {
-				rems.push(i2.to_string());
+				match i2 {
+					WITH_NAME_ => with_name = true,
+					_ => rems.push(i2.to_string())
+				}
 				true
 			}, env.in_q_.clone(), q2.unwrap(), env.w.clone()) {
 				Ok(q3) => {
@@ -95,6 +103,11 @@ impl Item1_ {
 				}
 				Err(e) => return e,
 			}
+		}
+		if with_name {
+			let mut s = name.clone();
+			as_ref__!(env.w).rem1__(&mut s);
+			as_mut_ref__!(env.ret).add__(s);
 		}
 		if !rems.is_empty() {
 			if Args_::with2__(&name, &rems) {}
@@ -157,6 +170,30 @@ impl Item1_ {
 	}
 	pub fn get__(&self, ret2:&result_::List_, is_has:bool, env:&code_::Env_) -> Result2_ {
 		self.get2__(ret2, is_has, &Default::default(), env)
+	}
+
+	pub fn hello__(&self, mut ok:impl FnMut(Option<qv_::T_>) -> Result2_, i:&dyn Name_, env:&code_::Env_) -> Result2_ {
+		let mut with_name = false;
+		match qv_::rem4_::hello__(&self.rems_, |rem| {
+			match rem {
+				WITH_NAME_ => {
+					with_name = true;
+					true
+				}
+				_ => false
+			}
+		}, env.in_q_.clone(), env.q.clone(), env.w.clone()) {
+			Ok(q2) => {
+				if with_name {
+					let w = as_ref__!(env.w);
+					let mut s = i.name__(&w);
+					w.rem1__(&mut s);
+					as_mut_ref__!(env.ret).add__(s);
+				}
+				ok(q2)
+			}
+			Err(e) => e,
+		}
 	}
 }
 

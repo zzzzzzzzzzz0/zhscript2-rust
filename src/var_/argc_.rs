@@ -22,13 +22,14 @@ impl Argc_ {
 
 impl code_::Item_ for Argc_ {
 	fn kw__(&self) -> &keyword_::Item_ {self.super_.super_.kw__()}
-	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(ARGC_, ret, w)}
+	fn s__(&self, ret:&mut String, w:&World_) {self.super_.s__(self.name__(w), ret, w)}
 	fn hello__(&self, env:&code_::Env_) -> Result2_ {
-		match qv_::rem4_::hello__(&self.super_.rems_, |_| {false}, env.in_q_.clone(), env.q.clone(), env.w.clone()) {
-			Ok(q2) =>
-				Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret)),
-			Err(e) =>
-				e,
-		}
+		self.super_.hello__(|q2| {
+			Self::hello__(false, q2.unwrap(), &mut as_mut_ref__!(env.ret))
+		}, self, env)
 	}
+}
+
+impl Name_ for Argc_ {
+	fn name__(&self, _:&World_) -> String {ARGC_.to_string()}
 }
