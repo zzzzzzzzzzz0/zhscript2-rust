@@ -87,15 +87,18 @@ impl code_::Item_ for Item_ {
 				if n.is_infinite() {
 					return result2_::err2__("溢出");
 				}
+				let mut ret = as_mut_ref__!(env.ret);
 				if v.len() > 1 {
 					let s2 = &v[1];
-					if let Some(i) = t_::s2n__(s2) {
-						as_mut_ref__!(env.ret).add__(format!("{:.i$}", n, i = i));
+					if s2.is_empty() {
+						ret.add__(format!("{}", n.floor()));
+					} else if let Some(i) = t_::s2n__(s2) {
+						ret.add__(format!("{:.i$}", n, i = i));
 					} else {
 						return result2_::err__([&w2.text__(&s2), "点后位数非法"].concat())
 					}
 				} else {
-					as_mut_ref__!(env.ret).add__(format!("{}", n));
+					ret.add__(format!("{}", n));
 				}
 				ok__()
 			}
